@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>BoostArtisan — votre espace</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #F6F3EC; color: #1E1B16; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  .p { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 22px 40px; box-sizing: border-box; text-align: center; }
+  .m { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: #8A7B5F; font-weight: 700; margin-bottom: 18px; }
+  h1 { font-size: 28px; line-height: 1.2; margin: 0 0 12px; font-weight: 800; }
+  p { font-size: 18px; line-height: 1.45; margin: 0 0 28px; color: #3E372C; max-width: 340px; }
+  a.b { display: block; width: 100%; max-width: 340px; box-sizing: border-box; background: #1E1B16; color: #fff; text-decoration: none; font-size: 21px; font-weight: 800; padding: 20px 18px; border-radius: 16px; }
+  a.b:active { background: #000; }
+  .s { margin-top: 26px; font-size: 15px; color: #6E6350; }
+  .s a { color: #1E1B16; font-weight: 700; }
+  .w { display: inline-block; width: 22px; height: 22px; border: 3px solid #CFC6B5; border-top-color: #1E1B16; border-radius: 50%; animation: r 1s linear infinite; vertical-align: middle; margin-right: 10px; }
+  @keyframes r { to { transform: rotate(360deg); } }
+  .cache { display: none; }
+</style>
+</head>
+<body>
+<div class="p">
+  <div class="m">BoostArtisan</div>
+  <h1 id="t">Votre espace client</h1>
+  <p id="x">Appuyez sur le bouton : votre espace s'ouvre dans Chrome, en sécurité.</p>
+  <a class="b" id="b" href="#">Ouvrir mon espace</a>
+  <div class="s cache" id="s">Ça ne s'ouvre pas ? <a id="f" href="#">Appuyez ici</a>.</div>
+</div>
+<script>
+(function () {
+  /* La porte d'entrée BoostArtisan (9 nov. 2026). Elle ne garde rien : le lien complet reste dans l'adresse et part tel quel vers l'espace.
+     Sur Android, les liens script.google.com sont attrapés par l'appli Google Drive (« Impossible d'ouvrir le fichier ») :
+     le bouton ouvre donc l'adresse DANS Chrome (intent, package com.android.chrome). Ailleurs (iPhone, ordinateur), l'espace s'ouvre tout seul. */
+  var PORTAIL = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec';
+  var TABLEAU = 'https://script.google.com/macros/s/AKfycbzDQYLSrRFEjoDronAiSy7mOEo3GDRHRl5AKkUcAbD7p-CUZFw1MiHEH7AIA31Eqa1p/exec';
+  var q = String(location.search || '');
+  var client = /[?&](?:j|jc)=/.test(q);
+  var cible = (client ? PORTAIL : TABLEAU) + q;
+  var ua = String(navigator.userAgent || '');
+  var android = /android/i.test(ua) || (navigator.userAgentData && String(navigator.userAgentData.platform || '').toLowerCase() === 'android');
+  var t = document.getElementById('t'), x = document.getElementById('x'), b = document.getElementById('b'), s = document.getElementById('s'), f = document.getElementById('f');
+  if (!client) { t.textContent = 'Votre page BoostArtisan'; x.textContent = android ? 'Appuyez sur le bouton : la page s\'ouvre dans Chrome.' : 'La page s\'ouvre…'; b.textContent = 'Ouvrir ma page'; }
+  f.setAttribute('href', cible);
+  if (android) {
+    var intent = 'intent://' + cible.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(cible) + ';end';
+    b.setAttribute('href', intent);
+    s.className = 's';
+  } else {
+    if (client) x.innerHTML = '<span class="w"></span>Votre espace s\'ouvre…';
+    b.setAttribute('href', cible);
+    s.className = 's';
+    setTimeout(function () { try { location.replace(cible); } catch (e) { location.href = cible; } }, 150);
+  }
+})();
+</script>
+</body>
+</html>
