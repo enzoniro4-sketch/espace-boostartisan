@@ -25,8 +25,14 @@ self.addEventListener('activate', function (e) {
   }));
 });
 self.addEventListener('fetch', function (e) {
-  var r = e.request; if (r.method !== 'GET' || r.mode !== 'navigate') return;
+  var r = e.request; if (r.method !== 'GET') return;
   var u = new URL(r.url); if (u.origin !== self.location.origin) return;
+  /* Les polices (10 nov., le dessin de la maquette) : des fichiers qui ne changent jamais (police neuve = nom neuf). Gardées d'abord : le réseau ne sert que la première fois. */
+  if (/^\/polices\/[\w.-]+\.woff2$/.test(u.pathname)) {
+    e.respondWith(caches.open(V).then(function (c) { return c.match(u.pathname).then(function (g) { return g || fetch(r).then(function (rep) { if (rep && rep.ok) c.put(u.pathname, rep.clone()).catch(function () { }); return rep; }); }); }));
+    return;
+  }
+  if (r.mode !== 'navigate') return;
   var ouvert = caches.open(V);
   var frais = ouvert.then(function (c) { return fetch(new Request('/index.html', { cache: 'no-store' })).then(function (rep) { if (rep && rep.ok) return c.put('/index.html', rep.clone()).catch(function () { }).then(function () { return rep; }); throw new Error('http'); }); });
   var garde = ouvert.then(function (c) { return c.match('/index.html'); });
