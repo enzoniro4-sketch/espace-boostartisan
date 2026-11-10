@@ -50,6 +50,29 @@ a:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
 .porte.bleu{background:var(--t-blue);color:var(--t-white);margin-top:8px}
 .porte.bleu .n{background:var(--t-blue2);color:var(--t-white)}
 .porte.bleu .t span{color:var(--t-bluetx)}
+.porte .t .o{display:none;color:var(--t-blue);font-weight:600}
+.porte.ouv .t span,.porte.ouv .t em{display:none}
+.porte.ouv .t .o{display:block}
+.porte.bleu .t .o{color:var(--t-white)}
+.porte.ouv{box-shadow:inset 0 0 0 2px var(--t-blue)}
+.porte.bleu.ouv{box-shadow:inset 0 0 0 2px var(--t-white)}
+.porte .tour{display:none;width:22px;height:22px;border-radius:50%;border:3px solid var(--t-sk);border-top-color:var(--t-blue);flex-shrink:0;animation:tour .8s linear infinite}
+.porte.ouv .tour{display:block}
+.porte.bleu .tour{border-color:var(--t-blue2);border-top-color:var(--t-white)}
+.tel.occ .porte:not(.ouv){opacity:.45;pointer-events:none}
+@keyframes tour{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.porte .tour{animation:none;border-right-color:var(--t-blue)}}
+.repli{background:var(--t-card);border-radius:16px;box-shadow:inset 0 0 0 2px var(--t-blue);padding:16px 14px 8px;display:flex;flex-direction:column;gap:8px}
+.repli b{font:600 17px/1.3 var(--body);padding:0 2px 2px}
+.repli p{font-size:14px;line-height:1.45;color:var(--t-mute);padding:0 2px}
+.repli a{display:block;text-align:center;font:600 16px/1.2 var(--body);border-radius:12px;padding:14px 12px;text-decoration:none}
+.repli .b1{background:var(--t-blue);color:var(--t-white)}
+.repli .b2{background:var(--t-chip);color:var(--t-ink)}
+.repli .b3{color:var(--t-blue);font-weight:500}
+.souci.seul span{font-size:15px;line-height:1.5}
+.regler .btn .o{display:none}
+.regler .btn.ouv .l{display:none}
+.regler .btn.ouv .o{display:inline}
 .sk{display:block;height:11px;border-radius:6px;background:var(--t-sk);margin-block:5px 4px}
 .tete .sk{background:var(--t-skd);margin:0}
 .souci{background:var(--t-amber);color:var(--t-ambertx);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
@@ -89,6 +112,7 @@ a:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
   var LIEN = ANDROID ? 'intent://' + DIRECT.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(DIRECT) + ';end' : DIRECT;
   var K = (function () { var h = 5381; for (var i = 0; i < J.length; i++) h = ((h << 5) + h + J.charCodeAt(i)) >>> 0; return 'ba1:' + h.toString(36) + ':' + J.length; })();
   var copie = null, ligne = '', horsR = false, essais = 0, enCours = false, suites = [], MSG = '', vuDabord = false, dernier = 0, minuteur = null;
+  var OUV = null, OUVN = 0, mOuv = [], T_LONG = 8000, T_REPLI = 20000;   /* la porte en cours d'ouverture */
 
   function e(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function maj1(s) { s = String(s || ''); return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
@@ -120,6 +144,8 @@ a:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
   }
   function pub(a) {
     var p = (a && a.pub) || {}, t = String(p.texte || '');
+    /* (pièce 2) la phrase vient du tableau telle quelle (pièce 1, la vérité) : titre, mot, phrase, niveau */
+    if (p.titre) return { titre: String(p.titre), phrase: point(p.titre), court: String(p.mot || ''), plus: String(p.phrase || ''), code: String(p.code || ''), cls: p.niveau === 'ok' ? '' : p.niveau === 'bad' || p.code === 'arretee' ? 'ko' : p.code === 'pas_lu' ? 'vide' : 'att', vert: p.niveau === 'ok' };
     if (p.arret) return { phrase: 'Votre publicité est arrêtée.', court: 'Arrêtée', cls: 'ko' };
     if (p.active && p.demarrage) return { phrase: 'Votre publicité démarre.', court: 'Elle démarre', cls: '' };
     if (p.active) return { phrase: 'Votre publicité tourne.', court: 'Elle tourne', cls: '' };
@@ -127,13 +153,49 @@ a:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
     if (/^En préparation/i.test(t)) return { phrase: 'Votre publicité est en préparation.', court: 'En préparation', cls: 'att' };
     return { phrase: 'Votre publicité est arrêtée.', court: 'Arrêtée', cls: 'ko' };
   }
+  /* PIÈCE 2 — LES PORTES (10 nov. 2026). Une porte touchée réagit TOUT DE SUITE (« Ouverture… ») ; un seul départ à la fois (toucher trois portes ne relance plus trois fois) ;
+     si rien ne s'ouvre (20 s, ou retour sur cette page) un bloc propose : réessayer, ouvrir autrement, copier le lien. La porte reste un vrai lien : c'est le téléphone qui ouvre. */
+  function etatPorte(n) { return OUV && OUV.n === n ? OUV.etape : ''; }
+  function motOuv(et) { return et === 'long' ? 'Encore quelques secondes…' : et === 'cours' ? 'Ouverture…' : ''; }
+  function repli() {
+    return '<div class="repli" id="repli" role="alert"><b>Ça ne s\'est pas ouvert ?</b>' + (OUV && OUV.msg ? '<p role="status">' + e(OUV.msg) + '</p>' : '')
+      + '<a class="b1" href="' + e(LIEN) + '" data-a="re" rel="noreferrer">Réessayer</a>'
+      + '<a class="b2" href="' + e(DIRECT) + '" data-a="autre" target="_blank" rel="noopener noreferrer">Ouvrir autrement</a>'
+      + '<a class="b3" href="#" data-a="copier">Copier mon lien</a><a class="b3" href="#" data-a="fermer">Fermer</a></div>';
+  }
+  function desarmer() { mOuv.forEach(function (m) { try { clearTimeout(m); } catch (x) { } }); mOuv = []; }
+  function etape(id, x) {
+    if (!OUV || OUV.id !== id || OUV.etape === 'repli') return;
+    if (x === 'repli' && document.visibilityState === 'hidden') { OUV.cache = true; return; }   /* il est ailleurs : on lui dira à son retour */
+    OUV.etape = x; if (x === 'repli') desarmer(); rendre();
+  }
+  function armer() { var id = OUV.id; desarmer(); mOuv = [setTimeout(function () { etape(id, 'long'); }, T_LONG), setTimeout(function () { etape(id, 'repli'); }, T_REPLI)]; }
+  function toucher(ev, d) {
+    if (OUV && OUV.etape !== 'repli') { ev.preventDefault(); return; }   /* une ouverture est déjà en route */
+    OUV = { id: ++OUVN, n: Number(d.getAttribute('data-p')) || 0, etape: 'cours', cache: false, msg: '' };
+    try { var r = document.getElementById('repli'); if (r && r.parentNode) r.parentNode.removeChild(r); } catch (x) { }
+    /* on marque la porte SANS la redessiner : le lien touché reste en place, le téléphone l'ouvre lui-même */
+    try { d.className += ' ouv'; d.setAttribute('aria-busy', 'true'); var o = d.querySelector('.o'); if (o) o.textContent = 'Ouverture…'; app.className = 'tel occ'; } catch (x) { }
+    armer();
+  }
+  function relancer(t) {
+    OUV = { id: ++OUVN, n: OUV ? OUV.n : 0, etape: 'cours', cache: false, msg: '' };
+    try { t.textContent = 'Ouverture…'; app.className = 'tel occ'; } catch (x) { }
+    armer();
+  }
+  function copier() {
+    var fait = function (ok) { if (!OUV) return; OUV.msg = ok ? 'Lien copié. Collez-le en haut de Chrome ou de Safari.' : 'Copie impossible. Appuyez longtemps sur « Ouvrir autrement », puis « Copier le lien ».'; rendre(); };
+    try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(DIRECT).then(function () { fait(true); }, function () { fait(false); }); return; } } catch (x) { }
+    fait(false);
+  }
   function porte(n, titre, sous, cls, vert) {
-    return '<a class="porte' + (cls ? ' ' + cls : '') + '" href="' + e(LIEN) + '" rel="noreferrer"><span class="n">' + n + '</span><span class="t"><b>' + e(titre) + '</b>' + (sous === null ? '<em class="sk" style="width:' + (52 + n * 5) + '%"></em>' : '<span' + (vert ? ' class="ok"' : '') + '>' + e(sous) + '</span>') + '</span></a>';
+    var et = etatPorte(n), cours = et === 'cours' || et === 'long';
+    return '<a class="porte' + (cls ? ' ' + cls : '') + (cours ? ' ouv' : '') + '" href="' + e(LIEN) + '" data-p="' + n + '"' + (cours ? ' aria-busy="true"' : '') + ' rel="noreferrer"><span class="n">' + n + '</span><span class="t"><b>' + e(titre) + '</b>' + (sous === null ? '<em class="sk" style="width:' + (52 + n * 5) + '%"></em>' : '<span' + (vert ? ' class="ok"' : '') + '>' + e(sous) + '</span>') + '<span class="o" role="status">' + e(motOuv(et)) + '</span></span><i class="tour"></i></a>' + (et === 'repli' ? repli() : '');
   }
   function portes(c, lu, Pb, n) {
     var a = c ? (c.accueil || {}) : null, v = !a;   /* v = la première fois : des traits gris à la place des chiffres */
     return porte(1, 'Mes appels et demandes', v ? null : 'Appels et formulaires' + (lu ? ' · ' + n + ' ce mois-ci' : ''))
-      + porte(2, 'Ma publicité', v ? null : maj1((lu ? Pb.court + ' · ' : '') + 'résultats, pause'), '', !v && lu && Pb.cls === '')
+      + porte(2, 'Ma publicité', v ? null : maj1((lu && Pb.court ? Pb.court + ' · ' : '') + 'résultats, pause'), '', !v && lu && (Pb.titre ? Pb.vert : Pb.cls === ''))
       + porte(3, 'Ce que je paie', 'Google et BoostArtisan')
       + porte(4, 'Mon budget', v ? null : maj1((a.budget_jour > 0 ? euros(a.budget_jour) + ' par jour · ' : '') + 'le monter ou le baisser'))
       + porte(5, 'Ma zone', v ? null : ([c.ville, a.rayon_km > 0 ? a.rayon_km + ' km autour' : ''].filter(Boolean).join(' · ') || 'Voir ma zone'))
@@ -144,19 +206,23 @@ a:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
     var r = c.a_regler || {}, m = euros(r.montant), ech = jourMois(r.echeance), note = MSG || (ferme ? 'Votre espace se rouvre dès le paiement.' : '');
     var h = '<div class="regler"><span class="lab">À régler</span><strong>' + e(m) + '</strong><p>Facture BoostArtisan' + (r.periode ? ' ' + e(r.periode) : '') + (ech ? ', à régler avant le ' + e(ech) : '') + '.</p>';
     if (r.detail) h += '<p class="d">' + e(point(r.detail)) + '</p>';
-    h += r.lien ? '<a class="btn" href="' + e(r.lien) + '" data-a="regler" rel="noreferrer">Régler ' + e(m) + '</a>' : '<a class="btn" href="' + e(LIEN) + '" rel="noreferrer">Voir comment régler</a>';
+    var et0 = etatPorte(0);
+    h += r.lien ? '<a class="btn" href="' + e(r.lien) + '" data-a="regler" rel="noreferrer">Régler ' + e(m) + '</a>' : '<a class="btn' + (et0 === 'cours' || et0 === 'long' ? ' ouv' : '') + '" href="' + e(LIEN) + '" data-p="0" rel="noreferrer"><span class="l">Voir comment régler</span><span class="o" role="status">' + e(motOuv(et0)) + '</span></a>' + (et0 === 'repli' ? repli() : '');
     if (note) h += '<p class="d" role="status">' + e(note) + '</p>';
     if (ferme && c.refermable && c.accueil) h += '<a class="plus" href="#" data-a="voir">Voir mon espace d\'abord ›</a>';
     return h + '</div>';
   }
   function accueil(c) {
-    var a = c.accueil || {}, age = ageReleve(c), lu = age !== null && age <= H26, Pb = pub(a), n = Math.round(Number(a.demandes_mois) || 0);
+    var a = c.accueil || {}, age = ageReleve(c), Pb = pub(a), n = Math.round(Number(a.demandes_mois) || 0);
+    /* lu = le relevé de Google a moins de 26 h ; « en préparation » et « arrêtée » ne dépendent d'aucun relevé : on les croit si la copie est du jour */
+    var lu = (age !== null && age <= H26) || (age === null && /^(preparation|arretee)$/.test(String(Pb.code || '')) && Date.now() - (Number(c.recu) || 0) < H26 * 36e5);
     var dem = n > 1 ? n + ' demandes reçues ce mois-ci.' : n === 1 ? '1 demande reçue ce mois-ci.' : 'Aucune demande reçue ce mois-ci.';
-    var etat = lu ? '<div class="etat' + (Pb.cls ? ' ' + Pb.cls : '') + '"><i></i><div><strong>' + e(Pb.phrase) + '</strong><span>' + e(dem) + '</span></div></div>'
+    var al = a.alerte && (a.alerte.titre || a.alerte.texte) ? a.alerte : null, meme = !!(al && Pb.titre && String(al.titre || '') === Pb.titre);   /* meme = l'alerte redit le titre du haut : on ne l'écrit qu'une fois */
+    var etat = lu ? '<div class="etat' + (Pb.cls ? ' ' + Pb.cls : '') + '"><i></i><div><strong>' + e(Pb.phrase) + '</strong>' + (Pb.plus && !meme ? '<span>' + e(Pb.plus) + '</span>' : '') + '<span>' + e(dem) + '</span></div></div>'
       : '<div class="etat vide"><i></i><div><strong>Publicité : pas lu.</strong><span>' + (age === null ? 'Le relevé de Google manque.' : 'Le relevé de Google date de plus d\'un jour.') + '</span></div></div>';
     var h = tete(c, etat) + '<div class="liste">';
     if (c.a_regler && !c.ferme) h += carteRegler(c, false);
-    if (a.alerte && (a.alerte.titre || a.alerte.texte)) h += '<div class="souci"><b>' + e(a.alerte.titre) + '</b><span>' + e(a.alerte.texte) + '</span></div>';
+    if (al && !(meme && (!lu || !al.texte))) h += '<div class="souci' + (meme ? ' seul' : '') + '">' + (meme ? '' : '<b>' + e(al.titre) + '</b>') + '<span>' + e(al.texte) + '</span></div>';
     return h + '<h3>Où voulez-vous aller ?</h3>' + portes(c, lu, Pb, n) + '</div>';
   }
   function rendre() {
@@ -165,6 +231,7 @@ a:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
     else if (copie.ferme && !(copie.refermable && copie.accueil && vuDabord)) h = tete(copie, '') + carteRegler(copie, true);
     else h = accueil(copie);
     app.innerHTML = h;
+    try { app.className = 'tel' + (OUV && OUV.etape !== 'repli' ? ' occ' : ''); } catch (x) { }
     try { document.title = 'Mon espace — ' + (copie && copie.nom ? copie.nom : 'BoostArtisan'); } catch (x) { }
     bandeau.hidden = !horsR;
     if (horsR) bandeau.textContent = 'Pas de réseau · ' + (copie ? 'chiffres ' + (heureParis(copie.calcule_le) || 'gardés dans ce téléphone') : 'vos chiffres arriveront dès qu\'il revient');
@@ -205,9 +272,15 @@ a:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
   }
   /* Argent : jamais d'action sur un vieux chiffre. « Régler » touché avant l'arrivée des chiffres frais = on revérifie le montant d'abord. */
   function clic(ev) {
-    var t = ev && ev.target && ev.target.closest ? ev.target.closest('[data-a]') : null; if (!t) return;
+    var c = ev && ev.target && ev.target.closest ? ev.target : null; if (!c) return;
+    var t = c.closest('[data-a]'), d;
+    if (!t) { d = c.closest('[data-p]'); if (d) toucher(ev, d); return; }
     var a = t.getAttribute('data-a');
     if (a === 'voir') { ev.preventDefault(); vuDabord = true; MSG = ''; rendre(); return; }
+    if (a === 're') { relancer(t); return; }
+    if (a === 'autre') return;   /* un vrai lien, dans un nouvel onglet */
+    if (a === 'fermer') { ev.preventDefault(); OUV = null; desarmer(); rendre(); return; }
+    if (a === 'copier') { ev.preventDefault(); copier(); return; }
     if (a !== 'regler' || estFrais()) return;
     ev.preventDefault();
     var avant = copie && copie.a_regler ? copie.a_regler.montant : null;
@@ -227,7 +300,12 @@ a:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
   app.addEventListener('click', clic);
   chercher();
   window.addEventListener('online', function () { if (horsR || !estFrais()) { essais = 0; chercher(); } });
-  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && Date.now() - dernier > 60000) { essais = 0; chercher(); } });
+  document.addEventListener('visibilitychange', function () {
+    var vis = document.visibilityState === 'visible';
+    if (OUV && OUV.etape !== 'repli') { if (!vis) OUV.cache = true; else if (OUV.cache) { OUV.etape = 'repli'; desarmer(); rendre(); } }   /* parti puis revenu : ça ne s'est peut-être pas ouvert */
+    if (vis && Date.now() - dernier > 60000) { essais = 0; chercher(); }
+  });
+  window.addEventListener('pageshow', function (ev) { if (ev && ev.persisted && OUV) { OUV = null; desarmer(); rendre(); } });   /* retour arrière depuis la page ouverte : tout est remis */
   try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function () { }); } catch (x) { }
 })();
 </script>
