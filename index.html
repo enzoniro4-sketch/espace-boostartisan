@@ -7,22 +7,31 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#101828">
 <link rel="icon" href="data:,">
+<link rel="preconnect" href="https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
+<link rel="preconnect" href="https://script.google.com" crossorigin>
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 <title>Mon espace — BoostArtisan</title>
 <style>
-:root{--t-bg:#F4F5F7;--t-card:#FFFFFF;--t-ink:#101828;--t-ink2:#1D2939;--t-mute:#475467;--t-soft:#C8D0DC;--t-chip:#EEF2F6;--t-blue:#1849A9;--t-blue2:#123A87;--t-bluetx:#E3EAF7;--t-green:#067647;--t-dot:#47CD89;--t-amber:#FEF0C7;--t-ambertx:#93370D;--t-sk:#E4E7EC;--t-skd:#344054;--t-white:#FFFFFF;--t-edge:#D0D5DD;--disp:'Space Grotesk','Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color-scheme:light}
+:root{--t-bg:#F4F5F7;--t-card:#FFFFFF;--t-ink:#101828;--t-ink2:#1D2939;--t-mute:#475467;--t-soft:#C8D0DC;--t-chip:#EEF2F6;--t-blue:#1849A9;--t-blue2:#123A87;--t-bluetx:#E3EAF7;--t-bluebg:#EFF4FF;--t-green:#067647;--t-greenbg:#DCFAE6;--t-greentx:#085D3A;--t-dot:#47CD89;--t-amber:#FEF0C7;--t-ambertx:#93370D;--t-red:#B42318;--t-redbg:#FEE4E2;--t-sk:#E4E7EC;--t-skd:#344054;--t-white:#FFFFFF;--t-edge:#D0D5DD;--t-line:#EAECF0;--disp:'Space Grotesk','Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color-scheme:light}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--t-bg);color:var(--t-ink);font:400 17px/1.5 var(--body)}
-p{margin:0}
+p,h1,h2,h3,ul{margin:0}
+ul{padding:0;list-style:none}
 a{color:inherit}
-a:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
+[hidden]{display:none!important}
+[data-z]{display:contents}
 .tel{width:100%;max-width:480px;margin:0 auto;min-height:100vh;background:var(--t-bg);color:var(--t-ink)}
 .hors{background:var(--t-amber);color:var(--t-ambertx);font:600 14px/1.4 var(--body);padding:11px 20px;padding-top:max(11px,env(safe-area-inset-top,0px));max-width:480px;margin:0 auto}
+.essai{position:sticky;top:0;z-index:5;background:#B54708;color:var(--t-white);font:700 13px/1.35 var(--body);text-align:center;padding:8px 12px}
 .tete{background:var(--t-ink);color:var(--t-white);padding:24px 20px 18px;display:flex;flex-direction:column;gap:14px}
 .tete small{font:500 13px/1.4 var(--body);color:var(--t-soft);display:block}
 .tete b{font:700 25px/1.2 var(--disp);display:block;overflow-wrap:anywhere}
 .tete .m{font:400 14px/1.4 var(--body);color:var(--t-soft);display:block}
-.etat{display:flex;align-items:center;gap:12px;background:var(--t-ink2);border-radius:14px;padding:12px 14px}
+.etat{display:flex;align-items:center;gap:12px;background:var(--t-ink2);border-radius:14px;padding:12px 14px;text-decoration:none;color:inherit}
 .etat i{width:12px;height:12px;border-radius:50%;background:var(--t-dot);flex-shrink:0}
 .etat strong{font:600 16px/1.3 var(--body);display:block}
 .etat span{font:400 14px/1.4 var(--body);color:var(--t-soft);display:block}
@@ -36,11 +45,15 @@ a:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
 .frais.ok i{background:var(--t-dot)}
 .frais.vieux{color:#FEC84B}
 .frais.vieux i{background:#FEC84B}
+.frais.clair{color:var(--t-mute);padding:6px 4px 0}
+.frais.clair.vieux{color:var(--t-ambertx)}
+.frais.clair.vieux i{background:var(--t-ambertx)}
 @keyframes pouls{50%{opacity:.25}}
-@media (prefers-reduced-motion:reduce){.frais.maj i{animation:none}}
-.liste{padding:18px 14px 20px;display:flex;flex-direction:column;gap:8px}
+@keyframes tour{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.frais.maj i,.roue{animation:none!important}}
+.liste{padding:18px 14px 28px;display:flex;flex-direction:column;gap:8px}
 .liste h3{margin:0 4px 4px;font:600 15px/1.4 var(--body);color:var(--t-mute)}
-.porte{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--t-card);border-radius:16px;min-height:48px;text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
+.porte{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--t-card);border-radius:16px;min-height:48px;text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent;border:0;width:100%;text-align:left}
 .porte:active{opacity:.8}
 .porte .n{width:30px;height:30px;border-radius:9px;background:var(--t-chip);font:700 14px/30px var(--body);text-align:center;flex-shrink:0}
 .porte .t{display:flex;flex-direction:column;gap:2px;flex-grow:1;min-width:0}
@@ -50,43 +63,162 @@ a:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
 .porte.bleu{background:var(--t-blue);color:var(--t-white);margin-top:8px}
 .porte.bleu .n{background:var(--t-blue2);color:var(--t-white)}
 .porte.bleu .t span{color:var(--t-bluetx)}
-.porte .t .o{display:none;color:var(--t-blue);font-weight:600}
-.porte.ouv .t span,.porte.ouv .t em{display:none}
-.porte.ouv .t .o{display:block}
-.porte.bleu .t .o{color:var(--t-white)}
-.porte.ouv{box-shadow:inset 0 0 0 2px var(--t-blue)}
-.porte.bleu.ouv{box-shadow:inset 0 0 0 2px var(--t-white)}
-.porte .tour{display:none;width:22px;height:22px;border-radius:50%;border:3px solid var(--t-sk);border-top-color:var(--t-blue);flex-shrink:0;animation:tour .8s linear infinite}
-.porte.ouv .tour{display:block}
-.porte.bleu .tour{border-color:var(--t-blue2);border-top-color:var(--t-white)}
-.tel.occ .porte:not(.ouv){opacity:.45;pointer-events:none}
-@keyframes tour{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){.porte .tour{animation:none;border-right-color:var(--t-blue)}}
-.repli{background:var(--t-card);border-radius:16px;box-shadow:inset 0 0 0 2px var(--t-blue);padding:16px 14px 8px;display:flex;flex-direction:column;gap:8px}
-.repli b{font:600 17px/1.3 var(--body);padding:0 2px 2px}
-.repli p{font-size:14px;line-height:1.45;color:var(--t-mute);padding:0 2px}
-.repli a{display:block;text-align:center;font:600 16px/1.2 var(--body);border-radius:12px;padding:14px 12px;text-decoration:none}
-.repli .b1{background:var(--t-blue);color:var(--t-white)}
-.repli .b2{background:var(--t-chip);color:var(--t-ink)}
-.repli .b3{color:var(--t-blue);font-weight:500}
-.souci.seul span{font-size:15px;line-height:1.5}
-.regler .btn .o{display:none}
-.regler .btn.ouv .l{display:none}
-.regler .btn.ouv .o{display:inline}
+.porte .ch{flex-shrink:0;width:20px;height:20px;stroke:#667085;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.porte.bleu .ch{stroke:var(--t-white)}
+.past{font:600 13px/1 var(--body);border-radius:999px;padding:7px 10px;flex-shrink:0;white-space:nowrap;display:inline-block}
+.past.ambre{color:var(--t-ambertx);background:var(--t-amber)}
+.past.gris{color:#344054;background:var(--t-chip)}
+.past.vert{color:var(--t-green);background:var(--t-greenbg)}
+.past.rouge{color:var(--t-red);background:var(--t-redbg)}
+.past.bleu{color:var(--t-blue2);background:var(--t-bluebg)}
 .sk{display:block;height:11px;border-radius:6px;background:var(--t-sk);margin-block:5px 4px}
 .tete .sk{background:var(--t-skd);margin:0}
 .souci{background:var(--t-amber);color:var(--t-ambertx);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
 .souci b{font:600 16px/1.35 var(--body)}
-.souci span{font:400 14px/1.45 var(--body);overflow-wrap:anywhere}
+.souci span{font:400 14px/1.45 var(--body);overflow-wrap:anywhere;white-space:pre-line}
+.souci.seul span{font-size:15px;line-height:1.5}
+.souci.rouge{background:var(--t-redbg);color:var(--t-red)}
+.souci.vert{background:var(--t-greenbg);color:var(--t-greentx)}
 .regler{margin:18px 14px 20px;background:var(--t-card);border-radius:18px;padding:20px 18px;display:flex;flex-direction:column;gap:10px}
-.liste .regler{margin:0 0 8px}
+.liste .regler,.corps .regler{margin:0 0 8px}
 .regler .lab{font:600 13px/1 var(--body);letter-spacing:.04em;text-transform:uppercase;color:var(--t-ambertx)}
 .regler strong{font:700 40px/1.05 var(--disp);font-variant-numeric:tabular-nums}
 .regler p{font-size:15px;line-height:1.45;color:var(--t-ink);overflow-wrap:anywhere}
 .regler p.d{color:var(--t-mute);font-size:14px}
-.regler .btn{display:block;text-align:center;background:var(--t-ambertx);color:var(--t-white);font:600 17px/1 var(--body);border-radius:14px;padding:16px 14px;margin-block:4px;text-decoration:none}
-.regler .plus{font:500 15px/1.4 var(--body);color:var(--t-blue);text-align:center;padding:10px}
-@media (min-width:560px){body{padding:24px 16px}.tel{min-height:0;border:1px solid var(--t-edge);border-radius:28px;overflow:hidden}.hors{border-radius:14px;margin-bottom:12px}}
+.regler .plus{font:500 15px/1.4 var(--body);color:var(--t-blue);text-align:center;padding:10px;background:none;border:0}
+.haut{padding:12px 20px 0;display:flex;flex-direction:column;gap:4px}
+.haut .retour{display:inline-flex;align-items:center;gap:6px;min-height:44px;align-self:flex-start;font:600 15px/1 var(--body);text-decoration:none;color:var(--t-blue);background:none;border:0;padding:0 8px 0 0}
+.haut .retour svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.haut h1{font:700 28px/1.15 var(--disp);overflow-wrap:anywhere}
+.haut p{margin-top:6px;font:400 16px/1.45 var(--body);color:var(--t-mute)}
+.corps{padding:16px 16px 32px;display:flex;flex-direction:column;gap:12px}
+.carte{background:var(--t-card);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.carte h2{font:600 15px/1.4 var(--body);color:var(--t-mute)}
+.carte h2.fort{font:700 18px/1.3 var(--disp);color:var(--t-ink)}
+.carte p{font:400 15px/1.5 var(--body);color:var(--t-mute);overflow-wrap:anywhere}
+.carte p.n{color:var(--t-ink)}
+.rangee{display:flex;align-items:center;gap:14px}
+.rond{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--t-greenbg)}
+.rond svg{width:22px;height:22px;fill:none;stroke:var(--t-green);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.rond.att{background:var(--t-amber)}.rond.att svg{stroke:var(--t-ambertx)}
+.rond.ko{background:var(--t-redbg)}.rond.ko svg{stroke:var(--t-red)}
+.rond.vide{background:var(--t-chip)}.rond.vide svg{stroke:var(--t-mute)}
+.gros{font:700 20px/1.25 var(--disp)}
+.chiffre{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.chiffre b{font:700 40px/1 var(--disp);font-variant-numeric:tabular-nums}
+.chiffre b.moy{font-size:34px}
+.chiffre span{font:500 16px/1.3 var(--body)}
+.chiffre small{font:400 14px/1.4 var(--body);color:var(--t-mute)}
+.ligne{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--t-line);padding-top:10px;font:400 15px/1.4 var(--body)}
+.ligne span{color:var(--t-mute)}
+.ligne b{font-weight:600;text-align:right;overflow-wrap:anywhere}
+.ligne.nu{border-top:0;padding-top:0}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border:0;background:var(--t-blue);color:var(--t-white);border-radius:12px;font:600 17px/1.2 var(--body);text-decoration:none;padding:8px 14px;text-align:center;width:100%}
+.btn.gris{background:var(--t-chip);color:var(--t-ink);min-height:48px;font-size:16px}
+.btn.bord{background:var(--t-white);color:var(--t-ink);border:1.5px solid var(--t-edge);min-height:44px;font-size:15px}
+.btn.ambre{background:var(--t-ambertx)}
+.btn.vert{background:var(--t-green)}
+.btn.rouge{background:var(--t-white);color:var(--t-red);border:1.5px solid #FDA29B;min-height:48px;font-size:16px}
+.btn[disabled],.btn.occ{opacity:.6;pointer-events:none}
+.btn.petit{min-height:44px;font-size:15px;width:auto;padding:8px 14px}
+.lien{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;font:600 15px/1.3 var(--body);text-decoration:none;color:var(--t-blue);background:none;border:0;width:100%;text-align:center}
+.lien svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.roue{display:inline-block;width:18px;height:18px;border-radius:50%;border:3px solid rgba(255,255,255,.35);border-top-color:currentColor;animation:tour .8s linear infinite;flex-shrink:0}
+.boite{border-radius:12px;padding:12px 14px;font:500 15px/1.45 var(--body);overflow-wrap:anywhere}
+.boite.bleu{background:var(--t-bluebg);color:var(--t-blue2)}
+.boite.ambre{background:var(--t-amber);color:var(--t-ambertx)}
+.boite.vert{background:var(--t-greenbg);color:var(--t-greentx)}
+.boite.rouge{background:var(--t-redbg);color:var(--t-red)}
+.boite.gris{background:var(--t-bg);color:var(--t-mute)}
+.boite b{display:block;font-weight:600;font-size:16px;line-height:1.35}
+.info{display:flex;gap:10px;padding:4px 4px 0;font:400 14px/1.5 var(--body);color:var(--t-mute)}
+.info svg{width:20px;height:20px;flex-shrink:0;margin-top:1px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tit{margin:4px 4px 0;font:600 15px/1.4 var(--body);color:var(--t-mute)}
+.dem{background:var(--t-card);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.dem .h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.dem .h div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.dem .h b{font:600 16px/1.3 var(--body);overflow-wrap:anywhere}
+.dem .h span.s{font:400 14px/1.4 var(--body);color:var(--t-mute)}
+.dem .x{font:400 14px/1.45 var(--body);color:var(--t-ink2);overflow-wrap:anywhere;white-space:pre-line}
+.dem .x.m{color:var(--t-mute)}
+.dem .x.a{color:var(--t-ambertx)}
+.dem a.nt{font:600 16px/1.3 var(--body);color:var(--t-blue);text-decoration:none;align-self:flex-start;min-height:28px;display:inline-flex;align-items:center}
+.duo{display:flex;gap:8px;flex-wrap:wrap}
+.duo>*{flex:1 1 140px}
+.champ{display:flex;flex-direction:column;gap:6px}
+.champ label,.lab2{font:600 15px/1.35 var(--body);color:var(--t-ink)}
+.champ input,.champ textarea{width:100%;border:1.5px solid var(--t-edge);border-radius:12px;background:var(--t-white);padding:12px 14px;font:400 16px/1.4 var(--body);min-height:48px}
+.champ textarea{min-height:92px;resize:vertical}
+.choix{display:flex;flex-direction:column;gap:8px}
+.choix button{display:flex;align-items:center;min-height:52px;padding:0 16px;border-radius:12px;font:600 16px/1.2 var(--body);text-align:left;border:1.5px solid var(--t-edge);background:var(--t-white);color:var(--t-ink);width:100%}
+.choix button[aria-pressed=true]{border:2px solid var(--t-blue);background:var(--t-bluebg);color:var(--t-blue2)}
+.puces{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.puces button{min-height:52px;border-radius:12px;font:600 16px/1 var(--body);border:1.5px solid var(--t-edge);background:var(--t-white);color:var(--t-ink);padding:0 4px}
+.puces button[aria-pressed=true]{border:2px solid var(--t-blue);background:var(--t-blue);color:var(--t-white)}
+.pas{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pas button{width:60px;height:60px;border:1.5px solid var(--t-edge);background:var(--t-white);border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pas button svg{width:24px;height:24px;stroke:var(--t-ink);fill:none;stroke-width:2.4;stroke-linecap:round}
+.pas div{display:flex;flex-direction:column;align-items:center;gap:2px}
+.pas div b{font:700 44px/1 var(--disp);color:var(--t-blue);font-variant-numeric:tabular-nums}
+.pas div span{font:500 14px/1.3 var(--body);color:var(--t-mute)}
+.centre{text-align:center}
+.points{display:flex;flex-direction:column;gap:10px}
+.points div{display:flex;align-items:flex-start;gap:10px;font:500 16px/1.4 var(--body)}
+.points i{width:8px;height:8px;border-radius:50%;background:var(--t-mute);flex-shrink:0;margin-top:8px}
+.suivi{display:flex;flex-direction:column;gap:10px}
+.suivi div{display:flex;align-items:center;gap:10px;font:500 16px/1.35 var(--body)}
+.suivi div span{flex-grow:1;min-width:0}
+.suivi svg{width:20px;height:20px;flex-shrink:0;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.per{display:flex;gap:6px;flex-wrap:wrap}
+.per button{white-space:nowrap;border-radius:999px;border:1.5px solid var(--t-edge);background:var(--t-white);padding:9px 13px;font:600 14px/1 var(--body);color:var(--t-ink2);min-height:40px}
+.per button[aria-pressed=true]{background:var(--t-ink);border-color:var(--t-ink);color:var(--t-white)}
+.tuiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tuiles div{background:var(--t-bg);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tuiles small{font:500 13px/1.35 var(--body);color:var(--t-mute)}
+.tuiles b{font:700 24px/1.15 var(--disp);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tuiles b.bleu{color:var(--t-blue)}
+.tuiles em{font:400 12px/1.3 var(--body);color:var(--t-mute);font-style:normal;min-height:16px}
+.tuiles em.up{color:var(--t-green)}.tuiles em.down{color:var(--t-red)}
+.sec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 14px;font:400 13px/1.4 var(--body);color:var(--t-mute)}
+.sec div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dashed var(--t-edge);padding:4px 0}
+.sec b{color:var(--t-ink);white-space:nowrap}
+.graph svg{display:block;width:100%;height:auto}
+.note{font:400 13px/1.5 var(--body)!important;color:var(--t-mute)}
+.fil{display:flex;flex-direction:column;gap:9px}
+.fil .jour{text-align:center;font:500 12px/1.3 var(--body);color:var(--t-mute);letter-spacing:.04em;text-transform:uppercase;margin-top:4px}
+.bulle{max-width:88%;padding:10px 13px;border-radius:16px;font:400 15px/1.45 var(--body);overflow-wrap:anywhere;white-space:pre-line}
+.bulle small{display:block;font:400 12px/1.3 var(--body);margin-top:4px;opacity:.8;white-space:normal}
+.bulle.moi{margin-left:auto;background:var(--t-blue);color:var(--t-white);border-bottom-right-radius:5px}
+.bulle.rep{margin-right:auto;background:var(--t-card);color:var(--t-ink);border-bottom-left-radius:5px}
+.bulle.enzo{background:var(--t-greenbg);color:var(--t-greentx)}
+.etape{display:inline-flex;align-items:center;gap:8px;font:500 14px/1.35 var(--body);padding:8px 12px;border-radius:12px;max-width:92%;margin-right:auto;background:var(--t-amber);color:var(--t-ambertx)}
+.etape i{width:9px;height:9px;border-radius:50%;background:currentColor;flex-shrink:0}
+.etape.att{background:var(--t-bluebg);color:var(--t-blue2)}
+.etape.att i{animation:pouls 1.1s infinite}
+.etape.vert{background:var(--t-greenbg);color:var(--t-greentx)}
+.etape.bleu{background:var(--t-bluebg);color:var(--t-blue2)}
+.saisie{display:flex;gap:8px;align-items:flex-end}
+.saisie textarea{flex-grow:1;border:1.5px solid var(--t-edge);border-radius:14px;background:var(--t-white);padding:12px 14px;font:400 16px/1.4 var(--body);min-height:52px;max-height:160px;resize:none}
+.saisie button{width:52px;height:52px;border:0;border-radius:14px;background:var(--t-blue);color:var(--t-white);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.saisie button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.sugg{display:flex;flex-direction:column;gap:8px}
+.sugg button{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:10px 14px;border-radius:12px;border:1.5px solid var(--t-edge);background:var(--t-white);font:600 15px/1.35 var(--body);text-align:left;color:var(--t-ink);width:100%}
+.sugg svg{width:18px;height:18px;stroke:#667085;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.pj{display:flex;flex-direction:column;gap:6px}
+.pj label{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:1.5px dashed var(--t-edge);border-radius:12px;background:var(--t-white);font:600 15px/1.3 var(--body);color:var(--t-ink2);cursor:pointer;overflow:hidden}
+.pj label input{position:absolute;left:0;top:0;width:1px;height:1px;opacity:0}
+.pj label svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pj li{display:flex;align-items:center;gap:8px;border:1px solid var(--t-line);border-radius:12px;background:var(--t-white);padding:7px 10px;font:400 14px/1.3 var(--body)}
+.pj li span{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pj li small{color:var(--t-mute);flex-shrink:0}
+.pj li button{width:32px;height:32px;border-radius:50%;border:0;background:var(--t-redbg);color:var(--t-red);font-weight:700;flex-shrink:0}
+audio{display:block;width:100%;margin-top:4px}
+.voile{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center;padding:16px;background:rgba(16,24,40,.72)}
+.voile .bte{width:100%;max-width:448px;max-height:calc(100vh - 32px);overflow:auto;background:var(--t-white);border-radius:20px;border-top:6px solid var(--t-red);padding:22px 20px 18px;display:flex;flex-direction:column;gap:12px;text-align:center}
+.voile .k{font:700 13px/1.3 var(--body);letter-spacing:.05em;text-transform:uppercase;color:var(--t-red)}
+.voile .x{font:400 17px/1.5 var(--body);white-space:pre-line;overflow-wrap:anywhere}
+.pied{padding:0 20px 28px;text-align:center;font:400 12px/1.45 var(--body);color:var(--t-mute)}
+@media (min-width:560px){body{padding:24px 16px}.tel{min-height:0;border:1px solid var(--t-edge);border-radius:28px;overflow:hidden}.hors{border-radius:14px;margin-bottom:12px}.voile{align-items:center}}
 </style>
 </head>
 <body>
@@ -96,216 +228,878 @@ a:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
 <script>
 (function () {
   'use strict';
-  /* L'espace BoostArtisan instantané (chantier 28, 10 nov. 2026).
-     La page montre TOUT DE SUITE la dernière copie de l'accueil gardée dans ce téléphone, puis va chercher la copie fraîche au tableau et remplace.
-     Le lien du client est la clé : il est après le « # » (jamais envoyé à l'hébergeur) et la page n'envoie pas d'origine.
-     Le téléphone ne garde que l'accueil (aucun numéro d'appelant) ; « lien invalide » efface la copie. Aucun secret ici : ce fichier est public. */
-  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', H6 = 6, H26 = 26;
-  var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  /* L'espace BoostArtisan — une appli d'une seule page (chantier 28 « espace fini », 10 nov. 2026).
+     Chaque porte ouvre SON écran DANS la page, tout de suite : aucun appel réseau n'est nécessaire pour l'afficher, aucune page de Google ne s'ouvre.
+     Trois sources, la plus récente gagne : 1. la copie gardée dans ce téléphone ; 2. le guichet (réponse en 0,1 à 0,3 s) ; 3. le tableau (la vérité, plus lent).
+     Le téléphone et le guichet ne gardent que la copie PUBLIQUE : aucun numéro, aucun e-mail, aucun lien de paiement. Les numéros, le fil et les liens viennent
+     du tableau seulement et restent en mémoire vive (« vif »). Le lien du client est la clé : il est après le « # » (jamais envoyé à l'hébergeur).
+     Les actions appellent les MÊMES fonctions du tableau que l'ancienne page. Aucun secret ici : ce fichier est public. */
+  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '2d553efce4', H2 = 2, H6 = 6, H26 = 26;
+  var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'], MOISC = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'], JOURS = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
   var app = document.getElementById('app'), bandeau = document.getElementById('hors');
-  var P = (function () { var o = {}; (String(location.search || '').replace(/^\?/, '') + '&' + String(location.hash || '').replace(/^#/, '')).split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i > 0) { try { o[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); } catch (x) { } } }); return o; })();
-  var J = String(P.j || '').trim(), SRC = P.src === 'enzo' ? 'enzo' : '';
-  try { if (J && /[?&]j=/.test(String(location.search || ''))) history.replaceState(null, '', location.pathname + '#j=' + encodeURIComponent(J) + (SRC ? '&src=' + SRC : '')); } catch (x) { }
-  var ANDROID = /android/i.test(String(navigator.userAgent || ''));
-  var DIRECT = API + '?j=' + encodeURIComponent(J) + (SRC ? '&src=' + SRC : '');
-  /* Derrière une porte : la page d'aujourd'hui. Sur Android, l'appli Google Drive attrape les liens script.google.com : on ouvre donc DANS Chrome. */
-  var LIEN = ANDROID ? 'intent://' + DIRECT.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(DIRECT) + ';end' : DIRECT;
-  var K = (function () { var h = 5381; for (var i = 0; i < J.length; i++) h = ((h << 5) + h + J.charCodeAt(i)) >>> 0; return 'ba1:' + h.toString(36) + ':' + J.length; })();
-  var copie = null, ligne = '', horsR = false, essais = 0, enCours = false, suites = [], MSG = '', vuDabord = false, dernier = 0, minuteur = null;
-  var OUV = null, OUVN = 0, mOuv = [], T_LONG = 8000, T_REPLI = 20000;   /* la porte en cours d'ouverture */
+  function params() { var o = {}; (String(location.search || '').replace(/^\?/, '') + '&' + String(location.hash || '').replace(/^#/, '')).split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i > 0) { try { o[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); } catch (x) { } } }); return o; }
+  var P = params();
+  var J = String(P.j || '').trim(), SRC = /^[a-z0-9_-]{1,24}$/i.test(String(P.src || '')) ? String(P.src) : '';
+  var ECRANS = { accueil: 1, appels: 1, pub: 1, pause: 1, paie: 1, budget: 1, zone: 1, site: 1, parler: 1 };
+  var NOMS = { appels: 'Mes appels et demandes', pub: 'Ma publicité', pause: 'Pause ou reprise', paie: 'Ce que je paie', budget: 'Mon budget', zone: 'Ma zone', site: 'Mon site et mon numéro', parler: 'Nous parler' };
+  var ecran = ECRANS[P.p] ? P.p : 'accueil';
+  var RET = { paye: P.paye === '1' && P.session_id ? String(P.session_id) : '', carte: P.carte_ok === '1' && P.session_id ? String(P.session_id) : '' };
+  var K = (function () { var h = 5381; for (var i = 0; i < J.length; i++) h = ((h << 5) + h + J.charCodeAt(i)) >>> 0; return 'ba2:' + h.toString(36) + ':' + J.length; })();
+  var copie = null, vif = null, vifLe = 0, ligne = '', horsR = false, essais = 0, enCours = false, suites = [], minuteur = null, dernier = 0, encore = null, DEC = 0, vuDabord = false, visiteDite = false;
+  var F = {}, A = {}, O = {}, PJ = [], FIL = [], PER = 'mois', MSG = '', BAN = null, MEQ_VU = false, PROF = 0, DEFIL = {}, ANCIENS = null, SON = {};
 
+  /* ---------- petits outils ---------- */
   function e(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function maj1(s) { s = String(s || ''); return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
-  function euros(n) { n = Math.round((Number(n) || 0) * 100) / 100; var s; try { s = n.toLocaleString('fr-FR', { maximumFractionDigits: 2 }); } catch (x) { s = String(n).replace('.', ','); } return s + ' €'; }
-  function hm(h, m) { return h + ' h ' + m; }
-  function parties(x) { var r = {}; new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(x).forEach(function (p) { r[p.type] = p.value; }); return r; }
-  function heureParis(iso) { try { var d = new Date(iso); if (isNaN(d.getTime())) return ''; var o = parties(d), a = parties(new Date()); return (o.day === a.day && o.month === a.month ? 'de ' : 'du ' + o.day + '/' + o.month + ' à ') + hm(o.hour, o.minute); } catch (x) { return ''; } }
+  function nbFr(n, max, min) { n = Number(n) || 0; try { return n.toLocaleString('fr-FR', { minimumFractionDigits: min || 0, maximumFractionDigits: max === undefined ? 2 : max }); } catch (x) { return String(Math.round(n * 100) / 100).replace('.', ','); } }
+  function euros(n) { return nbFr(Math.round((Number(n) || 0) * 100) / 100) + ' €'; }
+  function euros2(n) { return nbFr(Math.round((Number(n) || 0) * 100) / 100, 2, 2) + ' €'; }
+  function pl(n, un, des) { n = Number(n) || 0; return n + ' ' + (n > 1 ? (des || un + 's') : un); }
+  function hm(h, m) { return h + ' h ' + m; }
+  function maintenant() { return Date.now() + DEC; }
+  function parties(x) { var r = {}; new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', year: 'numeric', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(x).forEach(function (p) { r[p.type] = p.value; }); return r; }
+  function jourParis(t) { try { var o = parties(new Date(t)); return o.year + '-' + o.month + '-' + o.day; } catch (x) { return new Date(t).toISOString().slice(0, 10); } }
+  function heureParis(iso) { try { var d = new Date(iso); if (isNaN(d.getTime())) return ''; var o = parties(d), a = parties(new Date(maintenant())); return (o.day === a.day && o.month === a.month ? 'de ' : 'du ' + (+o.day) + '/' + (+o.month) + ' à ') + hm(o.hour, o.minute); } catch (x) { return ''; } }
   function quandReleve(s) { var m = /(\d{4})-(\d\d)-(\d\d)(?:[ T](\d\d):(\d\d))?/.exec(String(s || '')); if (!m) return ''; return (+m[3]) + '/' + (+m[2]) + (m[4] ? ' à ' + hm(m[4], m[5]) : ''); }
   function jourMois(s) { var m = /(\d{4})-(\d\d)-(\d\d)/.exec(String(s || '')); if (!m) return String(s || ''); return (+m[3] === 1 ? '1er' : String(+m[3])) + ' ' + MOIS[+m[2] - 1]; }
-  function point(s) { s = String(s || '').trim(); return /[.!?…]$/.test(s) ? s : s + '.'; }
-  function garder(c) { try { localStorage.setItem(K, JSON.stringify(c)); } catch (x) { } }
-  function reprise() { try { var c = JSON.parse(localStorage.getItem(K) || 'null'); return c && c.ok === true && c.v === 1 ? c : null; } catch (x) { return null; } }
-  function oublier() { try { localStorage.removeItem(K); } catch (x) { } }
-  /* L'âge du relevé de Google, compté sur l'horloge du téléphone depuis la réception : une vieille copie vieillit toute seule. */
-  function ageReleve(c) { if (!c || c.releve_age_h == null || !c.releve_le) return null; return Number(c.releve_age_h) + Math.max(0, Date.now() - (Number(c.recu) || Date.now())) / 36e5; }
-  function estFrais() { return !!(copie && copie.recu && ligne === 'ok' && Date.now() - copie.recu < 300000); }
+  function jm(s) { var m = /(\d{4})-(\d\d)-(\d\d)/.exec(String(s || '')); return m ? m[3] + '/' + m[2] : String(s || ''); }
+  function jmh(s) { var m = /(\d{4})-(\d\d)-(\d\d)(?:[ T](\d\d):(\d\d))?/.exec(String(s || '')); if (!m) return String(s || ''); return m[3] + '/' + m[2] + (m[4] ? ' à ' + hm(m[4], m[5]) : ''); }
+  function plusJours(s, n) { var p = String(s).split('-'), x = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); }
+  function aujourdhui() { return jourParis(maintenant()); }
+  /* « 2026-11-07 10:05 » → « Sam. 7 nov., 10 h 05 » ; aujourd'hui et hier en toutes lettres */
+  function quandLisible(s) {
+    var m = /(\d{4})-(\d\d)-(\d\d)(?:[ T](\d\d):(\d\d))?/.exec(String(s || '')); if (!m) return String(s || '');
+    var j = m[1] + '-' + m[2] + '-' + m[3], a = aujourdhui(), h = m[4] ? ', ' + hm(m[4], m[5]) : '';
+    if (j === a) return 'Aujourd\'hui' + h; if (j === plusJours(a, -1)) return 'Hier' + h;
+    return JOURS[new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])).getUTCDay()] + ' ' + (+m[3] === 1 ? '1er' : +m[3]) + ' ' + MOISC[+m[2] - 1] + h;
+  }
+  function point(s) { s = String(s || '').trim(); return !s || /[.!?…]$/.test(s) ? s : s + '.'; }
+  function g(o, ch) { var x = o; ch.split('.').forEach(function (k) { x = (x && typeof x === 'object') ? x[k] : undefined; }); return x; }
+  function tableau(x) { return Array.isArray(x) ? x : []; }
+  var ICO = {
+    ret: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>', ch: '<svg class="ch" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>',
+    ok: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>', al: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v6"/><path d="M12 17h.01"/></svg>', hor: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    info: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>', bulle: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/></svg>',
+    moins: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg>', plus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/><path d="M12 6v12"/></svg>',
+    env: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>', trombone: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5l-8 8a5 5 0 0 1-7-7l8.5-8.5a3.5 3.5 0 0 1 5 5L10 17.5a2 2 0 0 1-3-3l7.5-7.5"/></svg>'
+  };
 
-  function ligneFrais(c) {
-    var a = ageReleve(c), g = !(c.ferme && !c.accueil), t, vieux = false, h;
-    if (g && a === null) { t = 'Chiffres de Google : pas lus'; vieux = true; }
-    else if (g && a > H26) { t = 'Chiffres de Google : pas lus depuis le ' + quandReleve(c.releve_le); vieux = true; }
-    else if (g && a > H6) { t = 'Chiffres de Google du ' + quandReleve(c.releve_le); vieux = true; }
+  /* ---------- la copie publique : garder, reprendre, la plus récente gagne ---------- */
+  function garder(c) { try { localStorage.setItem(K, JSON.stringify(c)); } catch (x) { } }
+  function reprise() { try { var c = JSON.parse(localStorage.getItem(K) || 'null'); return c && c.ok === true && c.v === 2 ? c : null; } catch (x) { return null; } }
+  function oublier() { try { localStorage.removeItem(K); } catch (x) { } }
+  function prendre(c, force) {
+    if (!c || c.ok !== true || c.v !== 2) return false;
+    if (!force && copie && (Number(copie.calcule_ts) || 0) > (Number(c.calcule_ts) || 0)) return false;
+    copie = c; garder(c); return true;
+  }
+  /* L'âge du relevé de Google : compté sur l'heure du tableau (l'écart avec l'horloge du téléphone est corrigé dès que le tableau répond). */
+  function ageReleve(c) { if (!c || !(Number(c.releve_ts) > 0)) return null; if (g(c, 'accueil.pub.code') === 'pas_lu') return null; return Math.max(0, (maintenant() - Number(c.releve_ts)) / 36e5); }
+  function ageCopie() { return copie && Number(copie.calcule_ts) > 0 ? Math.max(0, (maintenant() - Number(copie.calcule_ts)) / 36e5) : 1e9; }
+  function vifFrais() { return !!(vif && vifLe && Date.now() - vifLe < 300000); }
+  function horloge(iso) { try { var t = new Date(iso).getTime(); if (t > 0) { var d = t - Date.now(); DEC = Math.abs(d) > 90000 ? d : 0; } } catch (x) { } }
+
+  /* ---------- le réseau ---------- */
+  function appel(url, opt, ms) {
+    opt = opt || {}; opt.credentials = 'omit'; opt.cache = 'no-store'; opt.redirect = 'follow'; opt.referrerPolicy = 'no-referrer';
+    var ctl = null, garde = null;
+    try { ctl = new AbortController(); opt.signal = ctl.signal; garde = setTimeout(function () { try { ctl.abort(); } catch (x) { } }, ms || 45000); } catch (x) { ctl = null; }
+    var fini = function () { if (garde) clearTimeout(garde); };
+    return fetch(url, opt).then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); }).then(function (o) { fini(); return o; }, function (x) { fini(); throw x; });
+  }
+  function poster(corps, ms) { corps.action = 'espace'; corps.j = J; return appel(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(corps) }, ms || 90000); }
+  function empreinte(t) {
+    try { if (!(window.crypto && crypto.subtle && window.TextEncoder)) return Promise.reject(new Error('pas de crypto')); return crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)).then(function (b) { return Array.prototype.map.call(new Uint8Array(b), function (x) { return (x < 16 ? '0' : '') + x.toString(16); }).join(''); }); } catch (x) { return Promise.reject(x); }
+  }
+  /* 2. le guichet : la copie publique rangée à l'adresse « empreinte du lien » ; absent ou en panne = on passe au tableau, sans rien dire */
+  function guichet() {
+    if (!/^https:\/\//.test(GUICHET)) return Promise.resolve('absent');
+    return empreinte(J).then(function (h) { return appel(GUICHET + '/c/' + h + '.json', { method: 'GET' }, 6000); }).then(function (c) {
+      if (c && c.ok === true && c.v === 2) { if (prendre(c)) rendre(true); return 'ok'; }
+      return 'absent';
+    }, function () { return 'absent'; });
+  }
+  /* 3 bis. la copie publique demandée au tableau (seulement quand ni le téléphone ni le guichet n'en ont une) */
+  function espace() {
+    return appel(API + '?x=espace&j=' + encodeURIComponent(J), { method: 'GET' }, 45000).then(function (c) {
+      if (c && c.ok === true && c.v === 2) { horloge(c.maintenant); if (prendre(c)) rendre(true); }
+      else if (c && c.erreur === 'lien invalide') invalide();
+    }, function () { });
+  }
+  function invalide() { oublier(); copie = null; vif = null; if (minuteur) { clearTimeout(minuteur); minuteur = null; } message('Lien invalide', 'Contactez BoostArtisan pour recevoir votre lien.'); }
+  function plusTard() {
+    var D = [4, 10, 20, 30, 30, 30]; essais++;
+    if (essais <= D.length) { ligne = 'maj'; minuteur = setTimeout(function () { minuteur = null; chercher(); }, D[essais - 1] * 1000); } else ligne = 'tard';
+    lacherPaiement(); rendre(true);
+  }
+  function horsReseau() {
+    horsR = true; ligne = ''; rendre(true);
+    if (essais < 8) { essais++; minuteur = setTimeout(function () { minuteur = null; chercher(); }, 15000); }
+  }
+  /* 3. le tableau : la vérité du moment + ce qui ne se garde nulle part (numéros, fil, liens). Une visite est comptée une seule fois par ouverture de la page. */
+  function chercher(o) {
+    o = o || {};
+    if (enCours) { if (o.frais) { encore = encore || []; if (o.suite) encore.push(o.suite); } else if (o.suite) suites.push(o.suite); return; }   /* un appel est déjà parti : un « frais » demandé pendant ce temps repart juste après */
+    if (o.suite) suites.push(o.suite);
+    enCours = true; dernier = Date.now();
+    if (minuteur) { clearTimeout(minuteur); minuteur = null; }
+    if (ligne !== 'maj') { ligne = 'maj'; rendre(true); }
+    var fin = function (etat) { enCours = false; var S = suites; suites = []; S.forEach(function (f) { try { f(etat); } catch (x) { } }); if (encore) { suites = encore; encore = null; chercher({ frais: true }); } };
+    var u = API + '?x=vif&j=' + encodeURIComponent(J) + (visiteDite ? '' : '&visite=1') + (SRC ? '&src=' + encodeURIComponent(SRC) : '') + (o.frais ? '&frais=1' : '') + (RET.paye ? '&paye=1&session_id=' + encodeURIComponent(RET.paye) : '');
+    appel(u, { method: 'GET' }, 70000).then(function (r) {
+      if (r && r.ok === true && r.v === 2 && r.vif) {
+        visiteDite = true; horloge(r.maintenant); vif = r.vif; vifLe = Date.now(); essais = 0; horsR = false; ligne = 'ok';
+        if (RET.paye) { RET.paye = ''; BAN = vif.paye ? { c: 'vert', t: 'Paiement bien reçu, merci !', x: 'Votre espace et votre service continuent normalement.' } : { c: '', t: 'Paiement pas encore confirmé', x: 'S\'il vient d\'être fait, il apparaîtra ici dans quelques minutes.' }; }
+        if (r.copie) prendre(r.copie, !!o.frais || !!vif.paye);
+        rendre(true); fin('ok');
+      }
+      else if (r && r.erreur === 'lien invalide') { invalide(); fin('invalide'); }
+      else { plusTard(); fin('pasprete'); }
+    }, function () { if (navigator.onLine === false) { horsReseau(); fin('reseau'); } else { plusTard(); fin('pasprete'); } });
+  }
+  /* retour de Stripe : si le tableau ne répond pas (3 essais), on arrête d'attendre et on montre l'espace tel qu'il est connu */
+  function lacherPaiement() { if (RET.paye && essais >= 3) { RET.paye = ''; BAN = { c: '', t: 'Paiement pas encore confirmé', x: 'La vérification tarde. S\'il vient d\'être fait, il apparaîtra ici dans quelques minutes.' }; rendre(); } }
+
+  /* ---------- se déplacer dans la page ---------- */
+  function adresse(p) { return String(location.pathname || '/') + '#j=' + encodeURIComponent(J) + (SRC ? '&src=' + encodeURIComponent(SRC) : '') + (p && p !== 'accueil' ? '&p=' + p : ''); }
+  function hautDePage() { try { window.scrollTo(0, 0); } catch (x) { } }
+  function noter(quoi) { try { var b = JSON.stringify({ action: 'espace', f: 'visite', j: J, quoi: String(quoi).slice(0, 60) }); if (navigator.sendBeacon && typeof Blob !== 'undefined') navigator.sendBeacon(API, new Blob([b], { type: 'text/plain;charset=utf-8' })); } catch (x) { } }
+  function aller(p, pre) {
+    if (!ECRANS[p] || p === ecran) { if (pre) { F[pre.k] = pre.v; rendre(); } return; }
+    try { DEFIL[PROF] = window.pageYOffset || 0; } catch (x) { }
+    PROF++; ecran = p; if (pre) F[pre.k] = pre.v;
+    try { history.pushState({ p: p, n: PROF }, '', adresse(p)); } catch (x) { }
+    rendre(); hautDePage();
+    if (p !== 'accueil') noter('porte ' + (NOMS[p] || p));
+  }
+  function retour() {
+    var s = null; try { s = history.state; } catch (x) { }
+    if (s && s.n > 0) { try { history.back(); return; } catch (x) { } }
+    PROF = 0; ecran = 'accueil'; try { history.replaceState({ p: 'accueil', n: 0 }, '', adresse('accueil')); } catch (x) { }
+    rendre(); hautDePage();
+  }
+  function surRetour(ev) {
+    var s = ev && ev.state, p = s && ECRANS[s.p] ? s.p : (ECRANS[params().p] ? params().p : 'accueil');
+    PROF = s && s.n > 0 ? s.n : 0; ecran = p; rendre();
+    try { window.scrollTo(0, DEFIL[PROF] || 0); } catch (x) { }
+  }
+
+  /* ---------- ce qui se dit en haut : la phrase de vérité du tableau, telle quelle ---------- */
+  function ligneFrais(c, clair) {
+    var a = ageReleve(c), sansG = !!(c.ferme && !c.accueil), t, vieux = false, h;
+    if (!sansG && a === null) { t = 'Chiffres de Google : pas lus'; vieux = true; }
+    else if (!sansG && a > H26) { t = 'Chiffres de Google : pas lus depuis le ' + quandReleve(c.releve_le); vieux = true; }
+    else if (!sansG && a > H6) { t = 'Chiffres de Google du ' + quandReleve(c.releve_le); vieux = true; }
     else { h = heureParis(c.calcule_le); t = h ? 'Chiffres ' + h : 'Chiffres gardés dans ce téléphone'; }
     var s = ligne === 'maj' ? ' · mise à jour…' : ligne === 'ok' ? (vieux ? '' : ' · à jour') : ligne === 'tard' ? ' · pas encore à jour' : '';
-    return '<div class="frais' + (ligne === 'maj' ? ' maj' : ligne === 'ok' && !vieux ? ' ok' : '') + (vieux ? ' vieux' : '') + '"><i></i><span>' + e(t + s) + '</span></div>';
+    return '<div data-z="frais"><div class="frais' + (clair ? ' clair' : '') + (ligne === 'maj' ? ' maj' : ligne === 'ok' && !vieux ? ' ok' : '') + (vieux ? ' vieux' : '') + '"><i></i><span>' + e(t + s) + '</span></div></div>';
   }
+  function pub(c) {
+    var p = g(c, 'accueil.pub') || {}, t = String(p.texte || '');
+    if (p.titre) return { titre: String(p.titre), phrase: point(p.titre), court: String(p.mot || ''), plus: String(p.phrase || ''), code: String(p.code || ''), cls: p.niveau === 'ok' ? '' : p.niveau === 'bad' || p.code === 'arretee' ? 'ko' : p.code === 'pas_lu' ? 'vide' : 'att', vert: p.niveau === 'ok' };
+    if (p.arret) return { phrase: 'Votre publicité est arrêtée.', court: 'Arrêtée', cls: 'ko', code: '', plus: '' };
+    if (p.active && p.demarrage) return { phrase: 'Votre publicité démarre.', court: 'Elle démarre', cls: '', code: '', plus: '', vert: true };
+    if (p.active) return { phrase: 'Votre publicité tourne.', court: 'Elle tourne', cls: '', code: '', plus: '', vert: true };
+    if (/^Prête/i.test(t)) return { phrase: 'Votre publicité est prête : il manque votre carte bancaire.', court: 'Prête', cls: 'att', code: '', plus: '' };
+    if (/^En préparation/i.test(t)) return { phrase: 'Votre publicité est en préparation.', court: 'En préparation', cls: 'att', code: '', plus: '' };
+    return { phrase: 'Votre publicité est arrêtée.', court: 'Arrêtée', cls: 'ko', code: '', plus: '' };
+  }
+  /* lu = le relevé de Google a moins de 26 h ; « en préparation » et « arrêtée » ne dépendent d'aucun relevé : on les croit si la copie est du jour */
+  function estLu(c, Pb) { var age = ageReleve(c); return (age !== null && age <= H26) || (age === null && /^(preparation|arretee)$/.test(String(Pb.code || '')) && ageCopie() < H26); }
+  function essaiBandeau() { return copie && copie.essai ? '<div class="essai" role="status">ESSAI — données de ' + e(copie.essai) + ' · ce client ne voit rien de ce qui se passe ici</div>' : ''; }
   function tete(c, corps) {
     return '<div class="tete"><div><small>' + (c ? 'Bonjour' : 'BoostArtisan') + '</small><b>' + e(c && c.nom ? c.nom : 'Votre espace') + '</b><span class="m">' + e(c ? [maj1(c.metier), c.ville].filter(Boolean).join(' · ') : (ligne === 'tard' ? 'Vos chiffres tardent. Nouvel essai dans un instant.' : 'Vos chiffres arrivent…')) + '</span></div>' + corps + (c ? ligneFrais(c) : '') + '</div>';
   }
-  function pub(a) {
-    var p = (a && a.pub) || {}, t = String(p.texte || '');
-    /* (pièce 2) la phrase vient du tableau telle quelle (pièce 1, la vérité) : titre, mot, phrase, niveau */
-    if (p.titre) return { titre: String(p.titre), phrase: point(p.titre), court: String(p.mot || ''), plus: String(p.phrase || ''), code: String(p.code || ''), cls: p.niveau === 'ok' ? '' : p.niveau === 'bad' || p.code === 'arretee' ? 'ko' : p.code === 'pas_lu' ? 'vide' : 'att', vert: p.niveau === 'ok' };
-    if (p.arret) return { phrase: 'Votre publicité est arrêtée.', court: 'Arrêtée', cls: 'ko' };
-    if (p.active && p.demarrage) return { phrase: 'Votre publicité démarre.', court: 'Elle démarre', cls: '' };
-    if (p.active) return { phrase: 'Votre publicité tourne.', court: 'Elle tourne', cls: '' };
-    if (/^Prête/i.test(t)) return { phrase: 'Votre publicité est prête : il manque votre carte bancaire.', court: 'Prête', cls: 'att' };
-    if (/^En préparation/i.test(t)) return { phrase: 'Votre publicité est en préparation.', court: 'En préparation', cls: 'att' };
-    return { phrase: 'Votre publicité est arrêtée.', court: 'Arrêtée', cls: 'ko' };
-  }
-  /* PIÈCE 2 — LES PORTES (10 nov. 2026). Une porte touchée réagit TOUT DE SUITE (« Ouverture… ») ; un seul départ à la fois (toucher trois portes ne relance plus trois fois) ;
-     si rien ne s'ouvre (20 s, ou retour sur cette page) un bloc propose : réessayer, ouvrir autrement, copier le lien. La porte reste un vrai lien : c'est le téléphone qui ouvre. */
-  function etatPorte(n) { return OUV && OUV.n === n ? OUV.etape : ''; }
-  function motOuv(et) { return et === 'long' ? 'Encore quelques secondes…' : et === 'cours' ? 'Ouverture…' : ''; }
-  function repli() {
-    return '<div class="repli" id="repli" role="alert"><b>Ça ne s\'est pas ouvert ?</b>' + (OUV && OUV.msg ? '<p role="status">' + e(OUV.msg) + '</p>' : '')
-      + '<a class="b1" href="' + e(LIEN) + '" data-a="re" rel="noreferrer">Réessayer</a>'
-      + '<a class="b2" href="' + e(DIRECT) + '" data-a="autre" target="_blank" rel="noopener noreferrer">Ouvrir autrement</a>'
-      + '<a class="b3" href="#" data-a="copier">Copier mon lien</a><a class="b3" href="#" data-a="fermer">Fermer</a></div>';
-  }
-  function desarmer() { mOuv.forEach(function (m) { try { clearTimeout(m); } catch (x) { } }); mOuv = []; }
-  function etape(id, x) {
-    if (!OUV || OUV.id !== id || OUV.etape === 'repli') return;
-    if (x === 'repli' && document.visibilityState === 'hidden') { OUV.cache = true; return; }   /* il est ailleurs : on lui dira à son retour */
-    OUV.etape = x; if (x === 'repli') desarmer(); rendre();
-  }
-  function armer() { var id = OUV.id; desarmer(); mOuv = [setTimeout(function () { etape(id, 'long'); }, T_LONG), setTimeout(function () { etape(id, 'repli'); }, T_REPLI)]; }
-  function toucher(ev, d) {
-    if (OUV && OUV.etape !== 'repli') { ev.preventDefault(); return; }   /* une ouverture est déjà en route */
-    OUV = { id: ++OUVN, n: Number(d.getAttribute('data-p')) || 0, etape: 'cours', cache: false, msg: '' };
-    try { var r = document.getElementById('repli'); if (r && r.parentNode) r.parentNode.removeChild(r); } catch (x) { }
-    /* on marque la porte SANS la redessiner : le lien touché reste en place, le téléphone l'ouvre lui-même */
-    try { d.className += ' ouv'; d.setAttribute('aria-busy', 'true'); var o = d.querySelector('.o'); if (o) o.textContent = 'Ouverture…'; app.className = 'tel occ'; } catch (x) { }
-    armer();
-  }
-  function relancer(t) {
-    OUV = { id: ++OUVN, n: OUV ? OUV.n : 0, etape: 'cours', cache: false, msg: '' };
-    try { t.textContent = 'Ouverture…'; app.className = 'tel occ'; } catch (x) { }
-    armer();
-  }
-  function copier() {
-    var fait = function (ok) { if (!OUV) return; OUV.msg = ok ? 'Lien copié. Collez-le en haut de Chrome ou de Safari.' : 'Copie impossible. Appuyez longtemps sur « Ouvrir autrement », puis « Copier le lien ».'; rendre(); };
-    try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(DIRECT).then(function () { fait(true); }, function () { fait(false); }); return; } } catch (x) { }
-    fait(false);
-  }
-  function porte(n, titre, sous, cls, vert) {
-    var et = etatPorte(n), cours = et === 'cours' || et === 'long';
-    return '<a class="porte' + (cls ? ' ' + cls : '') + (cours ? ' ouv' : '') + '" href="' + e(LIEN) + '" data-p="' + n + '"' + (cours ? ' aria-busy="true"' : '') + ' rel="noreferrer"><span class="n">' + n + '</span><span class="t"><b>' + e(titre) + '</b>' + (sous === null ? '<em class="sk" style="width:' + (52 + n * 5) + '%"></em>' : '<span' + (vert ? ' class="ok"' : '') + '>' + e(sous) + '</span>') + '<span class="o" role="status">' + e(motOuv(et)) + '</span></span><i class="tour"></i></a>' + (et === 'repli' ? repli() : '');
+  function porte(n, p, titre, sous, cls, vert, past) {
+    return '<a class="porte' + (cls ? ' ' + cls : '') + '" href="' + e(adresse(p)) + '" data-a="aller" data-v="' + p + '"><span class="n">' + n + '</span><span class="t"><b>' + e(titre) + '</b>' + (sous === null ? '<em class="sk" style="width:' + (52 + n * 5) + '%"></em>' : '<span' + (vert ? ' class="ok"' : '') + '>' + e(sous) + '</span>') + '</span>' + (past ? '<span class="past ambre">' + e(past) + '</span>' : '') + ICO.ch + '</a>';
   }
   function portes(c, lu, Pb, n) {
     var a = c ? (c.accueil || {}) : null, v = !a;   /* v = la première fois : des traits gris à la place des chiffres */
-    return porte(1, 'Mes appels et demandes', v ? null : 'Appels et formulaires' + (lu ? ' · ' + n + ' ce mois-ci' : ''))
-      + porte(2, 'Ma publicité', v ? null : maj1((lu && Pb.court ? Pb.court + ' · ' : '') + 'résultats, pause'), '', !v && lu && (Pb.titre ? Pb.vert : Pb.cls === ''))
-      + porte(3, 'Ce que je paie', 'Google et BoostArtisan')
-      + porte(4, 'Mon budget', v ? null : maj1((a.budget_jour > 0 ? euros(a.budget_jour) + ' par jour · ' : '') + 'le monter ou le baisser'))
-      + porte(5, 'Ma zone', v ? null : ([c.ville, a.rayon_km > 0 ? a.rayon_km + ' km autour' : ''].filter(Boolean).join(' · ') || 'Voir ma zone'))
-      + porte(6, 'Mon site et mon numéro', v ? null : (a.domaine || 'Site en préparation'))
-      + porte(7, 'Nous parler', 'Une question ? Réponse tout de suite', 'bleu');
+    var du = c && c.a_regler && c.a_regler.payable && Number(c.a_regler.montant) > 0 ? euros(c.a_regler.montant) + ' à régler' : '';
+    return porte(1, 'appels', 'Mes appels et demandes', v ? null : 'Appels et formulaires' + (lu ? ' · ' + n + ' ce mois-ci' : ''))
+      + porte(2, 'pub', 'Ma publicité', v ? null : maj1((lu && Pb.court ? Pb.court + ' · ' : '') + 'résultats, pause'), '', !v && lu && !!Pb.vert)
+      + porte(3, 'paie', 'Ce que je paie', 'Google et BoostArtisan', '', false, du)
+      + porte(4, 'budget', 'Mon budget', v ? null : maj1((a.budget_jour > 0 ? euros(a.budget_jour) + ' par jour · ' : '') + 'le monter ou le baisser'))
+      + porte(5, 'zone', 'Ma zone', v ? null : ([c.ville, a.rayon_lu && a.rayon_km > 0 ? a.rayon_km + ' km autour' : ''].filter(Boolean).join(' · ') || 'La voir, la changer'))
+      + porte(6, 'site', 'Mon site et mon numéro', v ? null : (a.domaine || 'Site en préparation'))
+      + porte(7, 'parler', 'Nous parler', 'Une question ? Réponse tout de suite', 'bleu');
   }
+  /* Argent : jamais d'action sur un vieux chiffre. « Régler » revérifie TOUJOURS le montant au tableau, et c'est le tableau qui donne le lien de paiement. */
   function carteRegler(c, ferme) {
-    var r = c.a_regler || {}, m = euros(r.montant), ech = jourMois(r.echeance), note = MSG || (ferme ? 'Votre espace se rouvre dès le paiement.' : '');
+    var r = c.a_regler || {}, m = euros(r.montant), ech = jourMois(r.echeance);
+    var st = A.regler || {}, note = st.msg || (ferme ? 'Votre espace se rouvre dès le paiement.' : '');
+    /* un relevé qui sera prélevé tout seul (carte enregistrée), ou dont le prélèvement est parti : on le dit, sans bouton « Régler » */
+    if (!ferme && !r.payable) {
+      var f = g(c, 's.paie.ba.facture') || {}, R = tableau(g(c, 's.paie.ba.releves')).filter(function (x) { return String(x.id) === String(f.numero); })[0] || {}, mR = euros(R.montant > 0 ? R.montant : r.montant);
+      if (f.releve && f.statut === 'en attente 48 h') return '<div class="regler"><span class="lab">Relevé prêt</span><strong>' + e(mR) + '</strong><p>Relevé BoostArtisan' + (r.periode ? ' ' + e(r.periode) : '') + (R.prelevement_prevu ? ', prélevé le ' + e(jmh(R.prelevement_prevu)) + ' sur votre carte' : '') + '.</p>' + (f.contest_jusqua ? '<p class="d">Une erreur ? Vous avez jusqu\'au ' + e(jmh(f.contest_jusqua)) + ' pour la signaler.</p>' : '') + '<button type="button" class="btn gris" data-a="aller" data-v="appels">Voir mes demandes</button></div>';
+      if (f.releve) return '<div class="regler"><span class="lab">Prélèvement en cours</span><strong>' + e(m) + '</strong><p>Relevé BoostArtisan' + (r.periode ? ' ' + e(r.periode) : '') + '. Votre banque met quelques jours à confirmer. Rien à faire de votre côté.</p></div>';
+      return '<div class="regler"><span class="lab">Facture</span><strong>' + e(m) + '</strong><p>Facture BoostArtisan' + (r.periode ? ' ' + e(r.periode) : '') + '.</p><button type="button" class="btn gris" data-a="aller" data-v="paie">Voir ce que je paie</button></div>';
+    }
     var h = '<div class="regler"><span class="lab">À régler</span><strong>' + e(m) + '</strong><p>Facture BoostArtisan' + (r.periode ? ' ' + e(r.periode) : '') + (ech ? ', à régler avant le ' + e(ech) : '') + '.</p>';
     if (r.detail) h += '<p class="d">' + e(point(r.detail)) + '</p>';
-    var et0 = etatPorte(0);
-    h += r.lien ? '<a class="btn" href="' + e(r.lien) + '" data-a="regler" rel="noreferrer">Régler ' + e(m) + '</a>' : '<a class="btn' + (et0 === 'cours' || et0 === 'long' ? ' ouv' : '') + '" href="' + e(LIEN) + '" data-p="0" rel="noreferrer"><span class="l">Voir comment régler</span><span class="o" role="status">' + e(motOuv(et0)) + '</span></a>' + (et0 === 'repli' ? repli() : '');
+    h += '<button type="button" class="btn ambre' + (st.etat === 'envoi' ? ' occ' : '') + '" data-a="regler" data-v="' + e(r.montant) + '">' + (st.etat === 'envoi' ? '<i class="roue"></i>Vérification du montant…' : 'Régler ' + e(m)) + '</button>';
     if (note) h += '<p class="d" role="status">' + e(note) + '</p>';
-    if (ferme && c.refermable && c.accueil) h += '<a class="plus" href="#" data-a="voir">Voir mon espace d\'abord ›</a>';
+    if (ferme) h += murPlus(c);
+    if (ferme && c.refermable && c.accueil) h += '<button type="button" class="plus" data-a="voir">Voir mon espace d\'abord ›</button>';
     return h + '</div>';
   }
+  /* ce que le tableau ajoute au mur quand il a répondu : le détail des lignes, la facture, les moyens d'écrire */
+  function murPlus(c) {
+    var f = g(vif, 'ba.facture'); if (!f) return '';
+    var L = f.releve && f.numero ? tableau(g(vif, 'ba.demandes')).filter(function (x) { return String(f.numero).split(' + ').indexOf(String(x.releve_id || '')) >= 0; }) : [], h = '';
+    var ap = f.arret_pub;
+    if (ap && ap.fait) h += '<div class="boite rouge"><b>Vos annonces sont coupées.</b>Elles repartent dès le paiement.</div>';
+    else if (ap && ap.ts && ap.rebours) h += '<div class="boite ambre">Sans règlement sous ' + e(ap.heures || 48) + ' h, vos annonces pourront être mises en pause.' + (reste(ap.ts) ? ' Il reste ' + e(reste(ap.ts)) + '.' : ' Délai dépassé.') + '</div>';
+    else if (ap && ap.ts) h += '<div class="boite ambre">' + (reste(ap.ts) ? 'Sans règlement, vos annonces sont coupées dans ' + e(reste(ap.ts)) + '.' : 'Vos annonces sont coupées. Elles repartent dès le paiement.') + '</div>';
+    if (L.length) h += '<button type="button" class="lien" data-a="bascule" data-v="murdet">' + (O.murdet ? 'Cacher le détail' : 'Voir le détail (' + pl(L.length, 'ligne') + ')') + '</button>' + (O.murdet ? '<ul class="pj">' + L.map(function (x) { return '<li><span>' + e(jmh(x.quand)) + ' — ' + e(srcNom(x.source)) + (x.ville || x.cp ? ' — ' + e([x.ville, x.cp].filter(Boolean).join(' ')) : '') + '</span><small>' + (x.verdict === 'facturee' ? e(euros(x.prix)) : 'offerte') + '</small></li>'; }).join('') + '</ul>' : '');
+    var l = [];
+    if (f.pdf) l.push('<a href="' + e(f.pdf) + '" target="_blank" rel="noopener noreferrer">facture PDF</a>');
+    if (vif.whatsapp) l.push('<a href="' + e(vif.whatsapp) + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>');
+    if (vif.contact) l.push('<a href="mailto:' + e(vif.contact) + '?subject=' + encodeURIComponent('Règlement BoostArtisan - ' + (c.nom || '')) + '">une question ?</a>');
+    return h + (l.length ? '<p class="d centre">Paiement sécurisé par carte · ' + l.join(' · ') + '</p>' : '');
+  }
+  function reste(ts) { var ms = Number(ts) - maintenant(); if (!(ms > 0)) return ''; var h = Math.floor(ms / 36e5), j = Math.floor(h / 24), m = Math.floor(ms % 36e5 / 6e4); return (j ? j + ' j ' : '') + (h % 24) + ' h' + (j ? '' : ' ' + ('0' + m).slice(-2) + ' min'); }
+  function regler(ev, t) {
+    if (ev) ev.preventDefault();
+    if (A.regler && A.regler.etat === 'envoi') return;
+    var attendu = Number(t && t.getAttribute('data-v')) || 0, num = String((t && t.getAttribute('data-n')) || '');
+    var suite = function (etat) {
+      if (etat === 'invalide') return;
+      if (etat !== 'ok') { A.regler = { etat: 'rate', msg: etat === 'reseau' ? 'Pas de réseau : le montant ne peut pas être vérifié. Réessayez dans un instant.' : 'Le montant n\'a pas pu être vérifié. Réessayez dans un instant.' }; rendre(); return; }
+      var f = g(vif, 'ba.facture'), lien = '', montant = 0;
+      if (num) { var R = tableau(g(vif, 'ba.releves')).filter(function (x) { return String(x.id) === num; })[0]; if (R && String(R.statut) === 'à payer') { lien = String(R.lien_payer || ''); montant = Number(R.montant) || 0; } }
+      else if (f && String(f.statut) !== 'payée') { lien = String(f.lien || ''); montant = Number(f.montant) || 0; }
+      if (!(montant > 0)) { A.regler = { etat: 'fait', msg: 'Il n\'y a plus rien à régler.' }; rendre(); return; }
+      if (attendu && montant !== attendu) { A.regler = { etat: 'rate', msg: 'Le montant a changé : ' + euros(montant) + '. Appuyez de nouveau pour régler.' }; rendre(); return; }
+      if (!lien) { A.regler = { etat: 'rate', msg: copie && copie.essai ? 'Essai : aucun paiement ne part d\'ici.' : 'Le paiement en ligne n\'est pas prêt. Écrivez-nous dans « Nous parler ».' }; rendre(); return; }
+      A.regler = { etat: 'fait', msg: 'Ouverture du paiement sécurisé…' }; rendre(); noter('Régler'); location.href = lien;
+    };
+    if (vifFrais()) return suite('ok');
+    A.regler = { etat: 'envoi' }; rendre(); chercher({ suite: suite });
+  }
   function accueil(c) {
-    var a = c.accueil || {}, age = ageReleve(c), Pb = pub(a), n = Math.round(Number(a.demandes_mois) || 0);
-    /* lu = le relevé de Google a moins de 26 h ; « en préparation » et « arrêtée » ne dépendent d'aucun relevé : on les croit si la copie est du jour */
-    var lu = (age !== null && age <= H26) || (age === null && /^(preparation|arretee)$/.test(String(Pb.code || '')) && Date.now() - (Number(c.recu) || 0) < H26 * 36e5);
+    var a = c.accueil || {}, Pb = pub(c), n = Math.round(Number(a.demandes_mois) || 0), lu = estLu(c, Pb), age = ageReleve(c);
     var dem = n > 1 ? n + ' demandes reçues ce mois-ci.' : n === 1 ? '1 demande reçue ce mois-ci.' : 'Aucune demande reçue ce mois-ci.';
     var al = a.alerte && (a.alerte.titre || a.alerte.texte) ? a.alerte : null, meme = !!(al && Pb.titre && String(al.titre || '') === Pb.titre);   /* meme = l'alerte redit le titre du haut : on ne l'écrit qu'une fois */
-    var etat = lu ? '<div class="etat' + (Pb.cls ? ' ' + Pb.cls : '') + '"><i></i><div><strong>' + e(Pb.phrase) + '</strong>' + (Pb.plus && !meme ? '<span>' + e(Pb.plus) + '</span>' : '') + '<span>' + e(dem) + '</span></div></div>'
+    var etat = lu ? '<a class="etat' + (Pb.cls ? ' ' + Pb.cls : '') + '" href="' + e(adresse('pub')) + '" data-a="aller" data-v="pub"><i></i><div><strong>' + e(Pb.phrase) + '</strong>' + (Pb.plus && !meme ? '<span>' + e(Pb.plus) + '</span>' : '') + '<span>' + e(dem) + '</span></div></a>'
       : '<div class="etat vide"><i></i><div><strong>Publicité : pas lu.</strong><span>' + (age === null ? 'Le relevé de Google manque.' : 'Le relevé de Google date de plus d\'un jour.') + '</span></div></div>';
     var h = tete(c, etat) + '<div class="liste">';
-    if (c.a_regler && !c.ferme) h += carteRegler(c, false);
-    if (al && !(meme && (!lu || !al.texte))) h += '<div class="souci' + (meme ? ' seul' : '') + '">' + (meme ? '' : '<b>' + e(al.titre) + '</b>') + '<span>' + e(al.texte) + '</span></div>';
-    return h + '<h3>Où voulez-vous aller ?</h3>' + portes(c, lu, Pb, n) + '</div>';
+    if (BAN) h += '<div class="souci ' + BAN.c + '" role="status"><b>' + e(BAN.t) + '</b><span>' + e(BAN.x) + '</span></div>';
+    if (vif && vif.message_equipe) h += '<div class="souci rouge"><b>Message de l\'équipe technique</b><span>' + e(vif.message_equipe) + '</span></div>';
+    if (c.a_regler) h += carteRegler(c, false);   /* aussi après « Voir mon espace d'abord » : le montant reste sous les yeux */
+    if (al && !(meme && (!lu || !al.texte))) h += '<div class="souci' + (meme ? ' seul' : '') + '">' + (meme ? '' : '<b>' + e(al.titre) + '</b>') + '<span>' + e(al.texte) + '</span>' + boutonCause(a) + '</div>';
+    return h + '<h3>Où voulez-vous aller ?</h3>' + portes(c, lu, Pb, n) + '</div><p class="pied">BoostArtisan · Cet espace est personnel : ne partagez pas ce lien.</p>';
   }
-  function rendre() {
-    var h;
-    if (!copie) h = tete(null, '<div class="etat vide"><i></i><div class="lignes"><em class="sk" style="width:58%"></em><em class="sk" style="width:74%"></em></div></div>') + '<div class="liste"><h3>Où voulez-vous aller ?</h3>' + portes(null) + '</div>';
-    else if (copie.ferme && !(copie.refermable && copie.accueil && vuDabord)) h = tete(copie, '') + carteRegler(copie, true);
-    else h = accueil(copie);
-    app.innerHTML = h;
-    try { app.className = 'tel' + (OUV && OUV.etape !== 'repli' ? ' occ' : ''); } catch (x) { }
-    try { document.title = 'Mon espace — ' + (copie && copie.nom ? copie.nom : 'BoostArtisan'); } catch (x) { }
-    bandeau.hidden = !horsR;
-    if (horsR) bandeau.textContent = 'Pas de réseau · ' + (copie ? 'chiffres ' + (heureParis(copie.calcule_le) || 'gardés dans ce téléphone') : 'vos chiffres arriveront dès qu\'il revient');
+  /* le bouton de l'alerte : chez Google quand Google réclame un paiement (lien donné par le tableau), sinon poser la question */
+  function boutonCause(a) {
+    if (a.bouton === 'google') { var l = g(vif, 'alerte.lien') || g(vif, 'lien_google') || ''; return l ? '<a class="btn ambre" style="margin-top:8px" href="' + e(l) + '" target="_blank" rel="noopener noreferrer">' + e(g(vif, 'alerte.bouton') || 'Ouvrir ma facturation Google Ads') + '</a>' : ''; }
+    if (a.bouton === 'parler') return '<button type="button" class="btn ambre" style="margin-top:8px" data-a="aller" data-v="parler">Demander pourquoi</button>';
+    return '';
   }
+  function squelette() { return tete(null, '<div class="etat vide"><i></i><div class="lignes"><em class="sk" style="width:58%"></em><em class="sk" style="width:74%"></em></div></div>') + '<div class="liste"><h3>Où voulez-vous aller ?</h3>' + portes(null) + '</div>'; }
   function message(titre, texte) {
     app.innerHTML = '<div class="tete"><div><small>BoostArtisan</small><b>Votre espace</b></div></div><div class="regler"><span class="lab">' + e(titre) + '</span><p>' + e(texte) + '</p></div>';
     bandeau.hidden = true;
   }
-  function dire(t) { MSG = t; rendre(); }
-  function plusTard() {
-    var D = [4, 10, 20, 30, 30, 30]; essais++;
-    if (essais <= D.length) { ligne = 'maj'; minuteur = setTimeout(function () { minuteur = null; chercher(); }, D[essais - 1] * 1000); } else ligne = 'tard';
-    rendre();
+  function voile() {
+    if (!(vif && vif.message_equipe) || MEQ_VU) return '';
+    var l = vif.whatsapp ? '<a class="btn vert" href="' + e(vif.whatsapp) + '" target="_blank" rel="noopener noreferrer">Nous contacter sur WhatsApp</a>' : '';
+    return '<div class="voile" role="alertdialog" aria-modal="true" aria-labelledby="meqT"><div class="bte"><p class="k">Message de l\'équipe technique</p><h2 id="meqT" class="gros">BoostArtisan</h2><p class="x">' + e(vif.message_equipe) + '</p>' + l + '<button type="button" class="btn gris" data-a="meq">J\'ai compris</button></div></div>';
   }
-  function horsReseau() {
-    horsR = true; ligne = ''; rendre();
-    if (essais < 8) { essais++; minuteur = setTimeout(function () { minuteur = null; chercher(); }, 15000); }
+  /* ---------- un écran : la flèche, le titre, les cartes ---------- */
+  function haut(titre, sous) { return '<div class="haut"><a class="retour" href="' + e(adresse('accueil')) + '" data-a="retour">' + ICO.ret + 'Accueil</a><h1>' + e(titre) + '</h1>' + (sous ? '<p>' + e(sous) + '</p>' : '') + '</div>'; }
+  function carte(h, cls) { return '<div class="carte' + (cls ? ' ' + cls : '') + '">' + h + '</div>'; }
+  function versParler(texte, q) { return '<button type="button" class="lien" data-a="aller" data-v="parler"' + (q ? ' data-q="' + e(q) + '"' : '') + '>' + ICO.bulle + e(texte) + '</button>'; }
+  function pied(c) { return ligneFrais(c, true); }
+  function attente(t) { return '<p class="note">' + e(ligne === 'tard' || (!vif && !enCours && essais > 0) ? 'Pas encore reçu : nouvel essai dans un instant.' : (horsR ? 'Pas de réseau : ' + t + ' dès qu\'il revient.' : maj1(t) + '…')) + '</p>'; }
+  /* l'état d'un envoi : rien, en cours, fait, raté (avec la raison et le moyen de réessayer) */
+  function bouton(cle, texte, attr, cls) {
+    var s = A[cle] || {};
+    return '<button type="button" class="btn' + (cls ? ' ' + cls : '') + (s.etat === 'envoi' ? ' occ' : '') + '" ' + attr + '>' + (s.etat === 'envoi' ? '<i class="roue"></i>' + e(s.msg || 'Envoi…') : e(texte)) + '</button>' + (s.etat === 'rate' ? '<div class="boite rouge" role="alert"><b>Ça n\'est pas parti.</b>' + e(s.msg || 'Réessayez.') + '</div>' : '');
   }
-  function chercher(suite) {
-    if (suite) suites.push(suite);
-    if (enCours) return;
-    enCours = true; dernier = Date.now();
-    if (minuteur) { clearTimeout(minuteur); minuteur = null; }
-    if (ligne !== 'maj') { ligne = 'maj'; rendre(); }
-    var ctl = null, garde = null;
-    try { ctl = new AbortController(); garde = setTimeout(function () { try { ctl.abort(); } catch (x) { } }, 45000); } catch (x) { ctl = null; }
-    var fin = function (etat) { if (garde) clearTimeout(garde); enCours = false; var S = suites; suites = []; S.forEach(function (f) { try { f(etat); } catch (x) { } }); };
-    var opt = { method: 'GET', credentials: 'omit', cache: 'no-store', redirect: 'follow', referrerPolicy: 'no-referrer' };
-    if (ctl) opt.signal = ctl.signal;
-    fetch(API + '?x=copie&j=' + encodeURIComponent(J), opt)
-      .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
-      .then(function (c) {
-        if (c && c.ok === true && c.v === 1) { c.recu = Date.now(); copie = c; essais = 0; horsR = false; ligne = 'ok'; garder(c); rendre(); fin('ok'); }
-        else if (c && c.erreur === 'lien invalide') { oublier(); copie = null; message('Lien invalide', 'Contactez BoostArtisan pour recevoir votre lien.'); fin('invalide'); }
-        else { plusTard(); fin('pasprete'); }
-      })
-      .catch(function () { if (navigator.onLine === false) { horsReseau(); fin('reseau'); } else { plusTard(); fin('pasprete'); } });
+  function fait(titre, texte) { return '<div class="boite vert" role="status"><b>' + e(titre) + '</b>' + e(texte) + '</div>'; }
+  var SUITE = 'Enzo dit oui ou non ici, dans votre espace. Rien ne change avant sa réponse.';
+  function envoyer(cle, corps, apres, ms) {
+    if (A[cle] && A[cle].etat === 'envoi') return;
+    A[cle] = { etat: 'envoi' }; rendre();
+    poster(corps, ms).then(function (r) {
+      if (r && r.ok) { A[cle] = { etat: 'fait', r: r }; if (apres) { try { apres(r); } catch (x) { } } rendre(); chercher({ frais: true }); }
+      else { A[cle] = { etat: 'rate', msg: point((r && r.erreur) || 'Envoi refusé') }; rendre(); }
+    }, function () { A[cle] = { etat: 'rate', msg: navigator.onLine === false ? 'Pas de réseau. Réessayez dès qu\'il revient.' : 'La connexion a coupé. Réessayez : une demande déjà reçue n\'est jamais comptée deux fois.' }; rendre(); });
   }
-  /* Argent : jamais d'action sur un vieux chiffre. « Régler » touché avant l'arrivée des chiffres frais = on revérifie le montant d'abord. */
-  function clic(ev) {
-    var c = ev && ev.target && ev.target.closest ? ev.target : null; if (!c) return;
-    var t = c.closest('[data-a]'), d;
-    if (!t) { d = c.closest('[data-p]'); if (d) toucher(ev, d); return; }
-    var a = t.getAttribute('data-a');
-    if (a === 'voir') { ev.preventDefault(); vuDabord = true; MSG = ''; rendre(); return; }
-    if (a === 're') { relancer(t); return; }
-    if (a === 'autre') return;   /* un vrai lien, dans un nouvel onglet */
-    if (a === 'fermer') { ev.preventDefault(); OUV = null; desarmer(); rendre(); return; }
-    if (a === 'copier') { ev.preventDefault(); copier(); return; }
-    if (a !== 'regler' || estFrais()) return;
-    ev.preventDefault();
-    var avant = copie && copie.a_regler ? copie.a_regler.montant : null;
-    dire('Vérification du montant…');
-    chercher(function (etat) {
-      var r = copie && copie.a_regler;
-      if (etat === 'invalide') return;
-      if (etat !== 'ok') { dire(etat === 'reseau' ? 'Pas de réseau : le montant ne peut pas être vérifié. Réessayez dans un instant.' : 'Le montant n\'a pas pu être vérifié. Réessayez dans un instant.'); return; }
-      if (!r || !r.lien) { dire(''); return; }
-      if (r.montant !== avant) { dire('Le montant a changé : ' + euros(r.montant) + '. Appuyez de nouveau pour régler.'); return; }
-      location.href = r.lien;
+  function srcNom(s) { return s === 'appel' ? 'appel' : s === 'email' ? 'e-mail' : 'formulaire'; }
+
+  /* ================= 1. MES APPELS ET DEMANDES ================= */
+  function lignesDemandes(c) {
+    var pubL = tableau(g(c, 's.dem.lignes')), vifL = tableau(g(vif, 'ba.demandes')), par = {};
+    vifL.forEach(function (x) { par[String(x.id)] = x; });
+    var deVif = function (x) { return { id: String(x.id), quand: String(x.quand || ''), source: x.source === 'appel' ? 'appel' : (x.source === 'email' ? 'email' : 'formulaire'), ville: String(x.ville || ''), cp: String(x.cp || ''), verdict: String(x.verdict || ''), motif: String(x.motif_texte || ''), prix: Number(x.prix) || 0, contestable: !!x.contestable, jusqua: String(x.contest_jusqua || ''), de: String(x.de || ''), texte: String(x.texte || '') }; };
+    if (vifL.length && vifL.length >= pubL.length) return vifL.map(deVif);
+    return pubL.map(function (x) { var v = par[String(x.id)]; return v ? deVif(v) : x; });
+  }
+  function telLien(de, gras) { var t = String(de || '').replace(/[^\d+]/g, ''); return t.length >= 9 && !/@/.test(de) ? '<a class="nt" href="tel:' + e(t) + '">' + e(de) + '</a>' : (de ? '<span class="x' + (gras ? '' : ' m') + '">' + e(de) + '</span>' : ''); }
+  function carteDemande(x, D) {
+    var src = x.source === 'appel' ? 'Appel' : x.source === 'email' ? 'E-mail' : 'Formulaire', lieu = [x.ville, x.cp].filter(Boolean).join(' '), k = 'sig:' + x.id, st = A[k] || {};
+    var signalee = x.verdict === 'contestee' || st.etat === 'fait';
+    var past = signalee ? '<span class="past ambre">Signalée</span>' : x.verdict === 'facturee' ? '<span class="past gris">' + (D.active ? 'Comptée ' + e(euros(x.prix)) : 'Valable') + '</span>' : x.verdict === 'offerte' ? '<span class="past vert">Offerte</span>' : '<span class="past bleu">En vérification</span>';
+    var h = '<div class="dem"><div class="h"><div><b>' + e(src + (lieu ? ' · ' + lieu : '')) + '</b><span class="s">' + e(quandLisible(x.quand)) + '</span></div>' + past + '</div>';
+    if (x.de) h += telLien(x.de, true);
+    if (x.texte) h += '<p class="x">' + e(x.texte) + '</p>';
+    if (signalee) h += '<p class="x a">On vérifie. Si elle n\'est pas valable, elle ne sera pas comptée.</p>';
+    else if (x.verdict === 'offerte') h += '<p class="x m">' + e(maj1(point(x.motif || 'pas comptée'))) + '</p>';
+    else if (x.verdict === 'facturee') {
+      if (O[k]) h += '<div class="champ"><label for="sig-' + e(x.id) + '">Pourquoi ? (facultatif)</label><textarea id="sig-' + e(x.id) + '" data-i="' + e(k) + '" maxlength="200" placeholder="Hors zone, démarchage, mauvais numéro…">' + e(F[k] || '') + '</textarea></div>' + bouton(k, 'Signaler cette demande', 'data-a="signaler" data-v="' + e(x.id) + '"') + '<button type="button" class="btn gris" data-a="bascule" data-v="' + e(k) + '">Annuler</button>';
+      else h += '<button type="button" class="btn bord" data-a="bascule" data-v="' + e(k) + '">Pas une vraie demande ?</button>';
+    }
+    return h + '</div>';
+  }
+  function signaler(id) {
+    var x = lignesDemandes(copie).filter(function (y) { return String(y.id) === String(id); })[0]; if (!x) return;
+    var raison = String(F['sig:' + id] || '').replace(/\s+/g, ' ').trim().slice(0, 200);
+    if (x.contestable) envoyer('sig:' + id, { f: 'contester', id: String(id), raison: raison });
+    else envoyer('sig:' + id, { f: 'demande', d: { type: 'lead_invalide', bouton: '1', site_web: '', texte: 'Demande du ' + jmh(x.quand) + ' (' + srcNom(x.source) + (x.ville ? ', ' + x.ville : '') + ') : ' + (raison || 'ce n\'est pas une vraie demande') } });
+  }
+  function ligneAppel(a, i, pre) {
+    var tel = String(a.de || '').replace(/[^\d+]/g, ''), mq = !a.repondu, k = pre + i, duree = a.duree ? ' · ' + (a.duree >= 60 ? Math.floor(a.duree / 60) + ' min ' : '') + (a.duree % 60) + ' s' : '';
+    var h = '<div class="dem"><div class="h"><div>' + (telLien(a.de, true) || '<b>numéro inconnu</b>') + '<span class="s">' + e(quandLisible(a.quand)) + e(duree) + '</span></div><span class="past ' + (mq ? 'ambre">Manqué' : 'vert">Répondu') + '</span></div>';
+    var b = '';
+    if (mq && tel.length >= 9) b += '<a class="btn vert petit" href="tel:' + e(tel) + '">Rappeler</a>';
+    if (a.audio) b += '<button type="button" class="btn gris petit" data-a="ecouter" data-v="' + e(k) + '">' + (SON[k] ? 'Fermer le son' : 'Écouter') + '</button>';
+    if (b) h += '<div class="duo">' + b + '</div>';
+    if (SON[k]) h += SON[k].err ? '<p class="x m">' + e(SON[k].err) + '</p>' : (SON[k].src ? '<audio controls preload="none" data-son="' + e(k) + '" src="' + e(SON[k].src) + '"></audio>' : '<p class="x m">Chargement du son…</p>');
+    return h + '</div>';
+  }
+  function trouverAppel(k) { var m = /^(ap|an(\d+)-)(\d+)$/.exec(k); if (!m) return null; if (m[2] !== undefined) return ((ANCIENS && ANCIENS.mois[+m[2]]) || { appels: [] }).appels[+m[3]] || null; return tableau(vif && vif.appels)[+m[3]] || null; }
+  function ecouter(k) {
+    if (SON[k]) { delete SON[k]; rendre(); return; }
+    var a = trouverAppel(k); if (!a || !a.audio) return;
+    Object.keys(SON).forEach(function (x) { delete SON[x]; });
+    SON[k] = { src: String(a.audio), id: String(a.id || ''), essai: 0 }; rendre();
+    try { var n = app.querySelector('audio[data-son="' + k + '"]'); if (n) n.play().catch(function () { }); } catch (x) { }
+  }
+  /* le lien direct du son ne se lit pas : le tableau va le chercher (une seule fois) */
+  function sonRate(k) {
+    var s = SON[k]; if (!s || s.essai || !s.id) { if (s) { s.err = 'Le son ne peut pas être lu pour le moment.'; s.src = ''; rendre(); } return; }
+    s.essai = 1; s.src = ''; rendre();
+    poster({ f: 'audio', id: s.id }, 90000).then(function (r) { if (!SON[k]) return; if (r && r.ok && r.data) { SON[k].src = r.data; rendre(); try { var n = app.querySelector('audio[data-son="' + k + '"]'); if (n) n.play().catch(function () { }); } catch (x) { } } else { SON[k].err = point((r && r.erreur) || 'Le son ne peut pas être lu pour le moment'); rendre(); } }, function () { if (SON[k]) { SON[k].err = 'Le son ne peut pas être lu pour le moment.'; rendre(); } });
+  }
+  function blocAppels() {
+    if (!vif) return carte('<h2>Appels reçus · 30 jours</h2>' + attente('vos appels arrivent'));
+    var Ap = tableau(vif.appels), manq = Ap.filter(function (a) { return !a.repondu; }).length, son = Ap.some(function (a) { return a.audio; });
+    var h = '<h2 class="tit">Appels reçus · 30 jours' + (Ap.length ? ' · ' + Ap.length : '') + '</h2>';
+    if (!Ap.length) return h + carte('<p>Aucun appel n\'est listé ici pour ces 30 jours.</p>');
+    if (son) h += '<p class="note" style="padding:0 4px">Vos appels sont enregistrés pour que vous puissiez les réécouter. La personne qui vous appelle l\'entend au début de l\'appel et peut refuser.</p>';
+    if (manq) h += '<div class="boite ambre"><b>' + e(pl(manq, 'appel manqué', 'appels manqués')) + ' sur 30 jours</b>Rappelez-les : un appel manqué est une demande qui part chez un autre.</div>';
+    h += Ap.slice(0, O.applus ? Ap.length : 5).map(function (a, i) { return ligneAppel(a, i, 'ap'); }).join('');
+    if (Ap.length > 5 && !O.applus) h += '<button type="button" class="lien" data-a="bascule" data-v="applus">Voir les ' + (Ap.length - 5) + ' autres appels</button>';
+    if (ANCIENS) {
+      if (ANCIENS.erreur) h += '<p class="note">' + e(ANCIENS.erreur) + '</p>';
+      else if (!ANCIENS.mois.length) h += '<p class="note">Aucun appel avant ces 30 jours.</p>';
+      else h += ANCIENS.mois.map(function (M, im) { var nM = M.appels.filter(function (x) { return !x.repondu; }).length, kk = 'anc' + im; return '<button type="button" class="lien" data-a="bascule" data-v="' + kk + '">' + e(maj1(M.libelle) + ' · ' + pl(M.appels.length, 'appel') + (nM ? ' · ' + pl(nM, 'manqué') : '')) + '</button>' + (O[kk] ? M.appels.map(function (a, i) { return ligneAppel(a, i, 'an' + im + '-'); }).join('') : ''); }).join('') + (ANCIENS.tronque ? '<p class="note">La liste s\'arrête aux 300 appels les plus récents.</p>' : '');
+    } else h += bouton('anciens', 'Voir les mois d\'avant', 'data-a="anciens"', 'gris');
+    return h;
+  }
+  function blocFormulaires() {
+    if (!vif) return '';
+    var L = tableau(vif.leads), h = '<h2 class="tit">Formulaires reçus · 30 jours' + (L.length ? ' · ' + L.length : '') + '</h2>';
+    if (!L.length) return h + carte('<p>Aucun formulaire sur 30 jours.</p>');
+    h += L.slice(0, O.formplus ? L.length : 5).map(function (x) {
+      return '<div class="dem"><div class="h"><div><b>' + e(x.nom || 'Formulaire') + (x.cp ? ' · ' + e(x.cp) : '') + '</b><span class="s">' + e(quandLisible(x.quand)) + '</span></div><span class="past ' + (x.livre ? 'vert">E-mail envoyé' : 'ambre">' + e(maj1(String(x.statut || 'en cours').replace(/\s*✓$/, '')))) + '</span></div>' + (x.tel ? telLien(x.tel, true) : '') + (x.demande ? '<p class="x">' + e(x.demande) + '</p>' : '') + '</div>';
+    }).join('');
+    if (L.length > 5 && !O.formplus) h += '<button type="button" class="lien" data-a="bascule" data-v="formplus">Voir les ' + (L.length - 5) + ' autres formulaires</button>';
+    return h;
+  }
+  function blocConnus() {
+    if (!vif) return '';
+    var NC = tableau(vif.numeros_connus), st = A.nc || {}, h = '<h2 class="fort">Mes numéros connus</h2><p>Vos clients existants, fournisseurs, proches : ajoutez leurs numéros ici. Leurs appels et messages ne sont jamais comptés comme des demandes. Ceux déjà reçus ce mois vous sont offerts.</p>';
+    if (NC.length) h += NC.map(function (x) { return '<div class="ligne"><b style="text-align:left">' + e(x.tel) + '</b><button type="button" class="btn bord petit" data-a="nc_retirer" data-v="' + e(x.tel) + '">Retirer</button></div>'; }).join('');
+    else h += '<p class="n">Aucun numéro pour l\'instant.</p>';
+    if (st.etat === 'fait' && st.r) h += fait(st.r.retire !== undefined ? 'Numéro retiré.' : 'C\'est noté.', st.r.retire !== undefined ? '' : 'Les appels et messages de ce numéro ne sont jamais comptés.' + (st.r.offertes ? ' ' + pl(st.r.offertes, 'demande déjà reçue vous est offerte', 'demandes déjà reçues vous sont offertes') + '.' : ''));
+    h += '<div class="champ"><label for="nc-tel">Ajouter un numéro</label><input id="nc-tel" type="tel" inputmode="tel" autocomplete="off" data-i="nc" placeholder="06 12 34 56 78" value="' + e(F.nc || '') + '"></div>' + bouton('nc', 'Ajouter ce numéro', 'data-a="nc_ajouter"', 'gris');
+    return carte(h);
+  }
+  function ecranAppels(c) {
+    var D = g(c, 's.dem') || {}, Pb = pub(c), lu = estLu(c, Pb), n = Math.round(Number(D.mois) || 0), q = D.qz, L = lignesDemandes(c);
+    var h = haut('Mes appels et demandes') + '<div class="corps">';
+    var t = lu ? '<div class="chiffre"><b>' + n + '</b><span>' + (n > 1 ? 'demandes ce mois-ci' : 'demande ce mois-ci') + '</span></div><p>Appels et formulaires reçus grâce à vos annonces.</p>' : '<div class="gros">Demandes du mois : pas lu.</div><p>Le relevé de Google ' + (ageReleve(c) === null ? 'manque.' : 'date de plus d\'un jour.') + '</p>';
+    if (q) {
+      t += '<div class="ligne"><span>' + e(maj1(q.periode)) + '</span><b>' + e(pl(q.facturees, D.active ? 'facturée' : 'valable')) + (D.active ? ' = ' + e(euros(q.montant)) : '') + '</b></div>';
+      if (q.offertes) t += '<div class="ligne"><span>Offertes</span><b>' + e(q.offertes) + '</b></div>';
+      if (q.contestees) t += '<div class="ligne"><span>Signalées, en vérification</span><b>' + e(q.contestees) + '</b></div>';
+      t += '<div class="ligne"><span>Prix</span><b>' + e(euros(D.prix)) + ' par vraie demande</b></div>';
+      if (!D.active) t += '<p>Rien n\'est facturé tant que la facturation n\'est pas activée.</p>';
+    }
+    h += carte(t);
+    if (q || L.length) {
+      h += '<h2 class="tit">Les dernières</h2>';
+      if (!L.length) h += carte('<p>Aucune demande sur 60 jours.</p>');
+      else {
+        var vus = O.demplus ? L.length : 6;
+        h += '<div data-z="dem" style="display:flex;flex-direction:column;gap:10px">' + L.slice(0, vus).map(function (x) { return carteDemande(x, D); }).join('') + '</div>';
+        if (L.length > vus) h += '<button type="button" class="lien" data-a="bascule" data-v="demplus">Voir les ' + (L.length - vus) + ' autres</button>';
+        else if (Number(D.total) > L.length) h += vif ? '' : attente('les ' + (Number(D.total) - L.length) + ' plus anciennes arrivent');
+      }
+      h += '<div class="info">' + ICO.info + '<p>Hors zone, doublon, démarchage, appel trop court : ce n\'est pas compté. Une demande comptée à tort ? Signalez-la.</p></div>';
+    }
+    h += '<div data-z="vifapp" style="display:flex;flex-direction:column;gap:10px">' + blocAppels() + blocFormulaires() + '</div>';
+    h += '<div data-z="nc">' + blocConnus() + '</div>';
+    h += '<button type="button" class="porte" data-a="aller" data-v="zone"><span class="t"><b>Un appel venait de trop loin ?</b><span>Changer ma zone</span></span>' + ICO.ch + '</button>';
+    return h + pied(c) + '</div>';
+  }
+
+  /* ================= 2. MA PUBLICITÉ (et la pause) ================= */
+  function carteEtat(c) {
+    var Pb = pub(c), lu = estLu(c, Pb), age = ageReleve(c);
+    if (!lu) return carte('<div class="rangee"><span class="rond vide">' + ICO.hor + '</span><div><div class="gros">Publicité : pas lu.</div><p>' + (age === null ? 'Le relevé de Google manque.' : 'Le relevé de Google date de plus d\'un jour.') + '</p></div></div>');
+    var cls = Pb.cls === 'ko' ? 'ko' : Pb.cls === 'att' ? 'att' : Pb.cls === 'vide' ? 'vide' : '';
+    return carte('<div class="rangee"><span class="rond ' + cls + '">' + (cls === '' ? ICO.ok : cls === 'vide' ? ICO.hor : ICO.al) + '</span><div><div class="gros">' + e(Pb.phrase) + '</div>' + (Pb.plus ? '<p>' + e(Pb.plus) + '</p>' : '') + '</div></div>' + boutonCause(c.accueil || {}));
+  }
+  function suivi(nom, valeur, niv) { var col = niv === 'ok' ? '#067647' : niv === 'bad' ? '#B42318' : niv === 'warn' ? '#93370D' : '#475467'; return '<div><svg viewBox="0 0 24 24" aria-hidden="true" style="stroke:' + col + '">' + (niv === 'ok' ? '<path d="M5 12.5l4.5 4.5L19 7.5"/>' : niv === 'info' ? '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' : '<path d="M12 7v6"/><path d="M12 17h.01"/>') + '</svg><span>' + e(nom) + '</span><b style="font:600 13px/1.2 var(--body);color:' + col + ';text-align:right">' + e(valeur) + '</b></div>'; }
+  var PERIODES = [['auj', 'Aujourd\'hui'], ['hier', 'Hier'], ['7j', '7 derniers jours'], ['sem', 'Cette semaine'], ['mois', 'Ce mois-ci'], ['moisp', 'Mois dernier'], ['30j', '30 derniers jours']];
+  function bornes(k, auj) {
+    var deb = auj.slice(0, 8) + '01', x;
+    if (k === 'auj') return [auj, auj]; if (k === 'hier') return [plusJours(auj, -1), plusJours(auj, -1)]; if (k === '7j') return [plusJours(auj, -7), plusJours(auj, -1)];
+    if (k === 'sem') { x = new Date(auj + 'T00:00:00Z'); return [plusJours(auj, -((x.getUTCDay() + 6) % 7)), auj]; }
+    if (k === 'moisp') { x = plusJours(deb, -1); return [x.slice(0, 8) + '01', x]; }
+    if (k === '30j') return [plusJours(auj, -30), plusJours(auj, -1)];
+    return [deb, auj];
+  }
+  function somme(par, a, b) { var o = { imp: 0, clics: 0, cout: 0, conv: 0, jours: [] }; for (var s = a; s <= b && o.jours.length <= 400; s = plusJours(s, 1)) { var l = par[s] || [s, 0, 0, 0, 0]; o.imp += l[1]; o.clics += l[2]; o.cout += l[3]; o.conv += l[4]; o.jours.push(l); } return o; }
+  function ecart(now, prev, inverse, nJ) { if (!prev) return ''; var p = Math.round((now - prev) / prev * 100), bon = inverse ? p <= 0 : p >= 0; return '<em' + (p === 0 ? '' : bon ? ' class="up"' : ' class="down"') + '>' + (p > 0 ? '+' : '') + p + ' % vs ' + nJ + ' j. avant</em>'; }
+  function graphique(jours, auj) {
+    var n = jours.length, W = 340, Hc = 92, Hd = 36, top = 18, yC = top + Hc, yD = yC + 30 + Hd, H = yD + 18, bw = W / n, maxC = 0, maxV = 0, bars = '', labs = '', pasL = Math.max(1, Math.ceil(52 / bw));
+    jours.forEach(function (l) { if (l[3] > maxC) maxC = l[3]; if (l[4] > maxV) maxV = l[4]; }); if (!maxC) maxC = 1; if (!maxV) maxV = 1;
+    jours.forEach(function (l, i) {
+      var x = i * bw + bw * 0.18, w = bw * 0.64, hc = Math.max(l[3] > 0 ? 2 : 0, l[3] / maxC * Hc), hd = Math.max(l[4] > 0 ? 3 : 0, l[4] / maxV * Hd), r = Math.min(3, bw * 0.3);
+      bars += '<rect x="' + x.toFixed(1) + '" y="' + (yC - hc).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + hc.toFixed(1) + '" rx="' + r.toFixed(1) + '" fill="#1849A9" opacity="' + (l[0] === auj ? '.45' : '.9') + '"/><rect x="' + x.toFixed(1) + '" y="' + (yD - hd).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + hd.toFixed(1) + '" rx="' + r.toFixed(1) + '" fill="' + (l[4] > 0 ? '#067647' : '#E4E7EC') + '"/>';
+      if (i === 0 || i === n - 1 || (i % pasL === 0 && (n - 1 - i) * bw >= 40)) labs += '<text x="' + (i === 0 ? 0 : i === n - 1 ? W : i * bw + bw / 2).toFixed(1) + '" y="' + (H - 3) + '" font-size="10.5" fill="#667085" text-anchor="' + (i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle') + '">' + jm(l[0]) + '</text>';
+    });
+    return '<div class="graph"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Coût et demandes par jour"><text x="0" y="11" font-size="11" font-weight="700" fill="#1849A9">Coût par jour</text><text x="' + W + '" y="11" font-size="11" fill="#667085" text-anchor="end">max ' + e(euros2(maxC)) + '</text><text x="0" y="' + (yC + 20) + '" font-size="11" font-weight="700" fill="#067647">Demandes par jour</text><text x="' + W + '" y="' + (yC + 20) + '" font-size="11" fill="#667085" text-anchor="end">max ' + e(nbFr(maxV, 1)) + '</text><line x1="0" y1="' + yC + '" x2="' + W + '" y2="' + yC + '" stroke="#E4E7EC"/><line x1="0" y1="' + yD + '" x2="' + W + '" y2="' + yD + '" stroke="#E4E7EC"/>' + bars + labs + '</svg></div>';
+  }
+  function resultats(c) {
+    var S = g(c, 's.pub') || {}, J = tableau(S.jours), auj = jourParis(maintenant()), par = {}, h = '<h2 class="fort">Vos résultats</h2>';
+    if (!J.length) return carte(h + '<p>Pas encore de chiffres jour par jour : ils arrivent avec le premier relevé Google Ads.</p>');
+    J.forEach(function (l) { par[l[0]] = l; });
+    var ab = bornes(PER, auj), s = somme(par, ab[0], ab[1]), nJ = s.jours.length, un = ab[0] === ab[1], pa = [plusJours(ab[0], -nJ), plusJours(ab[0], -1)], sp = somme(par, pa[0], pa[1]), cmp = !un && pa[0] >= J[0][0];
+    h += '<div class="per" role="group" aria-label="Période">' + PERIODES.map(function (p) { return '<button type="button" data-a="periode" data-v="' + p[0] + '" aria-pressed="' + (p[0] === PER) + '">' + e(p[1]) + '</button>'; }).join('') + '</div>';
+    h += '<p class="note">' + e(un ? (PER === 'auj' ? 'Aujourd\'hui, ' + jm(ab[0]) + ' (en cours)' : jm(ab[0])) : 'Du ' + jm(ab[0]) + ' au ' + jm(ab[1]) + ' · ' + nJ + ' jours') + '</p>';
+    h += '<div class="tuiles"><div><small>Coût</small><b class="bleu">' + e(euros2(s.cout)) + '</b>' + (cmp ? ecart(s.cout, sp.cout, true, nJ) : '<em></em>') + '</div><div><small>Demandes</small><b>' + e(nbFr(s.conv, 1)) + '</b>' + (cmp ? ecart(s.conv, sp.conv, false, nJ) : '<em></em>') + '</div><div><small>Coût par demande</small><b>' + (s.conv > 0 ? e(euros2(s.cout / s.conv)) : '—') + '</b>' + (cmp ? ecart(s.conv ? s.cout / s.conv : 0, sp.conv ? sp.cout / sp.conv : 0, true, nJ) : '<em></em>') + '</div><div><small>Visites</small><b>' + e(nbFr(s.clics, 0)) + '</b>' + (cmp ? ecart(s.clics, sp.clics, false, nJ) : '<em></em>') + '</div></div>';
+    h += '<div class="sec"><div><span>Affichages</span><b>' + e(nbFr(s.imp, 0)) + '</b></div><div><span>Taux de clic</span><b>' + (s.imp ? e(nbFr(Math.round(s.clics / s.imp * 1000) / 10, 1)) + ' %' : '—') + '</b></div><div><span>Coût par visite</span><b>' + (s.clics ? e(euros2(s.cout / s.clics)) : '—') + '</b></div><div><span>Demandes / visites</span><b>' + (s.clics ? Math.round(s.conv / s.clics * 100) + ' %' : '—') + '</b></div></div>';
+    if (!un && nJ >= 2) h += graphique(s.jours, auj);
+    h += '<p class="note">Demandes = les appels et les formulaires reçus et comptés par BoostArtisan. Visites = les clics sur vos annonces. Coût = ce que Google a dépensé.' + (S.jours_maj ? ' Relevé de Google du ' + e(jmh(S.jours_maj)) + '.' : '') + '</p>';
+    return carte(h);
+  }
+  function ecranPub(c) {
+    var S = g(c, 's.pub') || {}, a = c.accueil || {}, Pb = pub(c), lu = estLu(c, Pb);
+    var h = haut('Ma publicité') + '<div class="corps">' + carteEtat(c);
+    h += carte('<h2>Ce qu\'on surveille pour vous</h2><div class="suivi">' + suivi('Annonces', lu ? (S.annonces || Pb.court || '—') : 'pas lu', lu ? (S.niveau || 'info') : 'info') + suivi('Site', a.site_ok ? 'en ligne' : a.site_pret ? 'vérification' : 'en préparation', a.site_ok ? 'ok' : a.site_pret ? 'warn' : 'info') + suivi('Carte chez Google', S.paiement_google ? 'paiement à régler' : S.carte === 'ok' ? 'enregistrée' : S.carte === 'non' ? 'à ajouter' : 'non vérifiée', S.paiement_google ? 'bad' : S.carte === 'ok' ? 'ok' : S.carte === 'non' ? 'bad' : 'warn') + '</div>');
+    h += resultats(c);
+    h += '<button type="button" class="porte" data-a="aller" data-v="pause"><span class="t"><b>Pause ou reprise</b><span>' + (S.tourne ? 'Mettre en pause ou arrêter ma publicité' : 'Relancer ma publicité') + '</span></span>' + ICO.ch + '</button>';
+    h += '<button type="button" class="porte" data-a="aller" data-v="budget"><span class="t"><b>Budget</b><span>' + e(a.budget_jour > 0 ? euros(a.budget_jour) + ' par jour' : 'Le voir, le changer') + '</span></span>' + ICO.ch + '</button>';
+    h += '<button type="button" class="porte" data-a="aller" data-v="zone"><span class="t"><b>Zone</b><span>' + e([c.ville, a.rayon_lu && a.rayon_km > 0 ? a.rayon_km + ' km autour' : ''].filter(Boolean).join(' · ') || 'La voir, la changer') + '</span></span>' + ICO.ch + '</button>';
+    h += carte('<h2 class="fort">Moins d\'appels que d\'habitude ?</h2><p>Posez la question : l\'assistant regarde vos chiffres et vous répond.</p><button type="button" class="btn" data-a="aller" data-v="parler" data-q="Pourquoi j\'ai moins d\'appels ?">Demander pourquoi</button>');
+    return h + pied(c) + '</div>';
+  }
+  var TPUB = { pause: 'Mettre ma publicité en pause', arret: 'Arrêter ma publicité', relance: 'Relancer ma publicité' }, OUI = { pause: 'Oui, mettre en pause', arret: 'Oui, arrêter ma publicité', relance: 'Oui, relancer ma publicité' }, FAITP = { pause: 'Pause demandée.', arret: 'Arrêt demandé.', relance: 'Relance demandée.' };
+  function ecranPause(c) {
+    var S = g(c, 's.pub') || {}, st = A.pause || {}, et = O.pause || '';
+    var h = haut('Pause ou reprise') + '<div class="corps">' + carteEtat(c);
+    if (st.etat === 'fait') return h + carte(fait(FAITP[st.quoi] || 'Demande envoyée.', SUITE) + '<button type="button" class="btn gris" data-a="aller" data-v="parler">Suivre ma demande</button>') + pied(c) + '</div>';
+    h += carte('<h2>Pendant la pause</h2><div class="points"><div><i></i><span>Vos annonces ne passent plus : plus de nouveaux appels.</span></div><div><i></i><span>Google ne dépense plus votre budget.</span></div><div><i></i><span>Votre site reste en ligne.</span></div></div>');
+    if (et) h += carte('<h2 class="fort">Vous confirmez ?</h2><p class="n">' + e(TPUB[et]) + '.</p>' + bouton('pause', OUI[et], 'data-a="pub_envoyer" data-v="' + et + '"') + '<button type="button" class="btn gris" data-a="choisir" data-k="pause" data-v="">Non, je ne change rien</button>');
+    else if (S.tourne) h += '<button type="button" class="btn" data-a="choisir" data-k="pause" data-v="pause">Mettre ma publicité en pause</button><button type="button" class="porte" data-a="aller" data-v="budget"><span class="t"><b>Ça coûte trop cher ?</b><span>Vous pouvez baisser le budget sans tout arrêter</span></span>' + ICO.ch + '</button><button type="button" class="btn rouge" data-a="choisir" data-k="pause" data-v="arret">Arrêter ma publicité</button><p class="note centre">Arrêter = tout couper. La pause, elle, se relance sur simple demande.</p>';
+    else h += '<button type="button" class="btn" data-a="choisir" data-k="pause" data-v="relance">Relancer ma publicité</button>';
+    return h + pied(c) + '</div>';
+  }
+
+  /* ================= 3. CE QUE JE PAIE ================= */
+  function motifPrelev(t) { t = String(t || ''); if (/insufficient/i.test(t)) return 'pas assez d\'argent sur le compte de la carte'; if (/sans carte/i.test(t)) return 'aucune carte enregistrée'; if (/expir/i.test(t)) return 'carte expirée'; if (/authentification|authentication/i.test(t)) return 'votre banque demande une confirmation'; if (/refus|declined/i.test(t)) return 'carte refusée par votre banque'; return t || 'le paiement n\'est pas passé'; }
+  function relStatut(r, B) {
+    var st = String(r.statut || ''), lib = g(vif, 'ba.carte.libelle') || '', okC = !!g(B, 'carte.enregistree');
+    if (!B.active) return ['bleu', 'pour information', 'La facturation n\'est pas activée : rien ne vous est demandé.'];
+    if (st === 'en attente 48 h') return ['ambre', 'en attente', 'Vous pouvez signaler une erreur jusqu\'au ' + jmh(r.contest_jusqua) + '. Prélèvement prévu le ' + jmh(r.prelevement_prevu) + (okC ? ' sur votre carte' + (lib ? ' ' + lib : '') : ' : enregistrez votre carte avant, sinon vous recevrez un lien pour payer') + '.'];
+    if (st === 'prélèvement en cours') return ['bleu', 'prélèvement en cours', 'Votre banque met quelques jours à confirmer. Rien à faire.'];
+    if (st === 'payée') return ['vert', 'payée' + (r.payee_le ? ' le ' + jm(r.payee_le) : ''), /^réussi/.test(String(r.prelevement || '')) ? 'Prélevé sur votre carte' + (lib ? ' ' + lib : '') + '.' : (r.prelevement ? 'Paiement : ' + r.prelevement + '.' : '')];
+    if (st === 'à payer') return ['rouge', 'à payer', /premier relevé/i.test(String(r.prelevement || '')) ? 'À régler par carte : elle sera gardée pour les prochains relevés.' : 'Le prélèvement n\'a pas pu être fait : ' + motifPrelev(r.prelevement) + '.'];
+    if (st === 'annulée') return ['vert', 'annulée : 0 €', 'Toutes les demandes ont été offertes. Rien à payer.'];
+    return ['bleu', st, ''];
+  }
+  function blocGoogle(c) {
+    var G = g(c, 's.paie.google') || {}, a = c.accueil || {}, J = tableau(g(c, 's.pub.jours')), auj = jourParis(maintenant()), cout = Number(G.cout_mois) || 0, st = A.gg || {}, so = A.ggok || {};
+    if (J.length) { var par = {}; J.forEach(function (l) { par[l[0]] = l; }); cout = somme(par, auj.slice(0, 8) + '01', auj).cout; }
+    var h = '<div class="rangee" style="gap:10px"><span class="n" style="width:26px;height:26px;border-radius:50%;background:var(--t-ink);color:#fff;font:700 14px/26px var(--disp);text-align:center;flex-shrink:0">1</span><h2 style="font:600 16px/1.3 var(--body);color:var(--t-ink)">À Google : la publicité</h2></div>';
+    h += '<div class="chiffre"><b class="moy">' + e(J.length ? euros2(cout) : euros(cout)) + '</b><small>dépensés ce mois-ci</small></div><p>Google prélève votre carte directement, par petites sommes au fil du mois.</p>';
+    h += '<div class="ligne"><span>Budget</span><b>' + (a.budget_jour > 0 ? e(euros(a.budget_jour)) + ' par jour' : 'pas lu') + '</b></div>';
+    h += '<div class="ligne"><span>Carte chez Google</span><b style="color:' + (G.a_regler || G.carte === 'non' ? 'var(--t-red)' : G.carte === 'ok' ? 'var(--t-green)' : 'var(--t-ambertx)') + '">' + (G.a_regler ? 'paiement à régler chez Google' : G.carte === 'ok' ? 'enregistrée' : G.carte === 'non' ? 'à ajouter' : 'non vérifiée') + '</b></div>';
+    if (G.acces === 'oui') h += vif ? (vif.lien_google ? '<a class="btn gris" href="' + e(vif.lien_google) + '" target="_blank" rel="noopener noreferrer">' + (G.a_regler ? 'Régler mon paiement Google' : 'Payer ou gérer ma carte chez Google') + '</a>' + (vif.compte_google ? '<p class="note">Connectez-vous avec ' + e(vif.compte_google) + '.</p>' : '') : '') : attente('le bouton vers Google arrive');
+    else if (so.etat === 'fait') h += fait('C\'est noté.', 'Vous pouvez maintenant payer Google vous-même.');
+    else if (G.acces === 'invite') h += '<p class="n">Google vous a envoyé une invitation le ' + e(jm(G.invite_le)) + (g(vif, 'google.email') ? ' sur ' + e(vif.google.email) : '') + '. Ouvrez cet e-mail, appuyez sur « Accepter », puis ici :</p>' + bouton('ggok', 'J\'ai accepté l\'invitation Google', 'data-a="gg_ok"', 'vert');
+    else if (G.acces === 'note' || st.etat === 'fait') h += '<p class="n">Votre compte Google' + (g(vif, 'google.email') ? ' ' + e(vif.google.email) : '') + ' est noté : vous recevrez une invitation Google Ads à accepter, puis vous pourrez payer Google vous-même.</p>';
+    else if (O.gg) h += '<p class="n">Écrivez votre compte Google (une adresse Gmail, par exemple) : Google vous enverra une invitation à accepter, et le bouton « Payer chez Google » apparaîtra ici.</p><div class="champ"><label for="gg-mail">Votre adresse Google</label><input id="gg-mail" type="email" inputmode="email" autocomplete="email" data-i="gg" placeholder="prenom.nom@gmail.com" value="' + e(F.gg || '') + '"></div>' + bouton('gg', 'Demander mon accès', 'data-a="gg_envoyer"') + '<button type="button" class="btn gris" data-a="bascule" data-v="gg">Annuler</button>';
+    else h += '<button type="button" class="btn gris" data-a="bascule" data-v="gg">Payer Google moi-même</button>';
+    return carte(h + '<button type="button" class="lien" data-a="aller" data-v="budget">Changer mon budget</button>');
+  }
+  function payer(montant, num, texte) { var st = A.regler || {}; return '<button type="button" class="btn' + (st.etat === 'envoi' ? ' occ' : '') + '" data-a="regler" data-v="' + e(montant) + '"' + (num ? ' data-n="' + e(num) + '"' : '') + '>' + (st.etat === 'envoi' ? '<i class="roue"></i>Vérification du montant…' : e(texte)) + '</button>' + (st.msg ? '<p class="note" role="status">' + e(st.msg) + '</p>' : ''); }
+  function blocBoost(c) {
+    var B = g(c, 's.paie.ba') || {}, D = g(c, 's.dem') || {}, q = D.qz && B.rythme === 'quinzaine' ? D.qz : null, f = B.facture, ca = B.carte || {}, lib = g(vif, 'ba.carte.libelle') || '', pdf = g(vif, 'ba.facture.pdf') || '', sc = A.carte || {}, enc = B.en_cours || {};
+    var du = !!(f && f.payable);
+    var h = '<div class="rangee" style="gap:10px"><span class="n" style="width:26px;height:26px;border-radius:50%;background:var(--t-ink);color:#fff;font:700 14px/26px var(--disp);text-align:center;flex-shrink:0">2</span><h2 style="font:600 16px/1.3 var(--body);color:var(--t-ink);flex-grow:1">À BoostArtisan : ' + (q ? 'vos demandes' : 'votre site, vos campagnes, le suivi') + '</h2>' + (du && B.active ? '<span class="past ambre">À régler</span>' : '') + '</div>';
+    if (q) {
+      h += '<div class="chiffre"><b class="moy">' + e(euros(B.active ? q.montant : 0)) + '</b><small>' + (B.active ? 'quinzaine en cours' : 'pas de facture') + '</small></div>';
+      h += '<div class="ligne"><span>' + e(maj1(q.periode)) + '</span><b>' + e(pl(q.facturees, B.active ? 'facturée' : 'valable')) + '</b></div>' + (q.google_montre ? '<div class="ligne"><span>Google Ads en compte</span><b>' + e(q.google) + '</b></div>' : '') + '<div class="ligne"><span>Prix</span><b>' + e(euros(D.prix)) + ' par demande valable</b></div>';
+      h += B.active ? '<div class="ligne"><span>Prochain relevé</span><b>le ' + e(jourMois(q.prochain_releve)) + '</b></div>' : '<p>La facturation n\'est pas encore activée : aucune facture pour le moment. Vous voyez déjà vos demandes et ce qui serait compté.</p>';
+      if (ca.enregistree) h += '<div class="ligne"><span>Votre carte</span><b style="color:var(--t-green)">' + (lib ? e(lib) + ' ' : '') + 'enregistrée</b></div>';
+      else if (ca.peut) h += '<div class="boite ambre"><b>Enregistrez votre carte pour ne plus avoir à y penser</b>Vos relevés seront réglés tout seuls. Rien n\'est prélevé aujourd\'hui.</div>' + bouton('carte', 'Enregistrer ma carte', 'data-a="carte"', 'gris');
+      if (B.active && f && f.releve) {
+        var R = tableau(B.releves).filter(function (x) { return String(x.id) === String(f.numero); })[0], sF = R ? relStatut(R, B) : (f.statut === 'payée' ? ['vert', 'payée', ''] : B.bloque ? ['rouge', 'à payer', ''] : ['ambre', String(f.statut || ''), '']);
+        h += '<div class="ligne"><span>Dernier relevé ' + e(f.periode) + '</span><b>' + e(euros(R ? R.montant : f.montant)) + '</b></div><div class="ligne nu"><span>Statut</span><span class="past ' + sF[0] + '">' + e(sF[1]) + '</span></div>' + (sF[2] ? '<p class="note">' + e(sF[2]) + '</p>' : '');
+        if (f.payable) h += payer(f.montant, '', 'Régler ' + euros(f.montant));
+        if (pdf) h += '<a class="btn bord" href="' + e(pdf) + '" target="_blank" rel="noopener noreferrer">Relevé en PDF</a>';
+      } else if (B.active && f) h += facture(B, f, pdf);
+    } else if (B.mode === 'aucun') h += '<div class="chiffre"><b class="moy">0 €</b><small>ce mois-ci</small></div><div class="ligne"><span>À payer</span><b style="color:var(--t-green)">rien pour le moment</b></div>';
+    else {
+      h += '<div class="chiffre"><b class="moy">' + e(euros(enc.montant)) + '</b><small>en cours</small></div><div class="ligne"><span>' + e(maj1(enc.periode)) + '</span><b>' + e(enc.detail) + '</b></div>';
+      if (B.active) h += '<div class="ligne"><span>Facture</span><b>le ' + e(jourMois(enc.facture_le)) + ' · à régler sous ' + e(B.delai_j) + ' jours</b></div>';
+      h += f ? facture(B, f, pdf) : '<p class="note">Ce montant se met à jour tout seul' + (B.active ? ' ; la facture arrive le ' + e(jourMois(enc.facture_le)) + '.' : '.') + '</p>';
+    }
+    return carte(h + '<button type="button" class="lien" data-a="aller" data-v="appels">Voir mes demandes</button>');
+  }
+  function facture(B, f, pdf) {
+    var h = '<div class="ligne"><span>Facture ' + e(f.periode) + '</span><b>' + e(euros(f.montant)) + '</b></div><div class="ligne nu"><span>Statut</span><span class="past ' + (f.statut === 'payée' ? 'vert">payée' + (f.date_paiement ? ' le ' + e(jm(f.date_paiement)) : '') : B.bloque ? 'rouge">en retard' : 'ambre">à régler avant le ' + e(jourMois(f.echeance))) + '</span></div>';
+    if (f.payable) h += payer(f.montant, '', 'Régler ' + euros(f.montant));
+    if (pdf) h += '<a class="btn bord" href="' + e(pdf) + '" target="_blank" rel="noopener noreferrer">Facture en PDF</a>';
+    return h;
+  }
+  function blocReleves(c) {
+    var B = g(c, 's.paie.ba') || {}, Rv = tableau(B.releves); if (B.rythme !== 'quinzaine' || !Rv.length) return '';
+    var n = O.relplus ? Rv.length : 4, h = '<h2>Mes relevés</h2>';
+    h += Rv.slice(0, n).map(function (r) { var s = relStatut(r, B); return '<div class="ligne" style="flex-direction:column;align-items:stretch;gap:6px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><b style="text-align:left">Relevé ' + e(r.periode) + '</b><span class="past ' + s[0] + '">' + e(s[1]) + '</span></div><span>' + e(pl(r.facturees, 'facturée')) + ' = ' + e(euros(r.montant)) + (r.contestees ? ' · ' + e(pl(r.contestees, 'signalée')) : '') + (r.google_montre ? ' · Google Ads en compte ' + e(r.google) : '') + '</span>' + (s[2] ? '<span>' + e(s[2]) + '</span>' : '') + (B.active && r.statut === 'à payer' ? payer(r.montant, r.id, 'Régler ' + euros(r.montant)) : '') + '</div>'; }).join('');
+    if (Rv.length > n) h += '<button type="button" class="lien" data-a="bascule" data-v="relplus">Voir les ' + (Rv.length - n) + ' relevés plus anciens</button>';
+    return carte(h);
+  }
+  function ecranPaie(c) {
+    return haut('Ce que je paie', 'Deux choses, à deux endroits.') + '<div class="corps">' + (BAN ? '<div class="boite ' + BAN.c + '" role="status"><b>' + e(BAN.t) + '</b>' + e(BAN.x) + '</div>' : '') + '<div data-z="gg">' + blocGoogle(c) + '</div><div data-z="bb">' + blocBoost(c) + '</div><div data-z="rel">' + blocReleves(c) + '</div>' + versParler('Une somme que vous ne comprenez pas ?') + pied(c) + '</div>';
+  }
+
+  /* ================= 4. MON BUDGET ================= */
+  function ecranBudget(c) {
+    var a = c.accueil || {}, act = Math.round(Number(a.budget_jour) || 0), v = typeof F.budget === 'number' ? F.budget : (act || 20), st = A.budget || {};
+    var h = haut('Mon budget') + '<div class="corps">';
+    h += carte('<h2>Aujourd\'hui</h2>' + (act > 0 ? '<div class="chiffre"><b>' + e(euros(act)) + '</b><span>par jour</span></div><p>Soit environ ' + e(euros(a.budget_mois || Math.round(act * 30.4))) + ' par mois chez Google, au maximum.</p>' : '<div class="gros">Budget : pas lu.</div><p>Le relevé de Google ne donne pas de budget pour le moment.</p>'));
+    if (st.etat === 'fait') h += carte('<h2 class="fort">Changer mon budget</h2>' + fait('Demande envoyée : ' + euros(st.v) + ' par jour.', SUITE) + '<button type="button" class="btn gris" data-a="refaire" data-v="budget">Modifier ma demande</button>');
+    else h += carte('<h2 class="fort">Changer mon budget</h2><div class="pas"><button type="button" aria-label="Baisser de 5 euros" data-a="pas" data-v="-5">' + ICO.moins + '</button><div><b aria-live="polite">' + e(euros(v)) + '</b><span>par jour</span></div><button type="button" aria-label="Monter de 5 euros" data-a="pas" data-v="5">' + ICO.plus + '</button></div><p class="centre">Soit environ ' + e(euros(Math.round(v * 30.4))) + ' par mois, au maximum.</p>'
+      + (act > 0 && v > act ? '<div class="boite bleu">Plus de budget : vos annonces passent plus souvent.</div>' : act > 0 && v < act ? '<div class="boite ambre">Moins de budget : vos annonces passent moins souvent.</div>' : '<p class="note centre">Touchez + ou − pour choisir.</p>')
+      + (v !== act ? bouton('budget', 'Demander ' + euros(v) + ' par jour', 'data-a="budget_envoyer"') : ''));
+    return h + versParler('Combien mettre pour avoir plus d\'appels ?', 'Combien mettre de budget pour avoir plus d\'appels ?') + pied(c) + '</div>';
+  }
+
+  /* ================= 5. MA ZONE ================= */
+  var RAYONS = [10, 20, 30, 50, 80];
+  function ecranZone(c) {
+    var a = c.accueil || {}, lu = !!a.rayon_lu && a.rayon_km > 0, st = A.zone || {}, ville = F.zville === undefined ? String(c.ville || '') : F.zville, rayon = F.zrayon === undefined ? (lu && RAYONS.indexOf(a.rayon_km) >= 0 ? a.rayon_km : 0) : F.zrayon;
+    var h = haut('Ma zone') + '<div class="corps">';
+    h += carte('<h2>Aujourd\'hui</h2><div class="gros">' + e(c.ville || 'Ville : pas lue') + '</div><p>' + (lu ? 'et ' + e(a.rayon_km) + ' km autour' : 'Rayon : pas lu.') + '</p>');
+    if (st.etat === 'fait') h += carte('<h2 class="fort">Changer ma zone</h2>' + fait('Demande envoyée : ' + st.v + '.', SUITE) + '<button type="button" class="btn gris" data-a="refaire" data-v="zone">Modifier ma demande</button>');
+    else h += carte('<h2 class="fort">Changer ma zone</h2><div class="champ"><label for="z-ville">Ville de départ</label><input id="z-ville" type="text" maxlength="80" autocomplete="off" data-i="zville" value="' + e(ville) + '"></div><div class="lab2" id="z-r">Jusqu\'à quelle distance ?</div><div class="puces" style="grid-template-columns:repeat(5,minmax(0,1fr))" role="group" aria-labelledby="z-r">' + RAYONS.map(function (km) { return '<button type="button" data-a="rayon" data-v="' + km + '" aria-pressed="' + (km === rayon) + '">' + km + ' km</button>'; }).join('') + '</div><div class="champ"><label for="z-mot">Un mot de plus ? (facultatif)</label><input id="z-mot" type="text" maxlength="200" data-i="zmot" value="' + e(F.zmot || '') + '"></div>' + (st.manque ? '<div class="boite ambre">' + e(st.manque) + '</div>' : '') + bouton('zone', 'Demander ce changement', 'data-a="zone_envoyer"'));
+    h += '<button type="button" class="porte" data-a="aller" data-v="appels"><span class="t"><b>Un appel venait de trop loin ?</b><span>Signalez-le dans Mes appels et demandes</span></span>' + ICO.ch + '</button>';
+    return h + pied(c) + '</div>';
+  }
+
+  /* ================= 6. MON SITE ET MON NUMÉRO ================= */
+  var CHOIX = [['photos', 'Ajouter des photos de chantier', 'Où les mettre ? (facultatif)', 'site'], ['logo', 'Ajouter mon logo', 'Une précision ? (facultatif)', 'site'], ['texte', 'Changer un texte', 'Quel texte, et quoi écrire à la place ?', 'site'], ['numero', 'Changer mon numéro', 'Quel numéro mettre à la place ?', 'numero']];
+  function blocPieces() {
+    var h = '<div class="pj"><label>' + ICO.trombone + 'Joindre des photos ou des vidéos<input type="file" accept="image/*,video/*" multiple data-f="pj"></label><p class="note">Facultatif. 10 fichiers au plus. Une vidéo : 15 Mo au plus (environ 10 secondes).</p>';
+    if (PJ.length) h += '<ul class="pj">' + PJ.map(function (x, i) { return '<li><span>' + e(x.file.name) + '</span><small>' + e(taille(x.file.size)) + '</small><button type="button" aria-label="Retirer ' + e(x.file.name) + '" data-a="pj_retirer" data-v="' + i + '">×</button></li>'; }).join('') + '</ul>';
+    return h + (O.pjmsg ? '<p class="note" role="status" style="color:var(--t-ambertx)">' + e(O.pjmsg) + '</p>' : '') + '</div>';
+  }
+  function faitPieces(st, titre) { return fait(titre, (st.envoyes ? pl(st.envoyes, 'fichier joint', 'fichiers joints') + '. ' : '') + (st.rates && st.rates.length ? 'Pas partis : ' + st.rates.join(', ') + '. Renvoyez-les dans une nouvelle demande. ' : '') + 'Enzo vous répond ici, dans votre espace.'); }
+  function ecranSite(c) {
+    var a = c.accueil || {}, st = A.site || {}, sel = F.schoix || 'photos', ch = CHOIX.filter(function (x) { return x[0] === sel; })[0] || CHOIX[0];
+    var h = haut('Mon site et mon numéro') + '<div class="corps">';
+    h += carte('<div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><div class="gros" style="overflow-wrap:anywhere;min-width:0">' + e(a.domaine || 'Site en préparation') + '</div><span class="past ' + (a.site_ok ? 'vert">En ligne' : a.site_pret ? 'ambre">Vérification' : 'gris">En préparation') + '</span></div>' + (a.domaine ? '<a class="btn gris" href="https://' + e(a.domaine) + '" target="_blank" rel="noopener noreferrer">Voir mon site</a>' : ''));
+    h += '<div data-z="num">' + carte('<h2>Mon numéro</h2>' + (vif ? '<div class="ligne nu"><span>Numéro dans les annonces</span><b>' + e(vif.tel || '—') + '</b></div><div class="ligne"><span>Il sonne sur</span><b>' + e(vif.tel_client || '—') + '</b></div><p class="note">Le numéro des annonces est un numéro de suivi : il renvoie vers votre téléphone et compte les appels. Ne le donnez jamais vous-même (SMS, carte, devis) : vos clients existants doivent appeler votre numéro habituel, sinon leurs appels sont comptés comme des demandes.</p>' : attente('vos numéros arrivent'))) + '</div>';
+    if (st.etat === 'fait') h += carte('<h2 class="fort">Que voulez-vous changer ?</h2>' + faitPieces(st, 'Demande envoyée.') + '<button type="button" class="btn gris" data-a="refaire" data-v="site">Demander autre chose</button>');
+    else h += carte('<h2 class="fort" id="s-t">Que voulez-vous changer ?</h2><div class="choix" role="group" aria-labelledby="s-t">' + CHOIX.map(function (x) { return '<button type="button" data-a="schoix" data-v="' + x[0] + '" aria-pressed="' + (x[0] === sel) + '">' + e(x[1]) + '</button>'; }).join('') + '</div><div class="champ"><label for="s-x">' + e(ch[2]) + '</label><textarea id="s-x" maxlength="900" data-i="stexte">' + e(F.stexte || '') + '</textarea></div>' + blocPieces() + (st.manque ? '<div class="boite ambre">' + e(st.manque) + '</div>' : '') + bouton('site', 'Envoyer', 'data-a="site_envoyer"'));
+    h += '<div class="info">' + ICO.info + '<p>Pour le budget, la zone ou un paiement, repassez par l\'accueil : ce sera traité plus vite.</p></div>';
+    return h + pied(c) + '</div>';
+  }
+
+  /* ================= 7. NOUS PARLER ================= */
+  var SUGG = ['Pourquoi j\'ai moins d\'appels ?', 'Combien j\'ai dépensé ce mois-ci ?', 'Quelle différence entre Google et BoostArtisan ?', 'Comment signaler une demande pas valable ?', 'Mon site est-il en ligne ?'];
+  var TRANSMIS = 'Transmis à Enzo · sa réponse arrive ici, dans votre espace';
+  function etape(cls, t) { return '<div class="etape' + (cls ? ' ' + cls : '') + '"><i></i>' + e(t) + '</div>'; }
+  function hLocale() { try { var o = parties(new Date(maintenant())); return hm(o.hour, o.minute); } catch (x) { return ''; } }
+  function fil() {
+    var D = vif ? tableau(vif.demandes).slice().reverse() : [], h = '', jour = '';
+    D.forEach(function (Q) {
+      var st = String(Q.statut || ''), ty = String(Q.type || ''), j = String(Q.recu_le || '').slice(0, 10), hh = String(Q.recu_le || '').slice(11, 16).replace(':', ' h ');
+      if (j !== jour) { jour = j; h += '<div class="jour">' + e(quandLisible(j)) + '</div>'; }
+      h += '<div class="bulle moi">' + e(((ty === 'question' || ty === 'humain' || ty === 'autre') ? '' : String(Q.type_nom || '') + ' · ') + String(Q.texte || '')) + '<small>' + e(hh) + '</small></div>';
+      var enzo = '<div class="bulle rep enzo">' + e((st === 'faite' ? 'Fait ✓ — ' : st === 'refusee' ? 'Pas possible — ' : '') + String(Q.reponse || '')) + '<small>Enzo' + (Q.traite_le ? ' · ' + e(jmh(Q.traite_le)) : '') + '</small></div>', ia = '<div class="bulle rep">' + e(Q.reponse) + '<small>Assistant · ' + e(hh) + ' · d\'après les chiffres de votre espace</small></div>';
+      if (ty === 'humain') h += etape('vert', 'Enzo est prévenu.');
+      else if (Q.reponse && (st === 'repondu' || st === 'faite' || st === 'refusee')) h += enzo;
+      else if (Q.reponse && st === 'repondu_ia') h += ia;
+      else if (Q.reponse && st === 'a_trancher') h += ia + etape('', TRANSMIS);
+      else if (st === 'faite') h += etape('vert', 'Fait ✓');
+      else if (st === 'refusee') h += etape('', 'Pas possible : Enzo vous a écrit.');
+      else if (st === 'en_cours') h += (Q.reponse ? enzo : '') + etape('bleu', 'En cours chez Enzo');
+      else h += etape('', TRANSMIS);
+    });
+    FIL.forEach(function (x) {
+      if (x.moi) h += '<div class="bulle moi">' + e(x.moi) + '<small>' + e(x.h) + '</small></div>';
+      else if (x.att) h += etape('att', 'Réponse en quelques secondes…');
+      else if (x.rep) h += '<div class="bulle rep">' + e(x.rep) + '<small>Assistant · ' + e(x.h) + ' · d\'après les chiffres de votre espace</small></div>';
+      else if (x.transmis) h += etape('', TRANSMIS);
+      else if (x.err) h += etape('', x.err);
+    });
+    return h;
+  }
+  function ecranParler(c) {
+    var st = A.msg || {}, occupe = A.q && A.q.etat === 'envoi', f = fil();
+    var h = haut('Nous parler', 'Posez votre question. L\'assistant répond tout de suite, avec vos chiffres.') + '<div class="corps">';
+    h += '<div class="info">' + ICO.info + '<p>C\'est un assistant automatique. Quand il ne sait pas, il transmet à Enzo, qui vous répond ici.' + (copie.essai ? ' Pendant l\'essai, posez toutes vos questions.' : '') + '</p></div>';
+    h += '<div class="fil" data-z="fil" id="fil">' + (f || (vif ? '' : attente('vos messages arrivent'))) + '</div>';
+    if (!FIL.length && !occupe && !(vif && tableau(vif.demandes).length)) h += carte('<h2>Les questions les plus posées</h2><div class="sugg">' + SUGG.map(function (q, i) { return '<button type="button" data-a="sugg" data-v="' + i + '"><span>' + e(q) + '</span>' + ICO.ch.replace(' class="ch"', '') + '</button>'; }).join('') + '</div>');
+    h += '<div class="champ"><label for="q-x">Votre question</label><div class="saisie"><textarea id="q-x" rows="1" maxlength="1000" data-i="q" placeholder="Écrivez ici…">' + e(F.q || '') + '</textarea><button type="button" aria-label="Envoyer la question" data-a="q_envoyer"' + (occupe ? ' disabled' : '') + '>' + ICO.env + '</button></div></div>';
+    if (st.etat === 'fait') h += carte(faitPieces(st, 'Message envoyé à l\'équipe.') + '<button type="button" class="btn gris" data-a="refaire" data-v="msg">Écrire un autre message</button>');
+    else if (O.msg) h += carte('<h2 class="fort">Laisser un message à l\'équipe</h2><div class="champ"><label for="m-x">Votre message</label><textarea id="m-x" maxlength="900" data-i="mtexte">' + e(F.mtexte || '') + '</textarea></div>' + blocPieces() + (st.manque ? '<div class="boite ambre">' + e(st.manque) + '</div>' : '') + bouton('msg', 'Envoyer à l\'équipe', 'data-a="msg_envoyer"') + '<button type="button" class="btn gris" data-a="bascule" data-v="msg">Annuler</button>');
+    else h += '<button type="button" class="lien" data-a="bascule" data-v="msg">Laisser un message à l\'équipe, avec des photos</button>';
+    if (vif && (vif.whatsapp || vif.contact)) h += '<div class="duo">' + (vif.whatsapp ? '<a class="btn vert" href="' + e(vif.whatsapp) + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>' : '') + (vif.contact ? '<a class="btn gris" href="mailto:' + e(vif.contact) + '?subject=' + encodeURIComponent('Question BoostArtisan - ' + (c.nom || '')) + '">E-mail</a>' : '') + '</div>';
+    return h + '</div>';
+  }
+  function poser(t) {
+    t = String(t || '').replace(/\s+$/, '').trim(); if (!t || (A.q && A.q.etat === 'envoi')) return;
+    FIL = FIL.filter(function (x) { return !x.err; }); FIL.push({ moi: t, h: hLocale() }); FIL.push({ att: 1 }); A.q = { etat: 'envoi' }; F.q = ''; rendre(); versBas();
+    var fin = function () { FIL = FIL.filter(function (x) { return !x.att; }); A.q = {}; };
+    poster({ f: 'question', d: { texte: t, site_web: '' } }, 120000).then(function (r) {
+      fin();
+      if (!r || !r.ok) { FIL.push({ err: point((r && r.erreur) || 'Envoi impossible : réessayez') }); F.q = t; rendre(true); return; }
+      if ((r.etat === 'repondu' || r.etat === 'transmis_lu') && r.reponse) FIL.push({ rep: String(r.reponse), h: hLocale() });
+      if (r.etat !== 'repondu') FIL.push({ transmis: 1 });
+      rendre(true); versBas();
+      chercher({ frais: true, suite: function (et) { if (et === 'ok' && !(A.q && A.q.etat === 'envoi')) { FIL = []; rendre(true); } } });
+    }, function () { fin(); FIL.push({ err: navigator.onLine === false ? 'Pas de réseau : la question n\'est pas partie.' : 'La connexion a coupé : réessayez dans une minute.' }); F.q = t; rendre(true); });
+  }
+  function versBas() { try { var n = document.getElementById('fil'); if (n && n.lastElementChild && n.lastElementChild.scrollIntoView) n.lastElementChild.scrollIntoView({ block: 'nearest' }); } catch (x) { } }
+
+  /* ---------- photos et vidéos jointes (mêmes limites que l'ancienne page : 10 fichiers, vidéo 15 Mo, photos réduites à 2 200 px) ---------- */
+  var MAXN = 10, MAXO = 15 * 1024 * 1024, LOT = 9000000, COTE = 2200;
+  var TYPES = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif', heic: 'image/heic', heif: 'image/heif', mp4: 'video/mp4', m4v: 'video/x-m4v', mov: 'video/quicktime', webm: 'video/webm', '3gp': 'video/3gpp', '3g2': 'video/3gpp2', mpeg: 'video/mpeg', mpg: 'video/mpeg' };
+  var ACCEPTES = /^(image\/(jpeg|png|webp|gif|heic|heif)|video\/(mp4|quicktime|webm|3gpp|3gpp2|x-m4v|mpeg))$/;
+  function taille(o) { return o >= 1048576 ? String(Math.round(o / 104857.6) / 10).replace('.', ',') + ' Mo' : Math.max(1, Math.round(o / 1024)) + ' Ko'; }
+  function typeDe(x) { var t = String(x.type || '').toLowerCase().split(';')[0]; if (ACCEPTES.test(t)) return t; var m = /\.([A-Za-z0-9]{1,5})$/.exec(String(x.name || '')); t = TYPES[m ? m[1].toLowerCase() : ''] || ''; return ACCEPTES.test(t) ? t : ''; }
+  function ajouterFichiers(liste) {
+    var L = liste ? Array.prototype.slice.call(liste) : [], refus = [];
+    L.forEach(function (file) {
+      var t = typeDe(file), img = /^image\//.test(t);
+      if (!t) { refus.push('« ' + file.name + ' » : ce format n\'est pas accepté (photos et vidéos seulement)'); return; }
+      if (!img && file.size > MAXO) { refus.push('« ' + file.name + ' » fait ' + taille(file.size) + ' : 15 Mo au plus par vidéo'); return; }
+      if (PJ.length >= MAXN) { if (refus.indexOf('10 fichiers au plus par demande') < 0) refus.push('10 fichiers au plus par demande'); return; }
+      if (PJ.some(function (y) { return y.file.name === file.name && y.file.size === file.size; })) return;
+      PJ.push({ file: file, type: t, img: img });
+    });
+    O.pjmsg = refus.join(' · ');
+  }
+  function reduire(x, cb) {
+    var brut = function () { cb(x.file, x.file.name, x.type); };
+    if (!x.img || x.type === 'image/gif') return brut();
+    var url = null, im = new Image(), fini = false, garde = setTimeout(function () { if (!fini) { fini = true; try { URL.revokeObjectURL(url); } catch (e0) { } brut(); } }, 15000);
+    im.onload = function () {
+      if (fini) return; fini = true; clearTimeout(garde);
+      try {
+        var w = im.naturalWidth, h = im.naturalHeight, m = Math.max(w, h), k = m > COTE ? COTE / m : 1, c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(w * k)); c.height = Math.max(1, Math.round(h * k));
+        var gx = c.getContext('2d'); gx.fillStyle = '#fff'; gx.fillRect(0, 0, c.width, c.height); gx.drawImage(im, 0, 0, c.width, c.height);
+        try { URL.revokeObjectURL(url); } catch (e1) { }
+        c.toBlob(function (b) { if (b && b.size > 0 && (b.size < x.file.size || x.type !== 'image/jpeg')) cb(b, String(x.file.name).replace(/\.[A-Za-z0-9]{1,5}$/, '') + '.jpg', 'image/jpeg'); else brut(); }, 'image/jpeg', 0.86);
+      } catch (e2) { brut(); }
+    };
+    im.onerror = function () { if (fini) return; fini = true; clearTimeout(garde); try { URL.revokeObjectURL(url); } catch (e3) { } brut(); };
+    try { url = URL.createObjectURL(x.file); im.src = url; } catch (e4) { fini = true; clearTimeout(garde); brut(); }
+  }
+  function b64(blob, cb) { var r = new FileReader(); r.onload = function () { var s = String(r.result || ''), i = s.indexOf(','); cb(i >= 0 ? s.slice(i + 1) : ''); }; r.onerror = function () { cb(''); }; r.readAsDataURL(blob); }
+  function preparer(i, Pc, rates, cle, cb) {
+    if (i >= PJ.length) return cb(Pc, rates);
+    A[cle].msg = 'Préparation des fichiers : ' + (i + 1) + ' sur ' + PJ.length + '…'; rendre();
+    reduire(PJ[i], function (blob, nom, type) {
+      if (!blob || blob.size > MAXO) { rates.push(PJ[i].file.name + ' (trop lourd)'); return preparer(i + 1, Pc, rates, cle, cb); }
+      b64(blob, function (s) { if (s) Pc.push({ nom: nom, type: type, b64: s }); else rates.push(PJ[i].file.name + ' (illisible)'); preparer(i + 1, Pc, rates, cle, cb); });
+    });
+  }
+  function lots(id, Pc, rates, cle, cb) {
+    var G = [], cur = [], n = 0, envoyes = 0, k = 0;
+    Pc.forEach(function (p) { if (cur.length && n + p.b64.length > LOT) { G.push(cur); cur = []; n = 0; } cur.push(p); n += p.b64.length; });
+    if (cur.length) G.push(cur);
+    (function suivant(essai) {
+      if (k >= G.length) return cb(envoyes, rates);
+      var lot = G[k];
+      A[cle].msg = 'Envoi des fichiers : ' + Math.min(Pc.length, envoyes + 1) + ' sur ' + Pc.length + '… ne fermez pas la page.'; rendre();
+      var rate = function (pourquoi) { if (!essai) return suivant(1); lot.forEach(function (p) { rates.push(p.nom + ' (' + pourquoi + ')'); }); k++; suivant(0); };
+      poster({ f: 'pieces', id: id, pieces: lot }, 180000).then(function (x) {
+        if (x && x.ok) { envoyes += Number(x.recues) || 0; (x.refus || []).forEach(function (y) { rates.push(String(y)); }); k++; return suivant(0); }
+        lot.forEach(function (p) { rates.push(p.nom + ' (' + String((x && x.erreur) || 'refusé') + ')'); }); k++; suivant(0);
+      }, function () { rate('connexion coupée'); });
+    })(0);
+  }
+  function envoyerAvecPieces(cle, d) {
+    if (A[cle] && A[cle].etat === 'envoi') return;
+    A[cle] = { etat: 'envoi', msg: '' }; rendre();
+    preparer(0, [], [], cle, function (Pc, rates) {
+      d.pieces_noms = Pc.map(function (p) { return p.nom; });
+      A[cle].msg = 'Envoi de votre demande…'; rendre();
+      poster({ f: 'demande', d: d }).then(function (r) {
+        if (!r || !r.ok) { A[cle] = { etat: 'rate', msg: point((r && r.erreur) || 'Envoi refusé') }; rendre(); return; }
+        var finir = function (envoyes, rates2) { A[cle] = { etat: 'fait', r: r, envoyes: envoyes, rates: rates2 }; PJ = []; O.pjmsg = ''; rendre(); chercher({ frais: true }); };
+        if (!Pc.length) return finir(0, rates);
+        lots(String(r.id || ''), Pc, rates, cle, finir);
+      }, function () { A[cle] = { etat: 'rate', msg: navigator.onLine === false ? 'Pas de réseau. Réessayez dès qu\'il revient.' : 'La connexion a coupé. Réessayez : une demande déjà reçue n\'est jamais comptée deux fois.' }; rendre(); });
     });
   }
 
+  /* ---------- l'écran ---------- */
+  var aRendre = false;
+  function html() {
+    if (RET.paye) return tete(copie, '') + '<div class="regler" role="status"><span class="lab">Paiement</span><p>Vérification de votre paiement… Un instant.</p></div>';   /* retour de Stripe : on ne montre pas l'ancien « à régler » pendant que le tableau vérifie */
+    if (!copie) return squelette();
+    if (copie.ferme && !(copie.refermable && copie.accueil && vuDabord)) return essaiBandeau() + tete(copie, '') + carteRegler(copie, true) + voile();
+    var f = { appels: ecranAppels, pub: ecranPub, pause: ecranPause, paie: ecranPaie, budget: ecranBudget, zone: ecranZone, site: ecranSite, parler: ecranParler }[ecran];
+    return essaiBandeau() + (f && copie.accueil && copie.s ? f(copie) : accueil(copie)) + voile();
+  }
+  function occupe() { try { var a = document.activeElement; if (a && a !== document.body && app.contains(a) && /^(INPUT|TEXTAREA)$/.test(a.tagName) && a.type !== 'file') return true; var s = app.querySelector('audio'); return !!(s && !s.paused && !s.ended); } catch (x) { return false; } }
+  /* Des chiffres qui arrivent ne redessinent pas tout : si seules les zones marquées (data-z) ont changé, elles seules sont remplacées.
+     Le reste de l'écran ne bouge pas : un doigt posé reste sur son bouton, un champ garde sa frappe, un son continue. */
+  function zones(h) {
+    try {
+      var d = document.createElement('div'); d.innerHTML = h;
+      var nu = function (r) { var c = r.cloneNode(true), L = c.querySelectorAll('[data-z]'); for (var k = 0; k < L.length; k++) L[k].innerHTML = ''; return c.innerHTML; };
+      if (nu(d) !== nu(app)) return false;
+      var Z = app.querySelectorAll('[data-z]'), N = d.querySelectorAll('[data-z]'), act = document.activeElement; if (Z.length !== N.length) return false;
+      for (var i = 0; i < Z.length; i++) {
+        if (N[i].innerHTML === Z[i].innerHTML) continue;
+        var son = Z[i].querySelector('audio');
+        if ((act && act !== document.body && Z[i].contains(act) && /^(INPUT|TEXTAREA)$/.test(act.tagName)) || (son && !son.paused && !son.ended)) { aRendre = true; continue; }
+        Z[i].innerHTML = N[i].innerHTML;
+      }
+      return true;
+    } catch (x) { return false; }
+  }
+  var HTML0 = null;
+  function rendre(doux) {
+    var h = html(), plein = true;
+    if (doux) { if (h === HTML0 || zones(h)) plein = false; else if (occupe()) { aRendre = true; plein = false; } }
+    if (plein) {
+      var id = '', deb = null, fin = null;
+      try { var a = document.activeElement; if (a && a.id && app.contains(a)) { id = a.id; deb = a.selectionStart; fin = a.selectionEnd; } } catch (x) { }
+      aRendre = false; app.innerHTML = h;
+      if (id) { try { var n = document.getElementById(id); if (n && n.focus) { n.focus({ preventScroll: true }); if (deb !== null && n.setSelectionRange) n.setSelectionRange(deb, fin); } } catch (x) { } }
+    }
+    if (plein || !aRendre) HTML0 = h;
+    try { app.className = 'tel'; } catch (x) { }
+    try { document.title = (copie && !copie.ferme && ecran !== 'accueil' && NOMS[ecran] ? NOMS[ecran] + ' — ' : 'Mon espace — ') + (copie && copie.nom ? copie.nom : 'BoostArtisan'); } catch (x) { }
+    bandeau.hidden = !horsR;
+    if (horsR) bandeau.textContent = 'Pas de réseau · ' + (copie ? 'chiffres ' + (heureParis(copie.calcule_le) || 'gardés dans ce téléphone') : 'vos chiffres arriveront dès qu\'il revient');
+  }
+
+  /* ---------- les gestes ---------- */
+  function clic(ev) {
+    var c = ev && ev.target && ev.target.closest ? ev.target : null; if (!c) return;
+    var t = c.closest('[data-a]'); if (!t) return;
+    var a = t.getAttribute('data-a'), v = t.getAttribute('data-v'), acc = (copie && copie.accueil) || {}, x;
+    if (a === 'aller') { ev.preventDefault(); x = t.getAttribute('data-q'); if (ecran === 'site' || ecran === 'parler') { PJ = []; O.pjmsg = ''; } aller(v, x ? { k: 'q', v: x } : null); return; }
+    if (a === 'retour') { ev.preventDefault(); PJ = []; O.pjmsg = ''; retour(); return; }
+    if (a === 'regler') return regler(ev, t);
+    if (a === 'voir') { vuDabord = true; rendre(); hautDePage(); return; }
+    if (a === 'meq') { MEQ_VU = true; rendre(); return; }
+    if (a === 'bascule') { O[v] = !O[v]; rendre(); return; }
+    if (a === 'choisir') { O[t.getAttribute('data-k')] = v; rendre(); return; }
+    if (a === 'periode') { PER = v; rendre(); return; }
+    if (a === 'signaler') return signaler(v);
+    if (a === 'ecouter') return ecouter(v);
+    if (a === 'anciens') { if (A.anciens && A.anciens.etat === 'envoi') return; A.anciens = { etat: 'envoi' }; rendre(); poster({ f: 'appels_anciens' }).then(function (r) { A.anciens = {}; ANCIENS = r && r.ok ? { mois: tableau(r.mois), tronque: !!r.tronque } : { erreur: point((r && r.erreur) || 'Indisponible pour le moment'), mois: [] }; if (ANCIENS.mois.length) O.anc0 = true; rendre(); }, function () { A.anciens = { etat: 'rate', msg: 'Indisponible pour le moment : réessayez dans une minute.' }; rendre(); }); return; }
+    if (a === 'nc_ajouter' || a === 'nc_retirer') {
+      x = a === 'nc_retirer' ? String(v || '') : String(F.nc || '');
+      if (x.replace(/\D/g, '').length < 9) { A.nc = { etat: 'rate', msg: 'Écrivez un numéro à 10 chiffres.' }; rendre(); return; }
+      return envoyer('nc', { f: 'numero_connu', tel: x, faire: a === 'nc_retirer' ? 'retirer' : 'ajouter' }, function (r) { if (vif && Array.isArray(r.numeros)) vif.numeros_connus = r.numeros; F.nc = ''; });
+    }
+    if (a === 'pub_envoyer') return envoyer('pause', { f: 'demande', d: { type: v, bouton: '1', texte: '', site_web: '' } }, function () { A.pause.quoi = v; O.pause = ''; });
+    if (a === 'pas') { x = Math.round(Number(acc.budget_jour) || 0); F.budget = Math.max(5, Math.min(500, (typeof F.budget === 'number' ? F.budget : (x || 20)) + Number(v))); delete A.budget; rendre(); return; }
+    if (a === 'budget_envoyer') { x = Math.round(Number(acc.budget_jour) || 0); var b = F.budget; if (typeof b !== 'number' || b === x) return; return envoyer('budget', { f: 'demande', d: { type: x && b < x ? 'budget_baisser' : 'budget_monter', bouton: '1', texte: '', site_web: '', budget: String(b), budget_actuel: x ? String(x) : '' } }, function () { A.budget.v = b; }); }
+    if (a === 'rayon') { F.zrayon = F.zrayon === Number(v) ? 0 : Number(v); delete A.zone; rendre(); return; }
+    if (a === 'zone_envoyer') {
+      var lu = !!acc.rayon_lu && acc.rayon_km > 0, ville = String(F.zville === undefined ? (copie.ville || '') : F.zville).trim().slice(0, 80), rayon = F.zrayon === undefined ? (lu && RAYONS.indexOf(acc.rayon_km) >= 0 ? acc.rayon_km : 0) : F.zrayon, mot = String(F.zmot || '').trim();
+      if (!ville && !rayon) { A.zone = { manque: 'Indiquez la ville ou la distance voulue.' }; rendre(); return; }
+      if (!mot && ville === String(copie.ville || '') && (!rayon || (lu && rayon === acc.rayon_km))) { A.zone = { manque: 'Choisissez une autre ville ou une autre distance.' }; rendre(); return; }
+      return envoyer('zone', { f: 'demande', d: { type: 'zone', bouton: '1', site_web: '', texte: mot, ville: ville, rayon: rayon ? String(rayon) : '', zone_actuelle: String(copie.ville || '') + (lu ? ' · ' + acc.rayon_km + ' km' : '') } }, function () { A.zone.v = [ville, rayon ? rayon + ' km autour' : ''].filter(Boolean).join(', '); });
+    }
+    if (a === 'schoix') { F.schoix = v; delete A.site; rendre(); return; }
+    if (a === 'site_envoyer') {
+      var ch = CHOIX.filter(function (y) { return y[0] === (F.schoix || 'photos'); })[0] || CHOIX[0], tx = String(F.stexte || '').trim();
+      if ((ch[0] === 'texte' || ch[0] === 'numero') && !tx) { A.site = { manque: 'Écrivez ce qu\'il faut changer.' }; rendre(); return; }
+      if ((ch[0] === 'photos' || ch[0] === 'logo') && !PJ.length && !tx) { A.site = { manque: 'Joignez un fichier ou écrivez un mot.' }; rendre(); return; }
+      return envoyerAvecPieces('site', { type: ch[3], bouton: '1', site_web: '', texte: ch[1] + (tx ? ' : ' + tx : '') });
+    }
+    if (a === 'msg_envoyer') { x = String(F.mtexte || '').trim(); if (!x) { A.msg = { manque: 'Écrivez votre message.' }; rendre(); return; } return envoyerAvecPieces('msg', { type: 'autre', site_web: '', texte: x }); }
+    if (a === 'refaire') { delete A[v]; if (v === 'site') { F.stexte = ''; } if (v === 'msg') { F.mtexte = ''; O.msg = true; } if (v === 'budget') delete F.budget; PJ = []; O.pjmsg = ''; rendre(); return; }
+    if (a === 'pj_retirer') { PJ.splice(Number(v), 1); O.pjmsg = ''; rendre(); return; }
+    if (a === 'q_envoyer') return poser(F.q);
+    if (a === 'sugg') return poser(SUGG[Number(v)]);
+    if (a === 'gg_envoyer') { x = String(F.gg || '').trim(); if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x)) { A.gg = { etat: 'rate', msg: 'Écrivez l\'adresse de votre compte Google.' }; rendre(); return; } return envoyer('gg', { f: 'demande', d: { type: 'acces_google', bouton: '1', site_web: '', texte: 'Je veux payer Google moi-même.', google_email: x } }); }
+    if (a === 'gg_ok') return envoyer('ggok', { f: 'acces_google_ok' });
+    if (a === 'carte') { if (A.carte && A.carte.etat === 'envoi') return; A.carte = { etat: 'envoi' }; rendre(); poster({ f: 'carte' }).then(function (r) { if (r && r.ok && r.url) { noter('Enregistrer ma carte'); location.href = r.url; } else { A.carte = { etat: 'rate', msg: point((r && r.erreur) || 'Impossible pour l\'instant') }; rendre(); } }, function () { A.carte = { etat: 'rate', msg: 'La connexion a coupé. Réessayez.' }; rendre(); }); return; }
+  }
+  function saisie(ev) { var t = ev && ev.target, k = t && t.getAttribute ? t.getAttribute('data-i') : null; if (k) F[k] = String(t.value == null ? '' : t.value); }
+  function change(ev) { var t = ev && ev.target; if (t && t.getAttribute && t.getAttribute('data-f') === 'pj') { ajouterFichiers(t.files); try { t.value = ''; } catch (x) { } rendre(); } }
+  function apresSaisie() { setTimeout(function () { if (aRendre && !occupe()) rendre(); }, 60); }
+
+  /* ---------- la page se met à jour seule : une version neuve en ligne = un seul rechargement, quand rien n'est en cours ---------- */
+  var NEUF = '', vuLe = Date.now();
+  function envoiEnCours() { return Object.keys(A).some(function (k) { return A[k] && A[k].etat === 'envoi'; }); }
+  function recharger() {
+    if (!NEUF) return;
+    try { if (sessionStorage.getItem('ba:neuf') === NEUF) return; } catch (x) { }
+    if (occupe() || envoiEnCours() || PJ.length) { setTimeout(recharger, 20000); return; }
+    try { sessionStorage.setItem('ba:neuf', NEUF); } catch (x) { }
+    try { location.reload(); } catch (x) { }
+  }
+  function verifierVersion() {
+    if (!/^[0-9a-f]{6,}$/.test(BUILD) || NEUF) return;
+    vuLe = Date.now();
+    try {
+      fetch('/v.txt', { cache: 'no-store', credentials: 'omit' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) {
+        t = String(t || '').trim(); if (!/^[0-9a-f]{6,}$/.test(t) || t === BUILD) return;
+        return fetch('/index.html', { cache: 'no-store', credentials: 'omit' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (p) { if (String(p).indexOf('BUILD = \'' + t + '\'') > 0) { NEUF = t; recharger(); } });
+      }).catch(function () { });
+    } catch (x) { }
+  }
+  /* ---------- les erreurs de la page partent au tableau (jamais de contenu) : une fois par message, 5 au plus ---------- */
+  var VUES = {}, NERR = 0;
+  function signalerErreur(m) { try { m = String(m || '').slice(0, 300); if (!m || NERR >= 5 || VUES[m] || J.length < 8) return; VUES[m] = 1; NERR++; poster({ f: 'erreur', message: 'page ' + BUILD + ' : ' + m }, 20000).catch(function () { }); } catch (x) { } }
+
+  /* ---------- départ ---------- */
   if (J.length < 8) { message('Lien incomplet', 'Ouvrez le lien reçu par SMS ou par e-mail. Sinon, contactez BoostArtisan.'); return; }
+  try { history.replaceState({ p: ecran, n: 0 }, '', adresse(ecran)); } catch (x) { }
+  try { history.scrollRestoration = 'manual'; } catch (x) { }
+  try { app.setAttribute('data-v', BUILD); } catch (x) { }
   copie = reprise(); ligne = 'maj'; rendre();
   app.addEventListener('click', clic);
+  app.addEventListener('input', saisie);
+  app.addEventListener('change', change);
+  try { app.addEventListener('focusout', apresSaisie); app.addEventListener('pause', apresSaisie, true); app.addEventListener('ended', apresSaisie, true); app.addEventListener('error', function (ev) { var t = ev && ev.target; if (t && t.tagName === 'AUDIO') sonRate(t.getAttribute('data-son')); }, true); } catch (x) { }
+  window.addEventListener('popstate', surRetour);
+  var G0 = guichet();
   chercher();
-  window.addEventListener('online', function () { if (horsR || !estFrais()) { essais = 0; chercher(); } });
+  G0.then(function () { if (!copie) espace(); });
+  if (RET.carte) { poster({ f: 'carte_ok', session_id: RET.carte }).then(function (r) { if (r && r.ok) { BAN = { c: 'vert', t: 'Carte enregistrée ✓', x: (r.libelle ? r.libelle + ' : ' : '') + 'vos relevés seront réglés tout seuls. Plus rien à faire.' }; chercher({ frais: true }); } rendre(true); }, function () { }); RET.carte = ''; }
+  window.addEventListener('online', function () { if (horsR || !vifFrais()) { essais = 0; chercher(); } });
   document.addEventListener('visibilitychange', function () {
-    var vis = document.visibilityState === 'visible';
-    if (OUV && OUV.etape !== 'repli') { if (!vis) OUV.cache = true; else if (OUV.cache) { OUV.etape = 'repli'; desarmer(); rendre(); } }   /* parti puis revenu : ça ne s'est peut-être pas ouvert */
-    if (vis && Date.now() - dernier > 60000) { essais = 0; chercher(); }
+    if (document.visibilityState !== 'visible') return;
+    if (Date.now() - dernier > 60000) { essais = 0; chercher(); }
+    if (Date.now() - vuLe > 300000) verifierVersion();
   });
-  window.addEventListener('pageshow', function (ev) { if (ev && ev.persisted && OUV) { OUV = null; desarmer(); rendre(); } });   /* retour arrière depuis la page ouverte : tout est remis */
+  window.addEventListener('error', function (ev) { signalerErreur((ev && ev.message || 'erreur') + (ev && ev.lineno ? ' (ligne ' + ev.lineno + ')' : '')); });
+  window.addEventListener('unhandledrejection', function (ev) { signalerErreur('promesse : ' + String(ev && ev.reason && ev.reason.message || ev && ev.reason || '')); });
+  setInterval(function () { if (document.visibilityState === 'visible') { if (copie && copie.ferme && vif) rendre(true); if (Date.now() - vuLe > 900000) verifierVersion(); } }, 30000);
+  setTimeout(verifierVersion, 4000);
   try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function () { }); } catch (x) { }
 })();
 </script>
