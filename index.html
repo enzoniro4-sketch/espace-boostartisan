@@ -255,7 +255,7 @@ audio{display:block;width:100%;margin-top:3.5px}
      Le téléphone et le guichet ne gardent que la copie PUBLIQUE : aucun numéro, aucun e-mail, aucun lien de paiement. Les numéros, le fil et les liens viennent
      du tableau seulement et restent en mémoire vive (« vif »). Le lien du client est la clé : il est après le « # » (jamais envoyé à l'hébergeur).
      Les actions appellent les MÊMES fonctions du tableau que l'ancienne page. Aucun secret ici : ce fichier est public. */
-  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = 'c5e7ff007b', H2 = 2, H6 = 6, H26 = 26;
+  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '7278655581', H2 = 2, H6 = 6, H26 = 26;
   var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'], MOISC = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'], JOURS = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
   var app = document.getElementById('app'), bandeau = document.getElementById('hors');
   function params() { var o = {}; (String(location.search || '').replace(/^\?/, '') + '&' + String(location.hash || '').replace(/^#/, '')).split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i > 0) { try { o[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); } catch (x) { } } }); return o; }
@@ -1086,7 +1086,22 @@ audio{display:block;width:100%;margin-top:3.5px}
   function codeGarde() { try { var c = JSON.parse(localStorage.getItem('ba2:code') || 'null'), age = c ? Date.now() - Number(c.t) : -1; if (c && /^[0-9a-f]{16,40}$/i.test(String(c.ref || '')) && age >= 0 && age < (Math.min(30, Number(c.m) || 10)) * 60000) return c; if (c) oublierCode(); } catch (x) { } return null; }
   function porteDepart() { var c = codeGarde(); return c ? { e: 'code', saisie: '', ref: String(c.ref), canal: c.c === 'sms' ? 'sms' : 'mail', vers: '', minutes: Number(c.m) || 10, t: Number(c.t) } : { e: 'porte', saisie: '' }; }
   function porteEnCours() { return !!PO && (PO.e !== 'porte' || !!PO.inc || !!String(F.psaisie || '').trim()); }
-  function connexion(corps, ms) { corps.action = 'connexion'; return appel(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(corps) }, ms || 45000); }
+  /* (chantier 31) la porte occupée se rejoue seule : le tableau répond « occupe » quand son verrou n'a pas été obtenu (le geste n'a PAS tourné). On attend 2 à 6 secondes,
+     au hasard pour ne pas revenir tous ensemble, et on rejoue : 6 fois au plus, 90 secondes au plus. Une panne du réseau ou un délai dépassé ne se rejoue jamais seul. */
+  function connexion(corps, ms, surAttente) {
+    corps.action = 'connexion';
+    var debut = Date.now(), nO = 0;
+    var tenter = function () {
+      return appel(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(corps) }, ms || 45000).then(function (r) {
+        if (r && r.ok !== true && r.occupe === true && nO < 6 && Date.now() - debut < 90000) {
+          nO++; if (surAttente) { try { surAttente(nO); } catch (x) { } }
+          return new Promise(function (suite) { setTimeout(suite, 2000 + Math.floor(Math.random() * 4000)); }).then(tenter);
+        }
+        return r;
+      });
+    };
+    return tenter();
+  }
   function quandJ() { return J.length >= 8 ? Promise.resolve() : new Promise(function (bon, mauvais) { ATTJ.push([bon, mauvais]); }); }
   function lacherJ(bon) { var L = ATTJ; ATTJ = []; L.forEach(function (x) { try { if (bon) x[0](); else x[1](new Error('porte')); } catch (y) { } }); }
   /* les trois sources de l'espace, dans l'ordre habituel (le jeton est connu) */
@@ -1139,7 +1154,7 @@ audio{display:block;width:100%;margin-top:3.5px}
   function pAppel(cle, corps, msg, suite) {
     if (A[cle] && A[cle].etat === 'envoi') return;
     var gen = GEN, po = PO; A[cle] = { etat: 'envoi', msg: msg }; rendre();
-    connexion(corps).then(function (r) {
+    connexion(corps, 0, function () { if (gen !== GEN || po !== PO) return; if (A[cle] && A[cle].etat === 'envoi' && A[cle].msg !== 'Il y a du monde. Encore un instant…') { A[cle].msg = 'Il y a du monde. Encore un instant…'; rendre(); } }).then(function (r) {
       if (gen !== GEN || po !== PO) return;
       A[cle] = {}; r = r || {};
       if (r.ok !== true && (!r.erreur || /^(action inconnue|cl[ée] |\w*Error\b)/i.test(String(r.erreur)))) r = { ok: false, erreur: 'Indisponible pour le moment. Réessayez dans une minute.' };   /* une réponse qui n'est pas une phrase pour lui (tableau pas à jour, panne) ne s'affiche jamais telle quelle */
@@ -1315,9 +1330,9 @@ audio{display:block;width:100%;margin-top:3.5px}
       if (un) {
         x = PO.liste[0];
         h += carte('<h2 class="fort">C\'est bien vous ?</h2><div class="gros">' + e(x.nom) + '</div>' + (ligne2(x) ? '<p class="n">' + e(ligne2(x)) + '</p>' : '') + (x.contact ? '<p>E-mail connu : ' + e(x.contact) + '</p>' : '') + pErreur('porte')
-          + '<button type="button" class="btn' + occ + '" data-a="p_oui" data-v="0">' + (occ ? '<i class="roue"></i>Un instant…' : 'Oui, c\'est moi') + '</button><button type="button" class="lien" data-a="p_non">Non, ce n\'est pas moi</button>');
+          + '<button type="button" class="btn' + occ + '" data-a="p_oui" data-v="0">' + (occ ? '<i class="roue"></i>' + e(s.msg || 'Un instant…') : 'Oui, c\'est moi') + '</button><button type="button" class="lien" data-a="p_non">Non, ce n\'est pas moi</button>');
       } else {
-        h += carte('<h2 class="fort">Laquelle est la vôtre ?</h2><p>Touchez votre entreprise.</p><div class="choix">' + PO.liste.map(function (c, i) { var l2 = [ligne2(c), c.contact].filter(Boolean).join(' · '); return '<button type="button" class="deux' + occ + '" data-a="p_oui" data-v="' + i + '"><b>' + e(c.nom) + '</b>' + (l2 ? '<span>' + e(l2) + '</span>' : '') + '</button>'; }).join('') + '</div>' + pErreur('porte')
+        h += carte('<h2 class="fort">Laquelle est la vôtre ?</h2><p>Touchez votre entreprise.</p><div class="choix">' + PO.liste.map(function (c, i) { var l2 = [ligne2(c), c.contact].filter(Boolean).join(' · '); return '<button type="button" class="deux' + occ + '" data-a="p_oui" data-v="' + i + '"><b>' + e(c.nom) + '</b>' + (l2 ? '<span>' + e(l2) + '</span>' : '') + '</button>'; }).join('') + '</div>' + (occ && s.msg && s.msg !== 'Un instant…' ? '<p class="n" role="status">' + e(s.msg) + '</p>' : '') + pErreur('porte')
           + '<button type="button" class="lien" data-a="p_non">Aucune de celles-là</button>');
       }
     }
