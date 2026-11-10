@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#101828">
 <link rel="icon" href="data:,">
@@ -254,7 +255,7 @@ audio{display:block;width:100%;margin-top:3.5px}
      Le téléphone et le guichet ne gardent que la copie PUBLIQUE : aucun numéro, aucun e-mail, aucun lien de paiement. Les numéros, le fil et les liens viennent
      du tableau seulement et restent en mémoire vive (« vif »). Le lien du client est la clé : il est après le « # » (jamais envoyé à l'hébergeur).
      Les actions appellent les MÊMES fonctions du tableau que l'ancienne page. Aucun secret ici : ce fichier est public. */
-  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '6af0ab8641', H2 = 2, H6 = 6, H26 = 26;
+  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = 'c5e7ff007b', H2 = 2, H6 = 6, H26 = 26;
   var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'], MOISC = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'], JOURS = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
   var app = document.getElementById('app'), bandeau = document.getElementById('hors');
   function params() { var o = {}; (String(location.search || '').replace(/^\?/, '') + '&' + String(location.hash || '').replace(/^#/, '')).split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i > 0) { try { o[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); } catch (x) { } } }); return o; }
@@ -268,7 +269,7 @@ audio{display:block;width:100%;margin-top:3.5px}
   var RET = { paye: P.paye === '1' && P.session_id ? String(P.session_id) : '', carte: P.carte_ok === '1' && P.session_id ? String(P.session_id) : '' };
   function nomCopie(j) { var h = 5381; for (var i = 0; i < j.length; i++) h = ((h << 5) + h + j.charCodeAt(i)) >>> 0; return 'ba2:' + h.toString(36) + ':' + j.length; }
   var K = CLE ? '' : nomCopie(J), GEN = 0;   /* K = le nom de la copie gardée ; GEN change quand le téléphone quitte un espace : une réponse du réseau partie avant est ignorée */
-  var copie = null, vif = null, vifLe = 0, ligne = '', horsR = false, essais = 0, enCours = false, suites = [], minuteur = null, dernier = 0, encore = null, DEC = 0, vuDabord = false, visiteDite = false;
+  var copie = null, vif = null, vifLe = 0, ligne = '', horsR = false, essais = 0, enCours = false, suites = [], minuteur = null, dernier = 0, encore = null, DEC = 0, vuDabord = false, visiteDite = false, ACTN = 0;   /* ACTN : le nombre d'actions abouties (chantier 30 : une lecture partie avant ne remontre plus l'ancien état) */
   var F = {}, A = {}, O = {}, PJ = [], FIL = [], PER = 'mois', MSG = '', BAN = null, MEQ_VU = false, PROF = 0, DEFIL = {}, ANCIENS = null, SON = {};
 
   /* ---------- petits outils ---------- */
@@ -340,7 +341,7 @@ audio{display:block;width:100%;margin-top:3.5px}
   }
   /* une action de l'espace part avec le jeton. Par le lien commun, elle attend que le téléphone soit reconnu ; après un changement d'espace, sa réponse ne revient jamais. */
   function poster(corps, ms) {
-    var gen = GEN, partir = function () { corps.action = 'espace'; corps.j = J; return appel(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(corps) }, ms || 90000); };
+    var gen = GEN, partir = function () { corps.action = 'espace'; corps.j = J; return appel(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(corps) }, ms || 90000).then(function (r) { ACTN++; return r; }); };
     if (!CLE) return partir();
     var muet = function () { return new Promise(function () { }); };
     return (J.length >= 8 ? partir() : quandJ().then(partir)).then(function (r) { return gen !== GEN ? muet() : r; }, function (x) { if (gen !== GEN) return muet(); throw x; });
@@ -390,9 +391,14 @@ audio{display:block;width:100%;margin-top:3.5px}
     if (ligne !== 'maj') { ligne = 'maj'; rendre(true); }
     var fin = function (etat) { enCours = false; var S = suites; suites = []; S.forEach(function (f) { try { f(etat); } catch (x) { } }); if (encore) { suites = encore; encore = null; chercher({ frais: true }); } };
     var u = API + '?x=vif&j=' + encodeURIComponent(J) + (visiteDite ? '' : '&visite=1') + (SRC ? '&src=' + encodeURIComponent(SRC) : '') + (o.frais ? '&frais=1' : '') + (RET.paye ? '&paye=1&session_id=' + encodeURIComponent(RET.paye) : '');
-    var gen = GEN;
+    var gen = GEN, act0 = ACTN;
     appel(u, { method: 'GET' }, 70000).then(function (r) {
       if (gen !== GEN) return;
+      if (r && r.ok === true && r.v === 2 && r.vif && act0 !== ACTN) {   /* une action a abouti depuis le départ de cette lecture : sa réponse peut dater d'avant ; on ne l'affiche pas, une lecture fraîche repart avec les suites qui attendaient */
+        visiteDite = true; horloge(r.maintenant); essais = 0; horsR = false; enCours = false;
+        if (encore) { suites = suites.concat(encore); encore = null; }
+        chercher({ frais: true }); return;
+      }
       if (r && r.ok === true && r.v === 2 && r.vif) {
         visiteDite = true; horloge(r.maintenant); vif = r.vif; vifLe = Date.now(); essais = 0; horsR = false; ligne = 'ok';
         if (RET.paye) { RET.paye = ''; BAN = vif.paye ? { c: 'vert', t: 'Paiement bien reçu, merci !', x: 'Votre espace et votre service continuent normalement.' } : { c: '', t: 'Paiement pas encore confirmé', x: 'S\'il vient d\'être fait, il apparaîtra ici dans quelques minutes.' }; }
