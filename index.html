@@ -230,6 +230,10 @@ audio{display:block;width:100%;margin-top:3.5px}
 .champ .mdp input{padding-right:88.5px}
 .champ .mdp button{position:absolute;top:0;right:0;height:100%;min-width:78px;border:0;background:none;color:var(--t-blue);font:600 12px/1 var(--body);padding:0 12px;border-radius:10px}
 .formu{display:flex;flex-direction:column;gap:10px;margin:0}
+.choix button.deux{flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding:8.5px 13.5px;min-height:51px}
+.choix button.deux b{font:600 13.5px/1.3 var(--body)}
+.choix button.deux span{font:400 12px/1.35 var(--body);color:var(--t-mute);overflow-wrap:anywhere}
+.choix button.occ{opacity:.6;pointer-events:none}
 .pied button{font:inherit;color:var(--t-blue);background:none;border:0;padding:0 5px;min-height:40px;text-decoration:underline}
 .pied{padding:0 17px 24px;text-align:center;font:400 11.5px/1.45 var(--body);color:var(--t-mute)}
 @media (min-width:560px){body{padding:20.5px 13.5px}.tel{min-height:0;border:1px solid var(--t-edge);border-radius:24px;overflow:hidden}.hors{border-radius:12px;margin-bottom:10px}.voile{align-items:center}}
@@ -250,7 +254,7 @@ audio{display:block;width:100%;margin-top:3.5px}
      Le téléphone et le guichet ne gardent que la copie PUBLIQUE : aucun numéro, aucun e-mail, aucun lien de paiement. Les numéros, le fil et les liens viennent
      du tableau seulement et restent en mémoire vive (« vif »). Le lien du client est la clé : il est après le « # » (jamais envoyé à l'hébergeur).
      Les actions appellent les MÊMES fonctions du tableau que l'ancienne page. Aucun secret ici : ce fichier est public. */
-  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '72e537860f', H2 = 2, H6 = 6, H26 = 26;
+  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '7f06c8c433', H2 = 2, H6 = 6, H26 = 26;
   var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'], MOISC = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'], JOURS = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
   var app = document.getElementById('app'), bandeau = document.getElementById('hors');
   function params() { var o = {}; (String(location.search || '').replace(/^\?/, '') + '&' + String(location.hash || '').replace(/^#/, '')).split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i > 0) { try { o[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); } catch (x) { } } }); return o; }
@@ -1146,22 +1150,28 @@ audio{display:block;width:100%;margin-top:3.5px}
     if (chiffres) { if (F.rtel === undefined || F.rtel === O.rtel0) F.rtel = O.rtel0 = saisie.slice(0, 30); }
     else if (saisie && !/@/.test(saisie) && (F.rnom === undefined || F.rnom === O.rnom0)) F.rnom = O.rnom0 = saisie.slice(0, 80);
   }
-  /* 1. qui êtes-vous ? → un code part (au contact déjà connu), ou le mot de passe est demandé, ou « pas trouvé » */
-  function pDemander(saisie, avecCode) {
+  /* 1. qui êtes-vous ? → d'abord « C'est bien vous ? » (ou « Laquelle est la vôtre ? » s'il y a un doute) : rien ne part avant son oui.
+     Puis, avec le ticket de son choix : un code part (au contact déjà connu), ou son mot de passe est demandé, ou « on vous rappelle ». */
+  function pDemander(saisie, avecCode, choix, nom) {
     saisie = String(saisie || '').trim().slice(0, 120);
-    if (saisie.replace(/\s/g, '').length < 3) { A.porte = { etat: 'rate', msg: 'Écrivez votre numéro, votre e-mail ou le nom de votre entreprise.' }; rendre(); viser('p-saisie'); return; }
-    var corps = { f: 'demander', saisie: saisie, a: idAppareil() }; if (avecCode) corps.code = 1;
+    if (!choix && saisie.replace(/\s/g, '').length < 3) { A.porte = { etat: 'rate', msg: 'Écrivez votre numéro, votre e-mail ou le nom de votre entreprise.' }; rendre(); viser('p-saisie'); return; }
+    var corps = choix ? { f: 'demander', choix: choix, a: idAppareil() } : { f: 'demander', saisie: saisie, a: idAppareil(), v: 2 }; if (avecCode) corps.code = 1;
     pAppel('porte', corps, 'Un instant…', function (r) {
-      if (r.ok === true && r.etape === 'code' && r.ref) {
+      if (r.ok === true && r.etape === 'choisir' && r.choix && r.choix.length) {
+        PO = { e: 'qui', saisie: saisie, liste: r.choix.slice(0, 6).map(function (c) { return { c: String(c.c || ''), nom: String(c.nom || ''), metier: String(c.metier || ''), ville: String(c.ville || ''), contact: String(c.contact || '') }; }) };
+        A.rappel = {}; rendre(); hautDePage();
+      }
+      else if (r.ok === true && r.etape === 'code' && r.ref) {
         var renvoi = !!(PO && PO.e === 'code');
-        PO = { e: 'code', saisie: saisie, ref: String(r.ref), canal: r.canal === 'sms' ? 'sms' : 'mail', vers: String(r.vers || ''), minutes: Number(r.minutes) || 10, t: Date.now(), renvoi: renvoi };
+        PO = { e: 'code', saisie: saisie, choix: choix || '', nom: nom || '', ref: String(r.ref), canal: r.canal === 'sms' ? 'sms' : 'mail', vers: String(r.vers || ''), minutes: Number(r.minutes) || 10, t: Date.now(), renvoi: renvoi };
         F.pcode = ''; O.prien = false; A.rappel = {}; garderCode(); rendre(); hautDePage(); viser('p-code');
       }
-      else if (r.ok === true && r.etape === 'mdp') { PO = { e: 'mdp', saisie: saisie }; F.pmdp = ''; O.pvoir = false; rendre(); hautDePage(); viser('p-mdp'); }
-      else if (r.ok === true && r.etape === 'inconnu') { PO = { e: 'porte', saisie: saisie, inc: { plusieurs: !!r.plusieurs, sans: !!r.sans_contact } }; F.psaisie = saisie; A.rappel = {}; preRappel(r.plusieurs ? '' : saisie); rendre(); }
+      else if (r.ok === true && r.etape === 'mdp') { PO = { e: 'mdp', saisie: saisie, choix: choix || '', nom: nom || '' }; F.pmdp = ''; O.pvoir = false; rendre(); hautDePage(); viser('p-mdp'); }
+      else if (r.ok === true && r.etape === 'inconnu') { PO = { e: 'porte', saisie: saisie, inc: { plusieurs: !!r.plusieurs, sans: !!r.sans_contact } }; F.psaisie = saisie; A.rappel = {}; preRappel(r.plusieurs ? '' : (r.sans_contact && nom ? nom : saisie)); rendre(); }
       else {
+        if (r.recommencer) { oublierCode(); PO = { e: 'porte', saisie: saisie }; F.psaisie = saisie; }   /* son choix a plus de 15 minutes : il redit qui il est */
         A.porte = { etat: 'rate', msg: point(r.erreur || 'Réessayez dans une minute') };
-        if (r.bloque && PO && PO.e === 'porte') { PO = { e: 'porte', saisie: saisie, inc: { bloque: true } }; F.psaisie = saisie; preRappel(saisie); }
+        if (r.bloque && PO && (PO.e === 'porte' || PO.e === 'qui')) { PO = { e: 'porte', saisie: saisie, inc: { bloque: true } }; F.psaisie = saisie; preRappel(nom || saisie); }
         rendre();
       }
     });
@@ -1169,13 +1179,13 @@ audio{display:block;width:100%;margin-top:3.5px}
   /* 2. le code : bon = la clé d'appareil se garde et l'espace s'ouvre ; faux = on le dit avec ce qu'il reste ; fini = on en redemande un */
   function pValider() {
     if (!PO || PO.e !== 'code' || PO.fini) return;
-    var code = String(F.pcode || '').replace(/\D/g, '').slice(0, 4), saisie = PO.saisie;
+    var code = String(F.pcode || '').replace(/\D/g, '').slice(0, 4), saisie = PO.saisie, choix = PO.choix || '', nom = PO.nom || '';
     if (code.length !== 4) { A.porte = { etat: 'rate', msg: 'Écrivez les 4 chiffres du code.' }; rendre(); viser('p-code'); return; }
     pAppel('porte', { f: 'valider', ref: PO.ref, code: code, a: idAppareil() }, 'Vérification…', function (r) {
       F.pcode = '';
       if (r.ok === true && String(r.j || '').length >= 8) { oublierCode(); ouvrir(r, saisie); return; }
       if (r.bloque) { oublierCode(); PO = { e: 'porte', saisie: saisie, inc: { bloque: true } }; F.psaisie = saisie; preRappel(saisie); A.porte = { etat: 'rate', msg: point(r.erreur || 'Plus de code aujourd\'hui pour cet espace') }; rendre(); hautDePage(); return; }   /* plus de code aujourd'hui pour cet espace : la phrase du tableau et « On vous rappelle », pas un bouton « nouveau code » qui serait refusé */
-      if (r.expire) { oublierCode(); PO = { e: 'code', saisie: saisie, fini: true, msg: point(r.erreur || 'Ce code n\'est plus valable') }; O.prien = false; rendre(); return; }
+      if (r.expire) { oublierCode(); PO = { e: 'code', saisie: saisie, choix: choix, nom: nom, fini: true, msg: point(r.erreur || 'Ce code n\'est plus valable') }; O.prien = false; rendre(); return; }
       A.porte = { etat: 'rate', msg: point(r.erreur || 'Ce n\'est pas le bon code') }; rendre(); viser('p-code');
     });
   }
@@ -1198,7 +1208,7 @@ audio{display:block;width:100%;margin-top:3.5px}
     if (!PO || PO.e !== 'mdp') return;
     var mdp = String(F.pmdp || ''), saisie = PO.saisie;
     if (!mdp) { A.porte = { etat: 'rate', msg: 'Écrivez votre mot de passe.' }; rendre(); viser('p-mdp'); return; }
-    pAppel('porte', { f: 'entrer', saisie: saisie, mdp: mdp, a: idAppareil() }, 'Ouverture…', function (r) {
+    pAppel('porte', { f: 'entrer', saisie: saisie, choix: PO.choix || '', mdp: mdp, a: idAppareil() }, 'Ouverture…', function (r) {
       if (r.ok === true && String(r.j || '').length >= 8) { ouvrir(r, saisie); return; }
       if (r.code) PO.code = true;   /* trop de mauvais mots de passe : « Recevoir un code » passe devant */
       A.porte = { etat: 'rate', msg: point(r.erreur || 'Ce n\'est pas le bon mot de passe') }; rendre(); viser('p-mdp');
@@ -1225,14 +1235,16 @@ audio{display:block;width:100%;margin-top:3.5px}
       A.rappel = r.ok === true || /déjà noté/i.test(String(r.erreur || '')) ? { etat: 'fait' } : { etat: 'rate', msg: point(r.erreur || 'Réessayez dans une minute') }; rendre();
     });
   }
-  function clicPorte(ev, a) {
+  function clicPorte(ev, a, v) {
     var x;
     if (a === 'changer') { O.changer = !O.changer; rendre(); return; }
     if (a === 'changer_oui') { if (!CLE) return; x = moi(); if (x) connexion({ f: 'oublier', k: x.k }, 20000).then(function () { }, function () { }); versPorte(true); return; }
     if (!PO) return;
     if (a === 'p_retour') { if (PO.e === 'choisir') return; oublierCode(); PO = { e: 'porte', saisie: '' }; F = {}; A = {}; O = {}; rendre(); hautDePage(); viser('p-saisie'); return; }
-    if (a === 'p_renvoyer') { if (PO.e === 'code' && PO.saisie) pDemander(PO.saisie, true); return; }
-    if (a === 'p_oublie') { if (PO.e === 'mdp') pDemander(PO.saisie, true); return; }
+    if (a === 'p_renvoyer') { if (PO.e === 'code' && (PO.saisie || PO.choix)) pDemander(PO.saisie, true, PO.choix, PO.nom); return; }
+    if (a === 'p_oublie') { if (PO.e === 'mdp') pDemander(PO.saisie, true, PO.choix, PO.nom); return; }
+    if (a === 'p_oui') { x = PO.e === 'qui' ? PO.liste[Number(v) || 0] : null; if (x && x.c) pDemander(PO.saisie, false, x.c, x.nom); return; }   /* « Oui, c'est moi » : seulement maintenant le code part */
+    if (a === 'p_non') { if (PO.e !== 'qui') return; x = PO.saisie; PO = { e: 'porte', saisie: x, inc: { non: true } }; F.psaisie = x; A.porte = {}; A.rappel = {}; preRappel(x); rendre(); hautDePage(); viser('p-saisie'); return; }
     if (a === 'p_voir') { relire(); O.pvoir = !O.pvoir; rendre(); viser('p-mdp'); return; }
     if (a === 'p_tard') { if (PO.e === 'choisir') finPorte(); return; }
     if (a === 'p_rien') { if (PO.e !== 'code') return; O.prien = true; preRappel(PO.saisie); rendre(); viser('r-nom'); return; }
@@ -1269,21 +1281,32 @@ audio{display:block;width:100%;margin-top:3.5px}
   }
   function ecranPorte() {
     var s = A.porte || {}, h = pTete() + '<div class="corps">', x, inc;
-    if (PO.e === 'code' && PO.fini) {
+    if (PO.e === 'qui') {
+      var un = PO.liste.length === 1, occ = s.etat === 'envoi' ? ' occ' : '', ligne2 = function (c) { return [maj1(c.metier), c.ville].filter(Boolean).join(' · '); };
+      if (un) {
+        x = PO.liste[0];
+        h += carte('<h2 class="fort">C\'est bien vous ?</h2><div class="gros">' + e(x.nom) + '</div>' + (ligne2(x) ? '<p class="n">' + e(ligne2(x)) + '</p>' : '') + (x.contact ? '<p>E-mail connu : ' + e(x.contact) + '</p>' : '') + pErreur('porte')
+          + '<button type="button" class="btn' + occ + '" data-a="p_oui" data-v="0">' + (occ ? '<i class="roue"></i>Un instant…' : 'Oui, c\'est moi') + '</button><button type="button" class="lien" data-a="p_non">Non, ce n\'est pas moi</button>');
+      } else {
+        h += carte('<h2 class="fort">Laquelle est la vôtre ?</h2><p>Touchez votre entreprise.</p><div class="choix">' + PO.liste.map(function (c, i) { var l2 = [ligne2(c), c.contact].filter(Boolean).join(' · '); return '<button type="button" class="deux' + occ + '" data-a="p_oui" data-v="' + i + '"><b>' + e(c.nom) + '</b>' + (l2 ? '<span>' + e(l2) + '</span>' : '') + '</button>'; }).join('') + '</div>' + pErreur('porte')
+          + '<button type="button" class="lien" data-a="p_non">Aucune de celles-là</button>');
+      }
+    }
+    else if (PO.e === 'code' && PO.fini) {
       h += carte('<h2 class="fort">Votre code</h2><div class="boite rouge" role="alert">' + e(PO.msg) + '</div>' + pErreur('porte')
         + (PO.saisie ? '<button type="button" class="btn' + (s.etat === 'envoi' ? ' occ' : '') + '" data-a="p_renvoyer">' + (s.etat === 'envoi' ? '<i class="roue"></i>Un instant…' : 'Recevoir un nouveau code') + '</button>' : '')
         + '<button type="button" class="' + (PO.saisie ? 'lien' : 'btn') + '" data-a="p_retour">' + (PO.saisie ? 'Ce n\'est pas moi' : 'Recommencer') + '</button>');
     }
     else if (PO.e === 'code') {
       x = (PO.vers ? 'Code envoyé ' + PO.vers + '.' : 'Entrez le code reçu par ' + (PO.canal === 'sms' ? 'SMS' : 'e-mail') + '.') + ' Il est valable ' + PO.minutes + ' minutes.';
-      h += carte('<h2 class="fort">Entrez votre code</h2>' + (PO.renvoi ? '<div class="boite vert" role="status">Nouveau code envoyé.</div>' : '') + '<p>' + e(x) + '</p>'
+      h += carte('<h2 class="fort">Entrez votre code</h2>' + (PO.nom ? '<p class="n">' + e(PO.nom) + '</p>' : '') + (PO.renvoi ? '<div class="boite vert" role="status">Nouveau code envoyé.</div>' : '') + '<p>' + e(x) + '</p>'
         + FORM + 'p_valider"><div class="champ"><label for="p-code">Code à 4 chiffres</label><input id="p-code" class="code" name="code" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" maxlength="6" data-i="pcode" value="' + e(F.pcode || '') + '"></div>' + pErreur('porte') + pBouton('porte', 'Valider') + '</form>'
         + (PO.saisie ? '<button type="button" class="lien" data-a="p_renvoyer">Renvoyer un code</button>' : '')
         + '<button type="button" class="lien" data-a="p_retour">' + (PO.saisie ? 'Ce n\'est pas moi' : 'Recommencer') + '</button>');
       h += O.prien ? carteRappel() : '<div class="info">' + ICO.info + '<span>Rien reçu ? Regardez dans vos courriers indésirables.</span></div><button type="button" class="lien" data-a="p_rien">Toujours rien ? On vous rappelle</button>';
     }
     else if (PO.e === 'mdp') {
-      h += carte('<h2 class="fort">Votre mot de passe</h2>' + FORM + 'p_entrer">' + pIdent(PO.saisie) + pMdp(false) + pErreur('porte')
+      h += carte('<h2 class="fort">Votre mot de passe</h2>' + (PO.nom ? '<p class="n">' + e(PO.nom) + '</p>' : '') + FORM + 'p_entrer">' + pIdent(PO.saisie) + pMdp(false) + pErreur('porte')
         + (PO.code ? '<button type="button" class="btn" data-a="p_oublie">Recevoir un code</button>' : '') + pBouton('porte', 'Ouvrir mon espace', PO.code ? 'gris' : '') + '</form>'
         + (PO.code ? '' : '<button type="button" class="lien" data-a="p_oublie">Mot de passe oublié ? Recevoir un code</button>')
         + '<button type="button" class="lien" data-a="p_retour">Ce n\'est pas moi</button>');
@@ -1297,6 +1320,7 @@ audio{display:block;width:100%;margin-top:3.5px}
       inc = PO.inc;
       /* « plusieurs » : un nom que deux clients portent → demander le contact ; un contact que deux espaces partagent (un client, deux entreprises) → demander le nom */
       x = !inc || inc.bloque ? '' : inc.plusieurs ? (/@/.test(PO.saisie) || /^[\d\s.+()\-]+$/.test(PO.saisie) ? '<div class="boite ambre" role="alert"><b>Ce contact ouvre plusieurs espaces.</b>Écrivez le nom de l\'entreprise à ouvrir.</div>' : '<div class="boite ambre" role="alert"><b>Plusieurs entreprises ont un nom proche.</b>Écrivez plutôt votre e-mail ou votre numéro.</div>')
+        : inc.non ? '<div class="boite ambre" role="alert"><b>D\'accord, ce n\'est pas vous.</b>Essayez autre chose : votre numéro, votre e-mail ou le nom exact de votre entreprise.</div>'
         : inc.sans ? '<div class="boite ambre" role="alert"><b>Il nous manque votre e-mail pour vous envoyer un code.</b>Laissez votre numéro juste en dessous : on vous rappelle.</div>'
         : '<div class="boite ambre" role="alert"><b>Nous ne vous avons pas trouvé.</b>Essayez autre chose : votre numéro, votre e-mail ou le nom de votre entreprise.</div>';
       h += carte('<h2 class="fort">Retrouver mon espace</h2><p>Dites-nous qui vous êtes : on vous ouvre votre espace.</p>' + x
@@ -1311,7 +1335,7 @@ audio{display:block;width:100%;margin-top:3.5px}
     var c = ev && ev.target && ev.target.closest ? ev.target : null; if (!c) return;
     var t = c.closest('[data-a]'); if (!t) return;
     var a = t.getAttribute('data-a'), v = t.getAttribute('data-v'), acc = (copie && copie.accueil) || {}, x;
-    if (/^(p_|changer)/.test(a)) return clicPorte(ev, a);
+    if (/^(p_|changer)/.test(a)) return clicPorte(ev, a, v);
     if (a === 'aller') { ev.preventDefault(); x = t.getAttribute('data-q'); if (ecran === 'site' || ecran === 'parler') { PJ = []; O.pjmsg = ''; } aller(v, x ? { k: 'q', v: x } : null); return; }
     if (a === 'retour') { ev.preventDefault(); PJ = []; O.pjmsg = ''; retour(); return; }
     if (a === 'regler') return regler(ev, t);
