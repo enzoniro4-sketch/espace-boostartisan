@@ -1,59 +1,234 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<title>BoostArtisan — votre espace</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#101828">
+<link rel="icon" href="data:,">
+<title>Mon espace — BoostArtisan</title>
 <style>
-  html, body { margin: 0; padding: 0; background: #F6F3EC; color: #1E1B16; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
-  .p { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 22px 40px; box-sizing: border-box; text-align: center; }
-  .m { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: #8A7B5F; font-weight: 700; margin-bottom: 18px; }
-  h1 { font-size: 28px; line-height: 1.2; margin: 0 0 12px; font-weight: 800; }
-  p { font-size: 18px; line-height: 1.45; margin: 0 0 28px; color: #3E372C; max-width: 340px; }
-  a.b { display: block; width: 100%; max-width: 340px; box-sizing: border-box; background: #1E1B16; color: #fff; text-decoration: none; font-size: 21px; font-weight: 800; padding: 20px 18px; border-radius: 16px; }
-  a.b:active { background: #000; }
-  .s { margin-top: 26px; font-size: 15px; color: #6E6350; }
-  .s a { color: #1E1B16; font-weight: 700; }
-  .w { display: inline-block; width: 22px; height: 22px; border: 3px solid #CFC6B5; border-top-color: #1E1B16; border-radius: 50%; animation: r 1s linear infinite; vertical-align: middle; margin-right: 10px; }
-  @keyframes r { to { transform: rotate(360deg); } }
-  .cache { display: none; }
+:root{--t-bg:#F4F5F7;--t-card:#FFFFFF;--t-ink:#101828;--t-ink2:#1D2939;--t-mute:#475467;--t-soft:#C8D0DC;--t-chip:#EEF2F6;--t-blue:#1849A9;--t-blue2:#123A87;--t-bluetx:#E3EAF7;--t-green:#067647;--t-dot:#47CD89;--t-amber:#FEF0C7;--t-ambertx:#93370D;--t-sk:#E4E7EC;--t-skd:#344054;--t-white:#FFFFFF;--t-edge:#D0D5DD;--disp:'Space Grotesk','Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color-scheme:light}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--t-bg);color:var(--t-ink);font:400 17px/1.5 var(--body)}
+p{margin:0}
+a{color:inherit}
+a:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
+.tel{width:100%;max-width:480px;margin:0 auto;min-height:100vh;background:var(--t-bg);color:var(--t-ink)}
+.hors{background:var(--t-amber);color:var(--t-ambertx);font:600 14px/1.4 var(--body);padding:11px 20px;padding-top:max(11px,env(safe-area-inset-top,0px));max-width:480px;margin:0 auto}
+.tete{background:var(--t-ink);color:var(--t-white);padding:24px 20px 18px;display:flex;flex-direction:column;gap:14px}
+.tete small{font:500 13px/1.4 var(--body);color:var(--t-soft);display:block}
+.tete b{font:700 25px/1.2 var(--disp);display:block;overflow-wrap:anywhere}
+.tete .m{font:400 14px/1.4 var(--body);color:var(--t-soft);display:block}
+.etat{display:flex;align-items:center;gap:12px;background:var(--t-ink2);border-radius:14px;padding:12px 14px}
+.etat i{width:12px;height:12px;border-radius:50%;background:var(--t-dot);flex-shrink:0}
+.etat strong{font:600 16px/1.3 var(--body);display:block}
+.etat span{font:400 14px/1.4 var(--body);color:var(--t-soft);display:block}
+.etat.vide i{background:var(--t-skd)}
+.etat.ko i{background:#F97066}
+.etat.att i{background:#FEC84B}
+.etat .lignes{display:flex;flex-direction:column;gap:9px;flex-grow:1;padding-block:5px}
+.frais{display:flex;align-items:center;gap:8px;font:500 13px/1.4 var(--body);color:var(--t-soft)}
+.frais i{width:8px;height:8px;border-radius:50%;background:var(--t-soft);flex-shrink:0}
+.frais.maj i{animation:pouls 1.2s ease-in-out infinite}
+.frais.ok i{background:var(--t-dot)}
+.frais.vieux{color:#FEC84B}
+.frais.vieux i{background:#FEC84B}
+@keyframes pouls{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.frais.maj i{animation:none}}
+.liste{padding:18px 14px 20px;display:flex;flex-direction:column;gap:8px}
+.liste h3{margin:0 4px 4px;font:600 15px/1.4 var(--body);color:var(--t-mute)}
+.porte{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--t-card);border-radius:16px;min-height:48px;text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
+.porte:active{opacity:.8}
+.porte .n{width:30px;height:30px;border-radius:9px;background:var(--t-chip);font:700 14px/30px var(--body);text-align:center;flex-shrink:0}
+.porte .t{display:flex;flex-direction:column;gap:2px;flex-grow:1;min-width:0}
+.porte .t b{font:600 17px/1.3 var(--body)}
+.porte .t span{font:400 14px/1.4 var(--body);color:var(--t-mute);overflow-wrap:anywhere}
+.porte .t span.ok{color:var(--t-green)}
+.porte.bleu{background:var(--t-blue);color:var(--t-white);margin-top:8px}
+.porte.bleu .n{background:var(--t-blue2);color:var(--t-white)}
+.porte.bleu .t span{color:var(--t-bluetx)}
+.sk{display:block;height:11px;border-radius:6px;background:var(--t-sk);margin-block:5px 4px}
+.tete .sk{background:var(--t-skd);margin:0}
+.souci{background:var(--t-amber);color:var(--t-ambertx);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.souci b{font:600 16px/1.35 var(--body)}
+.souci span{font:400 14px/1.45 var(--body);overflow-wrap:anywhere}
+.regler{margin:18px 14px 20px;background:var(--t-card);border-radius:18px;padding:20px 18px;display:flex;flex-direction:column;gap:10px}
+.liste .regler{margin:0 0 8px}
+.regler .lab{font:600 13px/1 var(--body);letter-spacing:.04em;text-transform:uppercase;color:var(--t-ambertx)}
+.regler strong{font:700 40px/1.05 var(--disp);font-variant-numeric:tabular-nums}
+.regler p{font-size:15px;line-height:1.45;color:var(--t-ink);overflow-wrap:anywhere}
+.regler p.d{color:var(--t-mute);font-size:14px}
+.regler .btn{display:block;text-align:center;background:var(--t-ambertx);color:var(--t-white);font:600 17px/1 var(--body);border-radius:14px;padding:16px 14px;margin-block:4px;text-decoration:none}
+.regler .plus{font:500 15px/1.4 var(--body);color:var(--t-blue);text-align:center;padding:10px}
+@media (min-width:560px){body{padding:24px 16px}.tel{min-height:0;border:1px solid var(--t-edge);border-radius:28px;overflow:hidden}.hors{border-radius:14px;margin-bottom:12px}}
 </style>
 </head>
 <body>
-<div class="p">
-  <div class="m">BoostArtisan</div>
-  <h1 id="t">Votre espace client</h1>
-  <p id="x">Appuyez sur le bouton : votre espace s'ouvre dans Chrome, en sécurité.</p>
-  <a class="b" id="b" href="#">Ouvrir mon espace</a>
-  <div class="s cache" id="s">Ça ne s'ouvre pas ? <a id="f" href="#">Appuyez ici</a>.</div>
-</div>
+<div class="hors" id="hors" role="status" hidden></div>
+<main class="tel" id="app"><div class="tete"><div><small>BoostArtisan</small><b>Votre espace</b><span class="m">Vos chiffres arrivent…</span></div></div></main>
+<noscript><p style="padding:20px">Cette page a besoin de JavaScript. Contactez BoostArtisan.</p></noscript>
 <script>
 (function () {
-  /* La porte d'entrée BoostArtisan (9 nov. 2026). Elle ne garde rien : le lien complet reste dans l'adresse et part tel quel vers l'espace.
-     Sur Android, les liens script.google.com sont attrapés par l'appli Google Drive (« Impossible d'ouvrir le fichier ») :
-     le bouton ouvre donc l'adresse DANS Chrome (intent, package com.android.chrome). Ailleurs (iPhone, ordinateur), l'espace s'ouvre tout seul. */
-  var PORTAIL = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec';
-  var TABLEAU = 'https://script.google.com/macros/s/AKfycbzDQYLSrRFEjoDronAiSy7mOEo3GDRHRl5AKkUcAbD7p-CUZFw1MiHEH7AIA31Eqa1p/exec';
-  var q = String(location.search || '');
-  var client = /[?&](?:j|jc)=/.test(q);
-  var cible = (client ? PORTAIL : TABLEAU) + q;
-  var ua = String(navigator.userAgent || '');
-  var android = /android/i.test(ua) || (navigator.userAgentData && String(navigator.userAgentData.platform || '').toLowerCase() === 'android');
-  var t = document.getElementById('t'), x = document.getElementById('x'), b = document.getElementById('b'), s = document.getElementById('s'), f = document.getElementById('f');
-  if (!client) { t.textContent = 'Votre page BoostArtisan'; x.textContent = android ? 'Appuyez sur le bouton : la page s\'ouvre dans Chrome.' : 'La page s\'ouvre…'; b.textContent = 'Ouvrir ma page'; }
-  f.setAttribute('href', cible);
-  if (android) {
-    var intent = 'intent://' + cible.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(cible) + ';end';
-    b.setAttribute('href', intent);
-    s.className = 's';
-  } else {
-    if (client) x.innerHTML = '<span class="w"></span>Votre espace s\'ouvre…';
-    b.setAttribute('href', cible);
-    s.className = 's';
-    setTimeout(function () { try { location.replace(cible); } catch (e) { location.href = cible; } }, 150);
+  'use strict';
+  /* L'espace BoostArtisan instantané (chantier 28, 10 nov. 2026).
+     La page montre TOUT DE SUITE la dernière copie de l'accueil gardée dans ce téléphone, puis va chercher la copie fraîche au tableau et remplace.
+     Le lien du client est la clé : il est après le « # » (jamais envoyé à l'hébergeur) et la page n'envoie pas d'origine.
+     Le téléphone ne garde que l'accueil (aucun numéro d'appelant) ; « lien invalide » efface la copie. Aucun secret ici : ce fichier est public. */
+  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', H6 = 6, H26 = 26;
+  var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  var app = document.getElementById('app'), bandeau = document.getElementById('hors');
+  var P = (function () { var o = {}; (String(location.search || '').replace(/^\?/, '') + '&' + String(location.hash || '').replace(/^#/, '')).split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i > 0) { try { o[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); } catch (x) { } } }); return o; })();
+  var J = String(P.j || '').trim(), SRC = P.src === 'enzo' ? 'enzo' : '';
+  try { if (J && /[?&]j=/.test(String(location.search || ''))) history.replaceState(null, '', location.pathname + '#j=' + encodeURIComponent(J) + (SRC ? '&src=' + SRC : '')); } catch (x) { }
+  var ANDROID = /android/i.test(String(navigator.userAgent || ''));
+  var DIRECT = API + '?j=' + encodeURIComponent(J) + (SRC ? '&src=' + SRC : '');
+  /* Derrière une porte : la page d'aujourd'hui. Sur Android, l'appli Google Drive attrape les liens script.google.com : on ouvre donc DANS Chrome. */
+  var LIEN = ANDROID ? 'intent://' + DIRECT.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(DIRECT) + ';end' : DIRECT;
+  var K = (function () { var h = 5381; for (var i = 0; i < J.length; i++) h = ((h << 5) + h + J.charCodeAt(i)) >>> 0; return 'ba1:' + h.toString(36) + ':' + J.length; })();
+  var copie = null, ligne = '', horsR = false, essais = 0, enCours = false, suites = [], MSG = '', vuDabord = false, dernier = 0, minuteur = null;
+
+  function e(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function maj1(s) { s = String(s || ''); return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+  function euros(n) { n = Math.round((Number(n) || 0) * 100) / 100; var s; try { s = n.toLocaleString('fr-FR', { maximumFractionDigits: 2 }); } catch (x) { s = String(n).replace('.', ','); } return s + ' €'; }
+  function hm(h, m) { return h + ' h ' + m; }
+  function parties(x) { var r = {}; new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(x).forEach(function (p) { r[p.type] = p.value; }); return r; }
+  function heureParis(iso) { try { var d = new Date(iso); if (isNaN(d.getTime())) return ''; var o = parties(d), a = parties(new Date()); return (o.day === a.day && o.month === a.month ? 'de ' : 'du ' + o.day + '/' + o.month + ' à ') + hm(o.hour, o.minute); } catch (x) { return ''; } }
+  function quandReleve(s) { var m = /(\d{4})-(\d\d)-(\d\d)(?:[ T](\d\d):(\d\d))?/.exec(String(s || '')); if (!m) return ''; return (+m[3]) + '/' + (+m[2]) + (m[4] ? ' à ' + hm(m[4], m[5]) : ''); }
+  function jourMois(s) { var m = /(\d{4})-(\d\d)-(\d\d)/.exec(String(s || '')); if (!m) return String(s || ''); return (+m[3] === 1 ? '1er' : String(+m[3])) + ' ' + MOIS[+m[2] - 1]; }
+  function point(s) { s = String(s || '').trim(); return /[.!?…]$/.test(s) ? s : s + '.'; }
+  function garder(c) { try { localStorage.setItem(K, JSON.stringify(c)); } catch (x) { } }
+  function reprise() { try { var c = JSON.parse(localStorage.getItem(K) || 'null'); return c && c.ok === true && c.v === 1 ? c : null; } catch (x) { return null; } }
+  function oublier() { try { localStorage.removeItem(K); } catch (x) { } }
+  /* L'âge du relevé de Google, compté sur l'horloge du téléphone depuis la réception : une vieille copie vieillit toute seule. */
+  function ageReleve(c) { if (!c || c.releve_age_h == null || !c.releve_le) return null; return Number(c.releve_age_h) + Math.max(0, Date.now() - (Number(c.recu) || Date.now())) / 36e5; }
+  function estFrais() { return !!(copie && copie.recu && ligne === 'ok' && Date.now() - copie.recu < 300000); }
+
+  function ligneFrais(c) {
+    var a = ageReleve(c), g = !(c.ferme && !c.accueil), t, vieux = false, h;
+    if (g && a === null) { t = 'Chiffres de Google : pas lus'; vieux = true; }
+    else if (g && a > H26) { t = 'Chiffres de Google : pas lus depuis le ' + quandReleve(c.releve_le); vieux = true; }
+    else if (g && a > H6) { t = 'Chiffres de Google du ' + quandReleve(c.releve_le); vieux = true; }
+    else { h = heureParis(c.calcule_le); t = h ? 'Chiffres ' + h : 'Chiffres gardés dans ce téléphone'; }
+    var s = ligne === 'maj' ? ' · mise à jour…' : ligne === 'ok' ? (vieux ? '' : ' · à jour') : ligne === 'tard' ? ' · pas encore à jour' : '';
+    return '<div class="frais' + (ligne === 'maj' ? ' maj' : ligne === 'ok' && !vieux ? ' ok' : '') + (vieux ? ' vieux' : '') + '"><i></i><span>' + e(t + s) + '</span></div>';
   }
+  function tete(c, corps) {
+    return '<div class="tete"><div><small>' + (c ? 'Bonjour' : 'BoostArtisan') + '</small><b>' + e(c && c.nom ? c.nom : 'Votre espace') + '</b><span class="m">' + e(c ? [maj1(c.metier), c.ville].filter(Boolean).join(' · ') : (ligne === 'tard' ? 'Vos chiffres tardent. Nouvel essai dans un instant.' : 'Vos chiffres arrivent…')) + '</span></div>' + corps + (c ? ligneFrais(c) : '') + '</div>';
+  }
+  function pub(a) {
+    var p = (a && a.pub) || {}, t = String(p.texte || '');
+    if (p.arret) return { phrase: 'Votre publicité est arrêtée.', court: 'Arrêtée', cls: 'ko' };
+    if (p.active && p.demarrage) return { phrase: 'Votre publicité démarre.', court: 'Elle démarre', cls: '' };
+    if (p.active) return { phrase: 'Votre publicité tourne.', court: 'Elle tourne', cls: '' };
+    if (/^Prête/i.test(t)) return { phrase: 'Votre publicité est prête : il manque votre carte bancaire.', court: 'Prête', cls: 'att' };
+    if (/^En préparation/i.test(t)) return { phrase: 'Votre publicité est en préparation.', court: 'En préparation', cls: 'att' };
+    return { phrase: 'Votre publicité est arrêtée.', court: 'Arrêtée', cls: 'ko' };
+  }
+  function porte(n, titre, sous, cls, vert) {
+    return '<a class="porte' + (cls ? ' ' + cls : '') + '" href="' + e(LIEN) + '" rel="noreferrer"><span class="n">' + n + '</span><span class="t"><b>' + e(titre) + '</b>' + (sous === null ? '<em class="sk" style="width:' + (52 + n * 5) + '%"></em>' : '<span' + (vert ? ' class="ok"' : '') + '>' + e(sous) + '</span>') + '</span></a>';
+  }
+  function portes(c, lu, Pb, n) {
+    var a = c ? (c.accueil || {}) : null, v = !a;   /* v = la première fois : des traits gris à la place des chiffres */
+    return porte(1, 'Mes appels et demandes', v ? null : 'Appels et formulaires' + (lu ? ' · ' + n + ' ce mois-ci' : ''))
+      + porte(2, 'Ma publicité', v ? null : maj1((lu ? Pb.court + ' · ' : '') + 'résultats, pause'), '', !v && lu && Pb.cls === '')
+      + porte(3, 'Ce que je paie', 'Google et BoostArtisan')
+      + porte(4, 'Mon budget', v ? null : maj1((a.budget_jour > 0 ? euros(a.budget_jour) + ' par jour · ' : '') + 'le monter ou le baisser'))
+      + porte(5, 'Ma zone', v ? null : ([c.ville, a.rayon_km > 0 ? a.rayon_km + ' km autour' : ''].filter(Boolean).join(' · ') || 'Voir ma zone'))
+      + porte(6, 'Mon site et mon numéro', v ? null : (a.domaine || 'Site en préparation'))
+      + porte(7, 'Nous parler', 'Une question ? Réponse tout de suite', 'bleu');
+  }
+  function carteRegler(c, ferme) {
+    var r = c.a_regler || {}, m = euros(r.montant), ech = jourMois(r.echeance), note = MSG || (ferme ? 'Votre espace se rouvre dès le paiement.' : '');
+    var h = '<div class="regler"><span class="lab">À régler</span><strong>' + e(m) + '</strong><p>Facture BoostArtisan' + (r.periode ? ' ' + e(r.periode) : '') + (ech ? ', à régler avant le ' + e(ech) : '') + '.</p>';
+    if (r.detail) h += '<p class="d">' + e(point(r.detail)) + '</p>';
+    h += r.lien ? '<a class="btn" href="' + e(r.lien) + '" data-a="regler" rel="noreferrer">Régler ' + e(m) + '</a>' : '<a class="btn" href="' + e(LIEN) + '" rel="noreferrer">Voir comment régler</a>';
+    if (note) h += '<p class="d" role="status">' + e(note) + '</p>';
+    if (ferme && c.refermable && c.accueil) h += '<a class="plus" href="#" data-a="voir">Voir mon espace d\'abord ›</a>';
+    return h + '</div>';
+  }
+  function accueil(c) {
+    var a = c.accueil || {}, age = ageReleve(c), lu = age !== null && age <= H26, Pb = pub(a), n = Math.round(Number(a.demandes_mois) || 0);
+    var dem = n > 1 ? n + ' demandes reçues ce mois-ci.' : n === 1 ? '1 demande reçue ce mois-ci.' : 'Aucune demande reçue ce mois-ci.';
+    var etat = lu ? '<div class="etat' + (Pb.cls ? ' ' + Pb.cls : '') + '"><i></i><div><strong>' + e(Pb.phrase) + '</strong><span>' + e(dem) + '</span></div></div>'
+      : '<div class="etat vide"><i></i><div><strong>Publicité : pas lu.</strong><span>' + (age === null ? 'Le relevé de Google manque.' : 'Le relevé de Google date de plus d\'un jour.') + '</span></div></div>';
+    var h = tete(c, etat) + '<div class="liste">';
+    if (c.a_regler && !c.ferme) h += carteRegler(c, false);
+    if (a.alerte && (a.alerte.titre || a.alerte.texte)) h += '<div class="souci"><b>' + e(a.alerte.titre) + '</b><span>' + e(a.alerte.texte) + '</span></div>';
+    return h + '<h3>Où voulez-vous aller ?</h3>' + portes(c, lu, Pb, n) + '</div>';
+  }
+  function rendre() {
+    var h;
+    if (!copie) h = tete(null, '<div class="etat vide"><i></i><div class="lignes"><em class="sk" style="width:58%"></em><em class="sk" style="width:74%"></em></div></div>') + '<div class="liste"><h3>Où voulez-vous aller ?</h3>' + portes(null) + '</div>';
+    else if (copie.ferme && !(copie.refermable && copie.accueil && vuDabord)) h = tete(copie, '') + carteRegler(copie, true);
+    else h = accueil(copie);
+    app.innerHTML = h;
+    try { document.title = 'Mon espace — ' + (copie && copie.nom ? copie.nom : 'BoostArtisan'); } catch (x) { }
+    bandeau.hidden = !horsR;
+    if (horsR) bandeau.textContent = 'Pas de réseau · ' + (copie ? 'chiffres ' + (heureParis(copie.calcule_le) || 'gardés dans ce téléphone') : 'vos chiffres arriveront dès qu\'il revient');
+  }
+  function message(titre, texte) {
+    app.innerHTML = '<div class="tete"><div><small>BoostArtisan</small><b>Votre espace</b></div></div><div class="regler"><span class="lab">' + e(titre) + '</span><p>' + e(texte) + '</p></div>';
+    bandeau.hidden = true;
+  }
+  function dire(t) { MSG = t; rendre(); }
+  function plusTard() {
+    var D = [4, 10, 20, 30, 30, 30]; essais++;
+    if (essais <= D.length) { ligne = 'maj'; minuteur = setTimeout(function () { minuteur = null; chercher(); }, D[essais - 1] * 1000); } else ligne = 'tard';
+    rendre();
+  }
+  function horsReseau() {
+    horsR = true; ligne = ''; rendre();
+    if (essais < 8) { essais++; minuteur = setTimeout(function () { minuteur = null; chercher(); }, 15000); }
+  }
+  function chercher(suite) {
+    if (suite) suites.push(suite);
+    if (enCours) return;
+    enCours = true; dernier = Date.now();
+    if (minuteur) { clearTimeout(minuteur); minuteur = null; }
+    if (ligne !== 'maj') { ligne = 'maj'; rendre(); }
+    var ctl = null, garde = null;
+    try { ctl = new AbortController(); garde = setTimeout(function () { try { ctl.abort(); } catch (x) { } }, 45000); } catch (x) { ctl = null; }
+    var fin = function (etat) { if (garde) clearTimeout(garde); enCours = false; var S = suites; suites = []; S.forEach(function (f) { try { f(etat); } catch (x) { } }); };
+    var opt = { method: 'GET', credentials: 'omit', cache: 'no-store', redirect: 'follow', referrerPolicy: 'no-referrer' };
+    if (ctl) opt.signal = ctl.signal;
+    fetch(API + '?x=copie&j=' + encodeURIComponent(J), opt)
+      .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
+      .then(function (c) {
+        if (c && c.ok === true && c.v === 1) { c.recu = Date.now(); copie = c; essais = 0; horsR = false; ligne = 'ok'; garder(c); rendre(); fin('ok'); }
+        else if (c && c.erreur === 'lien invalide') { oublier(); copie = null; message('Lien invalide', 'Contactez BoostArtisan pour recevoir votre lien.'); fin('invalide'); }
+        else { plusTard(); fin('pasprete'); }
+      })
+      .catch(function () { if (navigator.onLine === false) { horsReseau(); fin('reseau'); } else { plusTard(); fin('pasprete'); } });
+  }
+  /* Argent : jamais d'action sur un vieux chiffre. « Régler » touché avant l'arrivée des chiffres frais = on revérifie le montant d'abord. */
+  function clic(ev) {
+    var t = ev && ev.target && ev.target.closest ? ev.target.closest('[data-a]') : null; if (!t) return;
+    var a = t.getAttribute('data-a');
+    if (a === 'voir') { ev.preventDefault(); vuDabord = true; MSG = ''; rendre(); return; }
+    if (a !== 'regler' || estFrais()) return;
+    ev.preventDefault();
+    var avant = copie && copie.a_regler ? copie.a_regler.montant : null;
+    dire('Vérification du montant…');
+    chercher(function (etat) {
+      var r = copie && copie.a_regler;
+      if (etat === 'invalide') return;
+      if (etat !== 'ok') { dire(etat === 'reseau' ? 'Pas de réseau : le montant ne peut pas être vérifié. Réessayez dans un instant.' : 'Le montant n\'a pas pu être vérifié. Réessayez dans un instant.'); return; }
+      if (!r || !r.lien) { dire(''); return; }
+      if (r.montant !== avant) { dire('Le montant a changé : ' + euros(r.montant) + '. Appuyez de nouveau pour régler.'); return; }
+      location.href = r.lien;
+    });
+  }
+
+  if (J.length < 8) { message('Lien incomplet', 'Ouvrez le lien reçu par SMS ou par e-mail. Sinon, contactez BoostArtisan.'); return; }
+  copie = reprise(); ligne = 'maj'; rendre();
+  app.addEventListener('click', clic);
+  chercher();
+  window.addEventListener('online', function () { if (horsR || !estFrais()) { essais = 0; chercher(); } });
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && Date.now() - dernier > 60000) { essais = 0; chercher(); } });
+  try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function () { }); } catch (x) { }
 })();
 </script>
 </body>
