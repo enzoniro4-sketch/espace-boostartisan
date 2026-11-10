@@ -234,7 +234,7 @@ audio{display:block;width:100%;margin-top:4px}
      Le téléphone et le guichet ne gardent que la copie PUBLIQUE : aucun numéro, aucun e-mail, aucun lien de paiement. Les numéros, le fil et les liens viennent
      du tableau seulement et restent en mémoire vive (« vif »). Le lien du client est la clé : il est après le « # » (jamais envoyé à l'hébergeur).
      Les actions appellent les MÊMES fonctions du tableau que l'ancienne page. Aucun secret ici : ce fichier est public. */
-  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '03139a7c14', H2 = 2, H6 = 6, H26 = 26;
+  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '4287746601', H2 = 2, H6 = 6, H26 = 26;
   var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'], MOISC = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'], JOURS = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
   var app = document.getElementById('app'), bandeau = document.getElementById('hors');
   function params() { var o = {}; (String(location.search || '').replace(/^\?/, '') + '&' + String(location.hash || '').replace(/^#/, '')).split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i > 0) { try { o[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); } catch (x) { } } }); return o; }
@@ -495,7 +495,7 @@ audio{display:block;width:100%;margin-top:4px}
   /* le bouton de l'alerte : chez Google quand Google réclame un paiement (lien donné par le tableau), sinon poser la question */
   function boutonCause(a) {
     if (a.bouton === 'google') { var l = g(vif, 'alerte.lien') || g(vif, 'lien_google') || ''; return l ? '<a class="btn ambre" style="margin-top:8px" href="' + e(l) + '" target="_blank" rel="noopener noreferrer">' + e(g(vif, 'alerte.bouton') || 'Ouvrir ma facturation Google Ads') + '</a>' : ''; }
-    if (a.bouton === 'parler') return '<button type="button" class="btn ambre" style="margin-top:8px" data-a="aller" data-v="parler">Demander pourquoi</button>';
+    if (a.bouton === 'parler') { var cd = String(g(a, 'pub.code') || ''), qC = /^plus/.test(cd) ? 'Pourquoi mes annonces ne s\'affichent plus ?' : /^pause/.test(cd) ? 'Pourquoi ma publicité est en pause ?' : /^arret/.test(cd) ? 'Pourquoi ma publicité est arrêtée ?' : 'Que se passe-t-il avec ma publicité ?'; return '<button type="button" class="btn ambre" style="margin-top:8px" data-a="aller" data-v="parler" data-q="' + e(qC) + '">Demander pourquoi</button>'; }
     return '';
   }
   function squelette() { return tete(null, '<div class="etat vide"><i></i><div class="lignes"><em class="sk" style="width:58%"></em><em class="sk" style="width:74%"></em></div></div>') + '<div class="liste"><h3>Où voulez-vous aller ?</h3>' + portes(null) + '</div>'; }
