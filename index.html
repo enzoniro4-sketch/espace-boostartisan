@@ -234,7 +234,7 @@ audio{display:block;width:100%;margin-top:4px}
      Le téléphone et le guichet ne gardent que la copie PUBLIQUE : aucun numéro, aucun e-mail, aucun lien de paiement. Les numéros, le fil et les liens viennent
      du tableau seulement et restent en mémoire vive (« vif »). Le lien du client est la clé : il est après le « # » (jamais envoyé à l'hébergeur).
      Les actions appellent les MÊMES fonctions du tableau que l'ancienne page. Aucun secret ici : ce fichier est public. */
-  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '4287746601', H2 = 2, H6 = 6, H26 = 26;
+  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '480cbfd4eb', H2 = 2, H6 = 6, H26 = 26;
   var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'], MOISC = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'], JOURS = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
   var app = document.getElementById('app'), bandeau = document.getElementById('hors');
   function params() { var o = {}; (String(location.search || '').replace(/^\?/, '') + '&' + String(location.hash || '').replace(/^#/, '')).split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i > 0) { try { o[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); } catch (x) { } } }); return o; }
@@ -698,7 +698,7 @@ audio{display:block;width:100%;margin-top:4px}
     var h = haut('Ma publicité') + '<div class="corps">' + carteEtat(c);
     h += carte('<h2>Ce qu\'on surveille pour vous</h2><div class="suivi">' + suivi('Annonces', lu ? (S.annonces || Pb.court || '—') : 'pas lu', lu ? (S.niveau || 'info') : 'info') + suivi('Site', a.site_ok ? 'en ligne' : a.site_pret ? 'vérification' : 'en préparation', a.site_ok ? 'ok' : a.site_pret ? 'warn' : 'info') + suivi('Carte chez Google', S.paiement_google ? 'paiement à régler' : S.carte === 'ok' ? 'enregistrée' : S.carte === 'non' ? 'à ajouter' : 'non vérifiée', S.paiement_google ? 'bad' : S.carte === 'ok' ? 'ok' : S.carte === 'non' ? 'bad' : 'warn') + '</div>');
     h += resultats(c);
-    h += '<button type="button" class="porte" data-a="aller" data-v="pause"><span class="t"><b>Pause ou reprise</b><span>' + (S.tourne ? 'Mettre en pause ou arrêter ma publicité' : 'Relancer ma publicité') + '</span></span>' + ICO.ch + '</button>';
+    if (String(g(a, 'pub.code') || '') !== 'preparation') h += '<button type="button" class="porte" data-a="aller" data-v="pause"><span class="t"><b>Pause ou reprise</b><span>' + (S.tourne ? 'Mettre en pause ou arrêter ma publicité' : 'Relancer ma publicité') + '</span></span>' + ICO.ch + '</button>';
     h += '<button type="button" class="porte" data-a="aller" data-v="budget"><span class="t"><b>Budget</b><span>' + e(a.budget_jour > 0 ? euros(a.budget_jour) + ' par jour' : 'Le voir, le changer') + '</span></span>' + ICO.ch + '</button>';
     h += '<button type="button" class="porte" data-a="aller" data-v="zone"><span class="t"><b>Zone</b><span>' + e([c.ville, a.rayon_lu && a.rayon_km > 0 ? a.rayon_km + ' km autour' : ''].filter(Boolean).join(' · ') || 'La voir, la changer') + '</span></span>' + ICO.ch + '</button>';
     h += carte('<h2 class="fort">Moins d\'appels que d\'habitude ?</h2><p>Posez la question : l\'assistant regarde vos chiffres et vous répond.</p><button type="button" class="btn" data-a="aller" data-v="parler" data-q="Pourquoi j\'ai moins d\'appels ?">Demander pourquoi</button>');
@@ -752,7 +752,7 @@ audio{display:block;width:100%;margin-top:4px}
       h += '<div class="chiffre"><b class="moy">' + e(euros(B.active ? q.montant : 0)) + '</b><small>' + (B.active ? 'quinzaine en cours' : 'pas de facture') + '</small></div>';
       h += '<div class="ligne"><span>' + e(maj1(q.periode)) + '</span><b>' + e(pl(q.facturees, B.active ? 'facturée' : 'valable')) + '</b></div>' + (q.google_montre ? '<div class="ligne"><span>Google Ads en compte</span><b>' + e(q.google) + '</b></div>' : '') + '<div class="ligne"><span>Prix</span><b>' + e(euros(D.prix)) + ' par demande valable</b></div>';
       h += B.active ? '<div class="ligne"><span>Prochain relevé</span><b>le ' + e(jourMois(q.prochain_releve)) + '</b></div>' : '<p>La facturation n\'est pas encore activée : aucune facture pour le moment. Vous voyez déjà vos demandes et ce qui serait compté.</p>';
-      if (ca.enregistree) h += '<div class="ligne"><span>Votre carte</span><b style="color:var(--t-green)">' + (lib ? e(lib) + ' ' : '') + 'enregistrée</b></div>';
+      if (ca.enregistree) h += '<div class="ligne"><span>Votre carte</span><b style="color:var(--t-green)">' + (lib && !/^link$/i.test(lib) ? e(lib) + ' ' : '') + 'enregistrée</b></div>';
       else if (ca.peut) h += '<div class="boite ambre"><b>Enregistrez votre carte pour ne plus avoir à y penser</b>Vos relevés seront réglés tout seuls. Rien n\'est prélevé aujourd\'hui.</div>' + bouton('carte', 'Enregistrer ma carte', 'data-a="carte"', 'gris');
       if (B.active && f && f.releve) {
         var R = tableau(B.releves).filter(function (x) { return String(x.id) === String(f.numero); })[0], sF = R ? relStatut(R, B) : (f.statut === 'payée' ? ['vert', 'payée', ''] : B.bloque ? ['rouge', 'à payer', ''] : ['ambre', String(f.statut || ''), '']);
@@ -833,12 +833,14 @@ audio{display:block;width:100%;margin-top:4px}
   var TRANSMIS = 'Transmis à Enzo · sa réponse arrive ici, dans votre espace';
   function etape(cls, t) { return '<div class="etape' + (cls ? ' ' + cls : '') + '"><i></i>' + e(t) + '</div>'; }
   function hLocale() { try { var o = parties(new Date(maintenant())); return hm(o.hour, o.minute); } catch (x) { return ''; } }
+  /* ce que le client a demandé, écrit une seule fois : « Relancer ma publicité » (et pas le nom du bouton suivi des mêmes mots) */
+  function bulleDemande(Q, ty) { var tn = String(Q.type_nom || ''), tx = String(Q.texte || ''); if (ty === 'question' || ty === 'humain' || ty === 'autre' || !tn) return tx; var court = tx.replace(/\s*\(demandé par le bouton de l['’]espace\)\s*$/, ''); var mot = tn.split(' ')[0].toLowerCase(); return court.toLowerCase().indexOf(tn.toLowerCase()) === 0 || (mot.length > 3 && court.toLowerCase().indexOf(mot + ' ') === 0) ? court : tn + ' · ' + court; }   /* « Monter mon budget » + « Monter le budget à 30 € par jour… » = la 2e phrase seule */
   function fil() {
     var D = vif ? tableau(vif.demandes).slice().reverse() : [], h = '', jour = '';
     D.forEach(function (Q) {
       var st = String(Q.statut || ''), ty = String(Q.type || ''), j = String(Q.recu_le || '').slice(0, 10), hh = String(Q.recu_le || '').slice(11, 16).replace(':', ' h ');
       if (j !== jour) { jour = j; h += '<div class="jour">' + e(quandLisible(j)) + '</div>'; }
-      h += '<div class="bulle moi">' + e(((ty === 'question' || ty === 'humain' || ty === 'autre') ? '' : String(Q.type_nom || '') + ' · ') + String(Q.texte || '')) + '<small>' + e(hh) + '</small></div>';
+      h += '<div class="bulle moi">' + e(bulleDemande(Q, ty)) + '<small>' + e(hh) + '</small></div>';
       var enzo = '<div class="bulle rep enzo">' + e((st === 'faite' ? 'Fait ✓ — ' : st === 'refusee' ? 'Pas possible — ' : '') + String(Q.reponse || '')) + '<small>Enzo' + (Q.traite_le ? ' · ' + e(jmh(Q.traite_le)) : '') + '</small></div>', ia = '<div class="bulle rep">' + e(Q.reponse) + '<small>Assistant · ' + e(hh) + ' · d\'après les chiffres de votre espace</small></div>';
       if (ty === 'humain') h += etape('vert', 'Enzo est prévenu.');
       else if (Q.reponse && (st === 'repondu' || st === 'faite' || st === 'refusee')) h += enzo;
