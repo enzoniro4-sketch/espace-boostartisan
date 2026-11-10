@@ -254,7 +254,7 @@ audio{display:block;width:100%;margin-top:3.5px}
      Le téléphone et le guichet ne gardent que la copie PUBLIQUE : aucun numéro, aucun e-mail, aucun lien de paiement. Les numéros, le fil et les liens viennent
      du tableau seulement et restent en mémoire vive (« vif »). Le lien du client est la clé : il est après le « # » (jamais envoyé à l'hébergeur).
      Les actions appellent les MÊMES fonctions du tableau que l'ancienne page. Aucun secret ici : ce fichier est public. */
-  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '7f06c8c433', H2 = 2, H6 = 6, H26 = 26;
+  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '6af0ab8641', H2 = 2, H6 = 6, H26 = 26;
   var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'], MOISC = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'], JOURS = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
   var app = document.getElementById('app'), bandeau = document.getElementById('hors');
   function params() { var o = {}; (String(location.search || '').replace(/^\?/, '') + '&' + String(location.hash || '').replace(/^#/, '')).split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i > 0) { try { o[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); } catch (x) { } } }); return o; }
@@ -1129,7 +1129,7 @@ audio{display:block;width:100%;margin-top:3.5px}
   }
   function viser(id) { try { var n = document.getElementById(id); if (n && n.focus && app.contains(n)) { n.focus({ preventScroll: true }); var l = String(n.value || '').length; if (n.setSelectionRange) n.setSelectionRange(l, l); } } catch (x) { } }
   /* ce que le téléphone a rempli tout seul (mot de passe retenu, code proposé par le clavier) se relit dans les champs au moment d'envoyer */
-  function relire() { try { [['p-saisie', 'psaisie'], ['p-code', 'pcode'], ['p-mdp', 'pmdp'], ['r-nom', 'rnom'], ['r-tel', 'rtel']].forEach(function (c) { var n = document.getElementById(c[0]); if (n && typeof n.value === 'string' && app.contains(n)) F[c[1]] = n.value; }); } catch (x) { } }
+  function relire() { try { [['p-saisie', 'psaisie'], ['p-code', 'pcode'], ['p-mdp', 'pmdp'], ['r-nom', 'rnom'], ['r-tel', 'rtel'], ['i-mail', 'imail'], ['i-tel', 'itel']].forEach(function (c) { var n = document.getElementById(c[0]); if (n && typeof n.value === 'string' && app.contains(n)) F[c[1]] = n.value; }); } catch (x) { } }
   function pAppel(cle, corps, msg, suite) {
     if (A[cle] && A[cle].etat === 'envoi') return;
     var gen = GEN, po = PO; A[cle] = { etat: 'envoi', msg: msg }; rendre();
@@ -1167,12 +1167,33 @@ audio{display:block;width:100%;margin-top:3.5px}
         F.pcode = ''; O.prien = false; A.rappel = {}; garderCode(); rendre(); hautDePage(); viser('p-code');
       }
       else if (r.ok === true && r.etape === 'mdp') { PO = { e: 'mdp', saisie: saisie, choix: choix || '', nom: nom || '' }; F.pmdp = ''; O.pvoir = false; rendre(); hautDePage(); viser('p-mdp'); }
+      else if (r.ok === true && r.etape === 'inscrire') { PO = { e: 'inscrire', saisie: saisie, choix: choix || '', nom: nom || '', numero: !!r.numero }; F.imail = ''; if (F.itel === undefined) F.itel = ''; A.rappel = {}; rendre(); hautDePage(); viser(r.numero ? 'i-tel' : 'i-mail'); }   /* pas d'e-mail chez nous : il écrit le sien */
       else if (r.ok === true && r.etape === 'inconnu') { PO = { e: 'porte', saisie: saisie, inc: { plusieurs: !!r.plusieurs, sans: !!r.sans_contact } }; F.psaisie = saisie; A.rappel = {}; preRappel(r.plusieurs ? '' : (r.sans_contact && nom ? nom : saisie)); rendre(); }
       else {
         if (r.recommencer) { oublierCode(); PO = { e: 'porte', saisie: saisie }; F.psaisie = saisie; }   /* son choix a plus de 15 minutes : il redit qui il est */
         A.porte = { etat: 'rate', msg: point(r.erreur || 'Réessayez dans une minute') };
         if (r.bloque && PO && (PO.e === 'porte' || PO.e === 'qui')) { PO = { e: 'porte', saisie: saisie, inc: { bloque: true } }; F.psaisie = saisie; preRappel(nom || saisie); }
         rendre();
+      }
+    });
+  }
+  /* 1 bis. nous n'avons pas son e-mail : il l'écrit (avec son portable s'il n'a pas été trouvé par lui), le code part à cet e-mail */
+  function pInscrire() {
+    if (!PO || PO.e !== 'inscrire') return;
+    var po = PO, mail = String(F.imail || '').replace(/\s/g, ''), tel = String(F.itel || '').trim().slice(0, 30);
+    if (po.numero && tel.replace(/\D/g, '').length < 9) { A.porte = { etat: 'rate', msg: 'Écrivez votre numéro de portable, par exemple 06 12 34 56 78.' }; rendre(); viser('i-tel'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { A.porte = { etat: 'rate', msg: 'Écrivez votre adresse e-mail, par exemple nom@gmail.com.' }; rendre(); viser('i-mail'); return; }
+    pAppel('porte', { f: 'inscrire', choix: po.choix, mail: mail, tel: po.numero ? tel : '', a: idAppareil() }, 'Un instant…', function (r) {
+      if (r.ok === true && r.etape === 'code' && r.ref) {
+        PO = { e: 'code', saisie: mail, choix: po.choix, nom: po.nom, ref: String(r.ref), canal: 'mail', vers: String(r.vers || ''), minutes: Number(r.minutes) || 10, t: Date.now() };
+        F.pcode = ''; O.prien = false; A.rappel = {}; garderCode(); rendre(); hautDePage(); viser('p-code');
+      }
+      else if (r.ok === true && r.etape === 'inconnu') { PO = { e: 'porte', saisie: po.saisie, inc: { sans: true } }; F.psaisie = po.saisie; preRappel(po.nom || po.saisie); rendre(); }
+      else {
+        A.porte = { etat: 'rate', msg: point(r.erreur || 'Réessayez dans une minute') };
+        if (r.recommencer) { PO = { e: 'porte', saisie: po.saisie }; F.psaisie = po.saisie; }
+        else if (r.bloque) { PO = { e: 'porte', saisie: po.saisie, inc: { bloque: true } }; F.psaisie = po.saisie; preRappel(po.nom || po.saisie); }
+        rendre(); if (PO.e === 'inscrire') viser(po.numero && /numéro/.test(String(r.erreur || '')) ? 'i-tel' : 'i-mail');
       }
     });
   }
@@ -1244,6 +1265,7 @@ audio{display:block;width:100%;margin-top:3.5px}
     if (a === 'p_renvoyer') { if (PO.e === 'code' && (PO.saisie || PO.choix)) pDemander(PO.saisie, true, PO.choix, PO.nom); return; }
     if (a === 'p_oublie') { if (PO.e === 'mdp') pDemander(PO.saisie, true, PO.choix, PO.nom); return; }
     if (a === 'p_oui') { x = PO.e === 'qui' ? PO.liste[Number(v) || 0] : null; if (x && x.c) pDemander(PO.saisie, false, x.c, x.nom); return; }   /* « Oui, c'est moi » : seulement maintenant le code part */
+    if (a === 'p_rappeler') { if (PO.e !== 'inscrire') return; x = PO; PO = { e: 'porte', saisie: x.saisie, inc: { sans: true } }; F.psaisie = x.saisie; A.porte = {}; A.rappel = {}; preRappel(x.nom || x.saisie); rendre(); hautDePage(); viser('r-tel'); return; }
     if (a === 'p_non') { if (PO.e !== 'qui') return; x = PO.saisie; PO = { e: 'porte', saisie: x, inc: { non: true } }; F.psaisie = x; A.porte = {}; A.rappel = {}; preRappel(x); rendre(); hautDePage(); viser('p-saisie'); return; }
     if (a === 'p_voir') { relire(); O.pvoir = !O.pvoir; rendre(); viser('p-mdp'); return; }
     if (a === 'p_tard') { if (PO.e === 'choisir') finPorte(); return; }
@@ -1260,6 +1282,7 @@ audio{display:block;width:100%;margin-top:3.5px}
     if (s === 'p_entrer') return pEntrer();
     if (s === 'p_poser') return pPoser();
     if (s === 'p_rappel') return pRappel();
+    if (s === 'p_inscrire') return pInscrire();
   }
   /* ---------- les écrans de la porte : mêmes écritures, mêmes champs et mêmes boutons que le reste de l'espace ---------- */
   function surIphone() { try { var u = String(navigator.userAgent || ''); if (!(/iPhone|iPad|iPod/.test(u) || (/Macintosh/.test(u) && navigator.maxTouchPoints > 1))) return false; if (navigator.standalone === true) return false; return !(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches); } catch (x) { return false; } }
@@ -1291,6 +1314,12 @@ audio{display:block;width:100%;margin-top:3.5px}
         h += carte('<h2 class="fort">Laquelle est la vôtre ?</h2><p>Touchez votre entreprise.</p><div class="choix">' + PO.liste.map(function (c, i) { var l2 = [ligne2(c), c.contact].filter(Boolean).join(' · '); return '<button type="button" class="deux' + occ + '" data-a="p_oui" data-v="' + i + '"><b>' + e(c.nom) + '</b>' + (l2 ? '<span>' + e(l2) + '</span>' : '') + '</button>'; }).join('') + '</div>' + pErreur('porte')
           + '<button type="button" class="lien" data-a="p_non">Aucune de celles-là</button>');
       }
+    }
+    else if (PO.e === 'inscrire') {
+      h += carte('<h2 class="fort">Votre e-mail</h2>' + (PO.nom ? '<p class="n">' + e(PO.nom) + '</p>' : '') + '<p>Nous n\'avons pas encore votre e-mail. Écrivez-le : vous recevez un code pour ouvrir votre espace.</p>' + FORM + 'p_inscrire">'
+        + (PO.numero ? '<div class="champ"><label for="i-tel">Votre numéro de portable</label><input id="i-tel" name="tel" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" data-i="itel" value="' + e(F.itel || '') + '"></div>' : '')
+        + '<div class="champ"><label for="i-mail">Votre e-mail</label><input id="i-mail" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="120" data-i="imail" value="' + e(F.imail || '') + '"></div>'
+        + pErreur('porte') + pBouton('porte', 'Recevoir mon code') + '</form><button type="button" class="lien" data-a="p_rappeler">Je préfère qu\'on me rappelle</button><button type="button" class="lien" data-a="p_retour">Ce n\'est pas moi</button>');
     }
     else if (PO.e === 'code' && PO.fini) {
       h += carte('<h2 class="fort">Votre code</h2><div class="boite rouge" role="alert">' + e(PO.msg) + '</div>' + pErreur('porte')
