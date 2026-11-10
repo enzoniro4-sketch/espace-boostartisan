@@ -1,0 +1,4 @@
+Polices servies par cette page (fichiers .woff2 de ce dossier), sous licence libre SIL Open Font License 1.1 :
+- Inter — Copyright The Inter Project Authors (https://github.com/rsms/inter)
+- Space Grotesk — Copyright The Space Grotesk Project Authors (https://github.com/floriankarsten/space-grotesk)
+Sous-ensembles (lettres du français) fournis par Google Fonts (https://fonts.google.com). Texte de la licence : https://openfontlicense.org
