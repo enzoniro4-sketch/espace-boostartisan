@@ -224,6 +224,13 @@ audio{display:block;width:100%;margin-top:3.5px}
 .voile .bte{width:100%;max-width:448px;max-height:calc(100vh - 27px);overflow:auto;background:var(--t-white);border-radius:17px;border-top:5px solid var(--t-red);padding:18.5px 17px 15.5px;display:flex;flex-direction:column;gap:10px;text-align:center}
 .voile .k{font:700 11.5px/1.3 var(--body);letter-spacing:.05em;text-transform:uppercase;color:var(--t-red)}
 .voile .x{font:400 14.5px/1.5 var(--body);white-space:pre-line;overflow-wrap:anywhere}
+.champ input[readonly]{background:var(--t-bg);color:var(--t-mute)}
+.champ input.code{font:700 25.5px/1.25 var(--disp);letter-spacing:.42em;text-align:center;padding-left:calc(12px + .42em);font-variant-numeric:tabular-nums}
+.champ .mdp{position:relative;display:block}
+.champ .mdp input{padding-right:88.5px}
+.champ .mdp button{position:absolute;top:0;right:0;height:100%;min-width:78px;border:0;background:none;color:var(--t-blue);font:600 12px/1 var(--body);padding:0 12px;border-radius:10px}
+.formu{display:flex;flex-direction:column;gap:10px;margin:0}
+.pied button{font:inherit;color:var(--t-blue);background:none;border:0;padding:0 5px;min-height:40px;text-decoration:underline}
 .pied{padding:0 17px 24px;text-align:center;font:400 11.5px/1.45 var(--body);color:var(--t-mute)}
 @media (min-width:560px){body{padding:20.5px 13.5px}.tel{min-height:0;border:1px solid var(--t-edge);border-radius:24px;overflow:hidden}.hors{border-radius:12px;margin-bottom:10px}.voile{align-items:center}}
 .champ input,.champ textarea{font-size:16px}
@@ -243,17 +250,20 @@ audio{display:block;width:100%;margin-top:3.5px}
      Le téléphone et le guichet ne gardent que la copie PUBLIQUE : aucun numéro, aucun e-mail, aucun lien de paiement. Les numéros, le fil et les liens viennent
      du tableau seulement et restent en mémoire vive (« vif »). Le lien du client est la clé : il est après le « # » (jamais envoyé à l'hébergeur).
      Les actions appellent les MÊMES fonctions du tableau que l'ancienne page. Aucun secret ici : ce fichier est public. */
-  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '30e4884927', H2 = 2, H6 = 6, H26 = 26;
+  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '72e537860f', H2 = 2, H6 = 6, H26 = 26;
   var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'], MOISC = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'], JOURS = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
   var app = document.getElementById('app'), bandeau = document.getElementById('hors');
   function params() { var o = {}; (String(location.search || '').replace(/^\?/, '') + '&' + String(location.hash || '').replace(/^#/, '')).split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i > 0) { try { o[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); } catch (x) { } } }); return o; }
   var P = params();
   var J = String(P.j || '').trim(), SRC = /^[a-z0-9_-]{1,24}$/i.test(String(P.src || '')) ? String(P.src) : '';
+  var CLE = J.length < 8;   /* le lien commun (chantier 29) : rien de personnel dans l'adresse, le téléphone se fait reconnaître ; un lien personnel abîmé passe aussi par là */
+  if (CLE) J = '';
   var ECRANS = { accueil: 1, appels: 1, pub: 1, pause: 1, paie: 1, budget: 1, zone: 1, site: 1, parler: 1 };
   var NOMS = { appels: 'Mes appels et demandes', pub: 'Ma publicité', pause: 'Pause ou reprise', paie: 'Ce que je paie', budget: 'Mon budget', zone: 'Ma zone', site: 'Mon site et mon numéro', parler: 'Nous parler' };
   var ecran = ECRANS[P.p] ? P.p : 'accueil';
   var RET = { paye: P.paye === '1' && P.session_id ? String(P.session_id) : '', carte: P.carte_ok === '1' && P.session_id ? String(P.session_id) : '' };
-  var K = (function () { var h = 5381; for (var i = 0; i < J.length; i++) h = ((h << 5) + h + J.charCodeAt(i)) >>> 0; return 'ba2:' + h.toString(36) + ':' + J.length; })();
+  function nomCopie(j) { var h = 5381; for (var i = 0; i < j.length; i++) h = ((h << 5) + h + j.charCodeAt(i)) >>> 0; return 'ba2:' + h.toString(36) + ':' + j.length; }
+  var K = CLE ? '' : nomCopie(J), GEN = 0;   /* K = le nom de la copie gardée ; GEN change quand le téléphone quitte un espace : une réponse du réseau partie avant est ignorée */
   var copie = null, vif = null, vifLe = 0, ligne = '', horsR = false, essais = 0, enCours = false, suites = [], minuteur = null, dernier = 0, encore = null, DEC = 0, vuDabord = false, visiteDite = false;
   var F = {}, A = {}, O = {}, PJ = [], FIL = [], PER = 'mois', MSG = '', BAN = null, MEQ_VU = false, PROF = 0, DEFIL = {}, ANCIENS = null, SON = {};
 
@@ -302,9 +312,9 @@ audio{display:block;width:100%;margin-top:3.5px}
   };
 
   /* ---------- la copie publique : garder, reprendre, la plus récente gagne ---------- */
-  function garder(c) { try { localStorage.setItem(K, JSON.stringify(c)); } catch (x) { } }
-  function reprise() { try { var c = JSON.parse(localStorage.getItem(K) || 'null'); return c && c.ok === true && c.v === 2 ? c : null; } catch (x) { return null; } }
-  function oublier() { try { localStorage.removeItem(K); } catch (x) { } }
+  function garder(c) { if (!K) return; try { localStorage.setItem(K, JSON.stringify(c)); } catch (x) { } }
+  function reprise() { if (!K) return null; try { var c = JSON.parse(localStorage.getItem(K) || 'null'); return c && c.ok === true && c.v === 2 ? c : null; } catch (x) { return null; } }
+  function oublier() { if (!K) return; try { localStorage.removeItem(K); } catch (x) { } }
   function prendre(c, force) {
     if (!c || c.ok !== true || c.v !== 2) return false;
     if (!force && copie && (Number(copie.calcule_ts) || 0) > (Number(c.calcule_ts) || 0)) return false;
@@ -324,26 +334,38 @@ audio{display:block;width:100%;margin-top:3.5px}
     var fini = function () { if (garde) clearTimeout(garde); };
     return fetch(url, opt).then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); }).then(function (o) { fini(); return o; }, function (x) { fini(); throw x; });
   }
-  function poster(corps, ms) { corps.action = 'espace'; corps.j = J; return appel(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(corps) }, ms || 90000); }
+  /* une action de l'espace part avec le jeton. Par le lien commun, elle attend que le téléphone soit reconnu ; après un changement d'espace, sa réponse ne revient jamais. */
+  function poster(corps, ms) {
+    var gen = GEN, partir = function () { corps.action = 'espace'; corps.j = J; return appel(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(corps) }, ms || 90000); };
+    if (!CLE) return partir();
+    var muet = function () { return new Promise(function () { }); };
+    return (J.length >= 8 ? partir() : quandJ().then(partir)).then(function (r) { return gen !== GEN ? muet() : r; }, function (x) { if (gen !== GEN) return muet(); throw x; });
+  }
   function empreinte(t) {
     try { if (!(window.crypto && crypto.subtle && window.TextEncoder)) return Promise.reject(new Error('pas de crypto')); return crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)).then(function (b) { return Array.prototype.map.call(new Uint8Array(b), function (x) { return (x < 16 ? '0' : '') + x.toString(16); }).join(''); }); } catch (x) { return Promise.reject(x); }
   }
   /* 2. le guichet : la copie publique rangée à l'adresse « empreinte du lien » ; absent ou en panne = on passe au tableau, sans rien dire */
   function guichet() {
-    if (!/^https:\/\//.test(GUICHET)) return Promise.resolve('absent');
+    if (!/^https:\/\//.test(GUICHET) || J.length < 8) return Promise.resolve('absent');
+    var gen = GEN;
     return empreinte(J).then(function (h) { return appel(GUICHET + '/c/' + h + '.json', { method: 'GET' }, 6000); }).then(function (c) {
+      if (gen !== GEN) return 'absent';
       if (c && c.ok === true && c.v === 2) { if (prendre(c)) rendre(true); return 'ok'; }
       return 'absent';
     }, function () { return 'absent'; });
   }
   /* 3 bis. la copie publique demandée au tableau (seulement quand ni le téléphone ni le guichet n'en ont une) */
   function espace() {
+    if (J.length < 8) return Promise.resolve();
+    var gen = GEN;
     return appel(API + '?x=espace&j=' + encodeURIComponent(J), { method: 'GET' }, 45000).then(function (c) {
+      if (gen !== GEN) return;
       if (c && c.ok === true && c.v === 2) { horloge(c.maintenant); if (prendre(c)) rendre(true); }
       else if (c && c.erreur === 'lien invalide') invalide();
     }, function () { });
   }
-  function invalide() { oublier(); copie = null; vif = null; if (minuteur) { clearTimeout(minuteur); minuteur = null; } message('Lien invalide', 'Contactez BoostArtisan pour recevoir votre lien.'); }
+  function invalide() { if (CLE) { versPorte(true); return; }   /* lien commun : le tableau ne connaît plus cet espace = la porte */
+    oublier(); copie = null; vif = null; if (minuteur) { clearTimeout(minuteur); minuteur = null; } message('Lien invalide', 'Contactez BoostArtisan pour recevoir votre lien.'); }
   function plusTard() {
     var D = [4, 10, 20, 30, 30, 30]; essais++;
     if (essais <= D.length) { ligne = 'maj'; minuteur = setTimeout(function () { minuteur = null; chercher(); }, D[essais - 1] * 1000); } else ligne = 'tard';
@@ -356,6 +378,7 @@ audio{display:block;width:100%;margin-top:3.5px}
   /* 3. le tableau : la vérité du moment + ce qui ne se garde nulle part (numéros, fil, liens). Une visite est comptée une seule fois par ouverture de la page. */
   function chercher(o) {
     o = o || {};
+    if (J.length < 8) { if (!PO) { if (o.suite) suites.push(o.suite); reconnaitre(); } return; }   /* lien commun : le téléphone se fait d'abord reconnaître */
     if (enCours) { if (o.frais) { encore = encore || []; if (o.suite) encore.push(o.suite); } else if (o.suite) suites.push(o.suite); return; }   /* un appel est déjà parti : un « frais » demandé pendant ce temps repart juste après */
     if (o.suite) suites.push(o.suite);
     enCours = true; dernier = Date.now();
@@ -363,26 +386,32 @@ audio{display:block;width:100%;margin-top:3.5px}
     if (ligne !== 'maj') { ligne = 'maj'; rendre(true); }
     var fin = function (etat) { enCours = false; var S = suites; suites = []; S.forEach(function (f) { try { f(etat); } catch (x) { } }); if (encore) { suites = encore; encore = null; chercher({ frais: true }); } };
     var u = API + '?x=vif&j=' + encodeURIComponent(J) + (visiteDite ? '' : '&visite=1') + (SRC ? '&src=' + encodeURIComponent(SRC) : '') + (o.frais ? '&frais=1' : '') + (RET.paye ? '&paye=1&session_id=' + encodeURIComponent(RET.paye) : '');
+    var gen = GEN;
     appel(u, { method: 'GET' }, 70000).then(function (r) {
+      if (gen !== GEN) return;
       if (r && r.ok === true && r.v === 2 && r.vif) {
         visiteDite = true; horloge(r.maintenant); vif = r.vif; vifLe = Date.now(); essais = 0; horsR = false; ligne = 'ok';
         if (RET.paye) { RET.paye = ''; BAN = vif.paye ? { c: 'vert', t: 'Paiement bien reçu, merci !', x: 'Votre espace et votre service continuent normalement.' } : { c: '', t: 'Paiement pas encore confirmé', x: 'S\'il vient d\'être fait, il apparaîtra ici dans quelques minutes.' }; }
         if (r.copie) prendre(r.copie, !!o.frais || !!vif.paye);
-        rendre(true); fin('ok');
+        rendre(true); fin('ok'); cleDuLien();
       }
       else if (r && r.erreur === 'lien invalide') { invalide(); fin('invalide'); }
       else { plusTard(); fin('pasprete'); }
-    }, function () { if (navigator.onLine === false) { horsReseau(); fin('reseau'); } else { plusTard(); fin('pasprete'); } });
+    }, function () { if (gen !== GEN) return; if (navigator.onLine === false) { horsReseau(); fin('reseau'); } else { plusTard(); fin('pasprete'); } });
   }
   /* retour de Stripe : si le tableau ne répond pas (3 essais), on arrête d'attendre et on montre l'espace tel qu'il est connu */
   function lacherPaiement() { if (RET.paye && essais >= 3) { RET.paye = ''; BAN = { c: '', t: 'Paiement pas encore confirmé', x: 'La vérification tarde. S\'il vient d\'être fait, il apparaîtra ici dans quelques minutes.' }; rendre(); } }
 
   /* ---------- se déplacer dans la page ---------- */
-  function adresse(p) { return String(location.pathname || '/') + '#j=' + encodeURIComponent(J) + (SRC ? '&src=' + encodeURIComponent(SRC) : '') + (p && p !== 'accueil' ? '&p=' + p : ''); }
+  /* par le lien commun, l'adresse ne porte jamais le jeton : il reste en mémoire vive */
+  function adresse(p) {
+    if (CLE) { var q = [SRC ? 'src=' + encodeURIComponent(SRC) : '', p && p !== 'accueil' ? 'p=' + p : ''].filter(Boolean).join('&'); return String(location.pathname || '/') + (q ? '#' + q : ''); }
+    return String(location.pathname || '/') + '#j=' + encodeURIComponent(J) + (SRC ? '&src=' + encodeURIComponent(SRC) : '') + (p && p !== 'accueil' ? '&p=' + p : '');
+  }
   var MARQ = {};
   function marque(n) { try { if (!MARQ[n] && window.performance && performance.mark) { MARQ[n] = 1; performance.mark(n); } } catch (x) { } }
   function hautDePage() { try { window.scrollTo(0, 0); } catch (x) { } }
-  function noter(quoi) { try { if (SRC === 'enzo') return; var b = JSON.stringify({ action: 'espace', f: 'visite', j: J, quoi: String(quoi).slice(0, 60) }); if (navigator.sendBeacon && typeof Blob !== 'undefined') navigator.sendBeacon(API, new Blob([b], { type: 'text/plain;charset=utf-8' })); } catch (x) { } }
+  function noter(quoi) { try { if (SRC === 'enzo' || J.length < 8) return; var b = JSON.stringify({ action: 'espace', f: 'visite', j: J, quoi: String(quoi).slice(0, 60) }); if (navigator.sendBeacon && typeof Blob !== 'undefined') navigator.sendBeacon(API, new Blob([b], { type: 'text/plain;charset=utf-8' })); } catch (x) { } }
   function aller(p, pre) {
     if (!ECRANS[p] || p === ecran) { if (pre) { F[pre.k] = pre.v; rendre(); } return; }
     try { DEFIL[PROF] = window.pageYOffset || 0; } catch (x) { }
@@ -507,7 +536,7 @@ audio{display:block;width:100%;margin-top:3.5px}
     if (vif && vif.message_equipe) h += '<div class="souci rouge"><b>Message de l\'équipe technique</b><span>' + e(vif.message_equipe) + '</span></div>';
     if (c.a_regler) h += carteRegler(c, false);   /* aussi après « Voir mon espace d'abord » : le montant reste sous les yeux */
     if (al && !(meme && (!lu || !al.texte))) h += '<div class="souci' + (meme ? ' seul' : '') + '">' + (meme ? '' : '<b>' + e(al.titre) + '</b>') + '<span>' + e(al.texte) + '</span>' + boutonCause(a) + '</div>';
-    return h + '<h3>Où voulez-vous aller ?</h3>' + portes(c, lu, Pb, n) + '</div><p class="pied">BoostArtisan · Cet espace est personnel : ne partagez pas ce lien.</p>';
+    return h + '<h3>Où voulez-vous aller ?</h3>' + portes(c, lu, Pb, n) + (CLE ? basCle() : '') + '</div><p class="pied">BoostArtisan · ' + (CLE ? '<button type="button" data-a="changer" aria-expanded="' + !!O.changer + '">Changer d\'espace</button>' : 'Cet espace est personnel : ne partagez pas ce lien.') + '</p>';
   }
   /* le bouton de l'alerte : chez Google quand Google réclame un paiement (lien donné par le tableau), sinon poser la question */
   function boutonCause(a) {
@@ -984,6 +1013,7 @@ audio{display:block;width:100%;margin-top:3.5px}
   /* ---------- l'écran ---------- */
   var aRendre = false;
   function html() {
+    if (PO) return ecranPorte();
     if (RET.paye) return tete(copie, '') + '<div class="regler" role="status"><span class="lab">Paiement</span><p>Vérification de votre paiement… Un instant.</p></div>';   /* retour de Stripe : on ne montre pas l'ancien « à régler » pendant que le tableau vérifie */
     if (!copie) return squelette();
     if (copie.ferme && !(copie.refermable && copie.accueil && vuDabord)) return essaiBandeau() + tete(copie, '') + carteRegler(copie, true) + voile();
@@ -1010,6 +1040,7 @@ audio{display:block;width:100%;margin-top:3.5px}
   }
   var HTML0 = null;
   function rendre(doux) {
+    if (doux && PO) return;   /* la porte ne se redessine pas quand des chiffres arrivent : rien d'elle ne dépend du réseau, et un doigt posé reste sur son bouton */
     var h = html(), plein = true, anc = null;
     if (doux && ecran === 'parler') { try { var q0 = document.getElementById('q-x'), r0 = q0 && q0.getBoundingClientRect(); if (r0 && r0.top < (window.innerHeight || 0) && r0.bottom > 0) anc = r0.top; } catch (x) { } }
     if (doux) { if (h === HTML0 || zones(h)) plein = false; else if (occupe()) { aRendre = true; plein = false; } }
@@ -1028,11 +1059,259 @@ audio{display:block;width:100%;margin-top:3.5px}
     if (horsR) bandeau.textContent = 'Pas de réseau · ' + (copie ? 'chiffres ' + (heureParis(copie.calcule_le) || 'gardés dans ce téléphone') : 'vos chiffres arriveront dès qu\'il revient');
   }
 
+  /* ================= LA PORTE COMMUNE (chantier 29, 10 nov. 2026) : un seul lien pour tous =================
+     Le lien commun ne porte rien de personnel : le téléphone se fait reconnaître. 1. Par sa clé d'appareil (« ba2:moi », gardée après une première ouverture ;
+     le tableau n'en a que l'empreinte et peut la révoquer). 2. Sinon par un code à 4 chiffres, envoyé au contact DÉJÀ connu du tableau (jamais à ce qui vient d'être écrit).
+     3. Sinon par le mot de passe choisi juste après le premier code. Le jeton de l'espace reste en mémoire vive : jamais dans l'adresse, jamais gardé.
+     Le code, le mot de passe et son ticket ne sont gardés nulle part ; « ba2:code » ne garde que la référence d'un code demandé (10 minutes), pour reprendre
+     l'écran du code après un détour par la boîte e-mail (onglet rechargé ou lien rouvert). « ba2:id » = un identifiant d'appareil tiré au hasard. */
+  var PO = null, RECO = false, cleDite = false, ATTJ = [], IDM = '';
+  function hasard(n) { var a = 'abcdefghijklmnopqrstuvwxyz0123456789', s = '', i; try { var b = new Uint8Array(n); window.crypto.getRandomValues(b); for (i = 0; i < n; i++) s += a.charAt(b[i] % 36); } catch (x) { s = ''; while (s.length < n) s += a.charAt(Math.floor(Math.random() * 36)); } return s; }
+  function idAppareil() { if (IDM) return IDM; var v = ''; try { v = String(localStorage.getItem('ba2:id') || ''); } catch (x) { } if (!/^[a-z0-9]{8,40}$/.test(v)) { v = hasard(20); try { localStorage.setItem('ba2:id', v); } catch (x) { } } IDM = v; return v; }
+  function moi() { try { var m = JSON.parse(localStorage.getItem('ba2:moi') || 'null'); return m && /^[0-9a-f]{32,64}$/i.test(String(m.k || '')) && /^ba2:[a-z0-9]+:\d+$/.test(String(m.s || '')) ? { k: String(m.k), s: String(m.s) } : null; } catch (x) { return null; } }
+  function garderMoi(k) { if (!K || !/^[0-9a-f]{32,64}$/i.test(String(k || ''))) return false; try { localStorage.setItem('ba2:moi', JSON.stringify({ k: String(k), s: K })); return true; } catch (x) { return false; } }
+  function oublierMoi() { try { localStorage.removeItem('ba2:moi'); } catch (x) { } }
+  function garderCode() { try { localStorage.setItem('ba2:code', JSON.stringify({ ref: PO.ref, t: PO.t, c: PO.canal, m: PO.minutes })); } catch (x) { } }
+  function oublierCode() { try { localStorage.removeItem('ba2:code'); } catch (x) { } }
+  function codeGarde() { try { var c = JSON.parse(localStorage.getItem('ba2:code') || 'null'), age = c ? Date.now() - Number(c.t) : -1; if (c && /^[0-9a-f]{16,40}$/i.test(String(c.ref || '')) && age >= 0 && age < (Math.min(30, Number(c.m) || 10)) * 60000) return c; if (c) oublierCode(); } catch (x) { } return null; }
+  function porteDepart() { var c = codeGarde(); return c ? { e: 'code', saisie: '', ref: String(c.ref), canal: c.c === 'sms' ? 'sms' : 'mail', vers: '', minutes: Number(c.m) || 10, t: Number(c.t) } : { e: 'porte', saisie: '' }; }
+  function porteEnCours() { return !!PO && (PO.e !== 'porte' || !!PO.inc || !!String(F.psaisie || '').trim()); }
+  function connexion(corps, ms) { corps.action = 'connexion'; return appel(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(corps) }, ms || 45000); }
+  function quandJ() { return J.length >= 8 ? Promise.resolve() : new Promise(function (bon, mauvais) { ATTJ.push([bon, mauvais]); }); }
+  function lacherJ(bon) { var L = ATTJ; ATTJ = []; L.forEach(function (x) { try { if (bon) x[0](); else x[1](new Error('porte')); } catch (y) { } }); }
+  /* les trois sources de l'espace, dans l'ordre habituel (le jeton est connu) */
+  function reseau() { var gen = GEN, G0 = guichet(); chercher(); G0.then(function () { if (gen === GEN && !copie) espace(); }); }
+  /* lien personnel : après la première lecture réussie, ce téléphone reçoit aussi une clé d'appareil ; le lien commun y marchera donc tout seul (jamais pour Enzo) */
+  function cleDuLien() {
+    if (CLE || cleDite || SRC === 'enzo') return; cleDite = true;
+    if (moi()) return;
+    var gen = GEN;
+    connexion({ f: 'appareil_creer', j: J, a: idAppareil() }, 30000).then(function (r) { if (gen === GEN && r && r.ok === true && r.k && !moi()) garderMoi(r.k); }, function () { });
+  }
+  /* lien commun, téléphone déjà connu : sa clé d'appareil retrouve le jeton (en mémoire vive), puis le réseau habituel. Clé refusée = la porte. Pas de réponse = on réessaie, la copie gardée reste à l'écran. */
+  function reconnaitre() {
+    if (RECO || PO) return;
+    var M = moi(); if (!M) { versPorte(false); return; }
+    RECO = true; var gen = GEN;
+    if (ligne !== 'maj') { ligne = 'maj'; rendre(true); }
+    var lacher = function (etat) { var S = suites; suites = []; S.forEach(function (f) { try { f(etat); } catch (x) { } }); };
+    var rate = function () { if (gen !== GEN) return; RECO = false; var hl = navigator.onLine === false; if (hl) horsReseau(); else plusTard(); lacher(hl ? 'reseau' : 'pasprete'); };
+    connexion({ f: 'appareil', k: M.k }, 45000).then(function (r) {
+      if (gen !== GEN) return;
+      if (r && r.ok === true && String(r.j || '').length >= 8) {
+        RECO = false; J = String(r.j); essais = 0; horsR = false;
+        var k2 = nomCopie(J); if (k2 !== K) { oublier(); K = k2; garderMoi(M.k); copie = reprise(); vif = null; rendre(); }   /* le jeton a changé chez nous : l'ancienne copie ne reste ni dans le téléphone ni à l'écran */
+        lacherJ(true); reseau();
+      }
+      else if (r && r.oublier) { RECO = false; versPorte(true); }
+      else if (r && r.eteint) {
+        RECO = false; ligne = 'tard';
+        if (copie) { BAN = { c: '', t: 'Mise à jour indisponible', x: point(r.erreur || 'Indisponible pour le moment') }; rendre(); } else message('Indisponible pour le moment', point(r.erreur || 'Ouvrez le lien reçu par SMS ou par e-mail.'));
+        lacher('pasprete');
+      }
+      else rate();
+    }, rate);
+  }
+  /* quitter l'espace : tout ce qui est en mémoire vive est vidé ; une réponse du réseau partie avant est ignorée (GEN) */
+  function versPorte(effacer) {
+    if (effacer) { oublier(); oublierMoi(); }
+    GEN++; RECO = false; J = ''; K = ''; copie = null; vif = null; vifLe = 0; ligne = ''; horsR = false; essais = 0; enCours = false; suites = []; encore = null; visiteDite = false; vuDabord = false; BAN = null; MEQ_VU = false; ANCIENS = null;
+    F = {}; A = {}; O = {}; PJ = []; FIL = []; SON = {}; DEFIL = {};
+    if (minuteur) { clearTimeout(minuteur); minuteur = null; }
+    lacherJ(false);
+    ecran = 'accueil'; PROF = 0; PO = porteDepart();
+    try { history.replaceState({ p: 'accueil', n: 0 }, '', adresse('accueil')); } catch (x) { }
+    rendre(); hautDePage();
+  }
+  function viser(id) { try { var n = document.getElementById(id); if (n && n.focus && app.contains(n)) { n.focus({ preventScroll: true }); var l = String(n.value || '').length; if (n.setSelectionRange) n.setSelectionRange(l, l); } } catch (x) { } }
+  /* ce que le téléphone a rempli tout seul (mot de passe retenu, code proposé par le clavier) se relit dans les champs au moment d'envoyer */
+  function relire() { try { [['p-saisie', 'psaisie'], ['p-code', 'pcode'], ['p-mdp', 'pmdp'], ['r-nom', 'rnom'], ['r-tel', 'rtel']].forEach(function (c) { var n = document.getElementById(c[0]); if (n && typeof n.value === 'string' && app.contains(n)) F[c[1]] = n.value; }); } catch (x) { } }
+  function pAppel(cle, corps, msg, suite) {
+    if (A[cle] && A[cle].etat === 'envoi') return;
+    var gen = GEN, po = PO; A[cle] = { etat: 'envoi', msg: msg }; rendre();
+    connexion(corps).then(function (r) {
+      if (gen !== GEN || po !== PO) return;
+      A[cle] = {}; r = r || {};
+      if (r.ok !== true && (!r.erreur || /^(action inconnue|cl[ée] |\w*Error\b)/i.test(String(r.erreur)))) r = { ok: false, erreur: 'Indisponible pour le moment. Réessayez dans une minute.' };   /* une réponse qui n'est pas une phrase pour lui (tableau pas à jour, panne) ne s'affiche jamais telle quelle */
+      if (r.eteint) { A[cle] = { etat: 'rate', msg: point(r.erreur || 'Indisponible pour le moment') }; rendre(); return; }
+      suite(r);
+    }, function () {
+      if (gen !== GEN || po !== PO) return;
+      A[cle] = { etat: 'rate', msg: navigator.onLine === false ? 'Pas de réseau. Réessayez dès qu\'il revient.' : 'La connexion a coupé. Réessayez.' }; rendre();
+    });
+  }
+  function preRappel(saisie) {
+    saisie = String(saisie || ''); var chiffres = /^[\d\s.+()\-]+$/.test(saisie) && saisie.replace(/\D/g, '').length >= 9;
+    /* ce qu'il vient d'écrire sert de départ au rappel, tant qu'il n'a pas corrigé lui-même le champ (un 2e essai remplace le 1er) */
+    if (chiffres) { if (F.rtel === undefined || F.rtel === O.rtel0) F.rtel = O.rtel0 = saisie.slice(0, 30); }
+    else if (saisie && !/@/.test(saisie) && (F.rnom === undefined || F.rnom === O.rnom0)) F.rnom = O.rnom0 = saisie.slice(0, 80);
+  }
+  /* 1. qui êtes-vous ? → un code part (au contact déjà connu), ou le mot de passe est demandé, ou « pas trouvé » */
+  function pDemander(saisie, avecCode) {
+    saisie = String(saisie || '').trim().slice(0, 120);
+    if (saisie.replace(/\s/g, '').length < 3) { A.porte = { etat: 'rate', msg: 'Écrivez votre numéro, votre e-mail ou le nom de votre entreprise.' }; rendre(); viser('p-saisie'); return; }
+    var corps = { f: 'demander', saisie: saisie, a: idAppareil() }; if (avecCode) corps.code = 1;
+    pAppel('porte', corps, 'Un instant…', function (r) {
+      if (r.ok === true && r.etape === 'code' && r.ref) {
+        var renvoi = !!(PO && PO.e === 'code');
+        PO = { e: 'code', saisie: saisie, ref: String(r.ref), canal: r.canal === 'sms' ? 'sms' : 'mail', vers: String(r.vers || ''), minutes: Number(r.minutes) || 10, t: Date.now(), renvoi: renvoi };
+        F.pcode = ''; O.prien = false; A.rappel = {}; garderCode(); rendre(); hautDePage(); viser('p-code');
+      }
+      else if (r.ok === true && r.etape === 'mdp') { PO = { e: 'mdp', saisie: saisie }; F.pmdp = ''; O.pvoir = false; rendre(); hautDePage(); viser('p-mdp'); }
+      else if (r.ok === true && r.etape === 'inconnu') { PO = { e: 'porte', saisie: saisie, inc: { plusieurs: !!r.plusieurs, sans: !!r.sans_contact } }; F.psaisie = saisie; A.rappel = {}; preRappel(r.plusieurs ? '' : saisie); rendre(); }
+      else {
+        A.porte = { etat: 'rate', msg: point(r.erreur || 'Réessayez dans une minute') };
+        if (r.bloque && PO && PO.e === 'porte') { PO = { e: 'porte', saisie: saisie, inc: { bloque: true } }; F.psaisie = saisie; preRappel(saisie); }
+        rendre();
+      }
+    });
+  }
+  /* 2. le code : bon = la clé d'appareil se garde et l'espace s'ouvre ; faux = on le dit avec ce qu'il reste ; fini = on en redemande un */
+  function pValider() {
+    if (!PO || PO.e !== 'code' || PO.fini) return;
+    var code = String(F.pcode || '').replace(/\D/g, '').slice(0, 4), saisie = PO.saisie;
+    if (code.length !== 4) { A.porte = { etat: 'rate', msg: 'Écrivez les 4 chiffres du code.' }; rendre(); viser('p-code'); return; }
+    pAppel('porte', { f: 'valider', ref: PO.ref, code: code, a: idAppareil() }, 'Vérification…', function (r) {
+      F.pcode = '';
+      if (r.ok === true && String(r.j || '').length >= 8) { oublierCode(); ouvrir(r, saisie); return; }
+      if (r.bloque) { oublierCode(); PO = { e: 'porte', saisie: saisie, inc: { bloque: true } }; F.psaisie = saisie; preRappel(saisie); A.porte = { etat: 'rate', msg: point(r.erreur || 'Plus de code aujourd\'hui pour cet espace') }; rendre(); hautDePage(); return; }   /* plus de code aujourd'hui pour cet espace : la phrase du tableau et « On vous rappelle », pas un bouton « nouveau code » qui serait refusé */
+      if (r.expire) { oublierCode(); PO = { e: 'code', saisie: saisie, fini: true, msg: point(r.erreur || 'Ce code n\'est plus valable') }; O.prien = false; rendre(); return; }
+      A.porte = { etat: 'rate', msg: point(r.erreur || 'Ce n\'est pas le bon code') }; rendre(); viser('p-code');
+    });
+  }
+  /* reconnu : le jeton reste en mémoire vive, la clé d'appareil se garde ; avec un ticket (après un code), il choisit d'abord son mot de passe pendant que ses chiffres arrivent */
+  function ouvrir(r, saisie) {
+    J = String(r.j); K = nomCopie(J);
+    var garde = r.k ? garderMoi(r.k) : false;
+    copie = reprise(); vif = null; vifLe = 0; ligne = 'maj'; essais = 0; horsR = false; visiteDite = false;
+    F = {}; A = {}; O = {}; ecran = 'accueil'; PROF = 0;
+    PO = r.p ? { e: 'choisir', saisie: saisie, p: String(r.p), deja: !!r.mdp, garde: garde && !!moi() } : null;
+    lacherJ(true);
+    rendre(); hautDePage();
+    try { history.replaceState({ p: 'accueil', n: 0 }, '', adresse('accueil')); } catch (x) { }   /* le formulaire a disparu et l'adresse est reposée : le téléphone propose de retenir le mot de passe */
+    if (PO) viser('p-mdp');
+    reseau();
+  }
+  function finPorte() { PO = null; F.pmdp = ''; O.pvoir = false; A.porte = {}; rendre(); hautDePage(); try { history.replaceState({ p: 'accueil', n: 0 }, '', adresse('accueil')); } catch (x) { } }
+  /* 3. revenir sans code : sa saisie et son mot de passe */
+  function pEntrer() {
+    if (!PO || PO.e !== 'mdp') return;
+    var mdp = String(F.pmdp || ''), saisie = PO.saisie;
+    if (!mdp) { A.porte = { etat: 'rate', msg: 'Écrivez votre mot de passe.' }; rendre(); viser('p-mdp'); return; }
+    pAppel('porte', { f: 'entrer', saisie: saisie, mdp: mdp, a: idAppareil() }, 'Ouverture…', function (r) {
+      if (r.ok === true && String(r.j || '').length >= 8) { ouvrir(r, saisie); return; }
+      if (r.code) PO.code = true;   /* trop de mauvais mots de passe : « Recevoir un code » passe devant */
+      A.porte = { etat: 'rate', msg: point(r.erreur || 'Ce n\'est pas le bon mot de passe') }; rendre(); viser('p-mdp');
+    });
+  }
+  /* 4. juste après un bon code : choisir son mot de passe (le ticket et le mot de passe ne quittent pas la mémoire vive) */
+  function pPoser() {
+    if (!PO || PO.e !== 'choisir') return;
+    var mdp = String(F.pmdp || '');
+    if (!mdp) { A.porte = { etat: 'rate', msg: 'Écrivez un mot de passe.' }; rendre(); viser('p-mdp'); return; }   /* aucune règle sur ce qu'il choisit (Enzo 10/11 17 h 08 : « même si c'est juste un seul chiffre, ils peuvent le faire ») */
+    pAppel('porte', { f: 'mdp_poser', p: PO.p, mdp: mdp, a: idAppareil() }, 'Enregistrement…', function (r) {
+      if (r.ok === true) { BAN = { c: 'vert', t: 'Mot de passe enregistré ✓', x: 'Il vous servira à revenir sans code.' }; finPorte(); return; }
+      if (r.expire) { BAN = { c: '', t: 'Mot de passe pas enregistré', x: point(r.erreur || 'Le temps est passé') }; finPorte(); return; }
+      A.porte = { etat: 'rate', msg: point(r.erreur || 'Réessayez dans une minute') }; rendre(); viser('p-mdp');
+    });
+  }
+  /* 5. pas reconnu, ou rien reçu : il laisse son nom et son numéro, Enzo est prévenu */
+  function pRappel() {
+    if (!PO) return;
+    var nom = String(F.rnom || '').replace(/\s+/g, ' ').trim().slice(0, 80), tel = String(F.rtel || '').trim().slice(0, 30);
+    if (nom.length < 2) { A.rappel = { etat: 'rate', msg: 'Écrivez le nom de votre entreprise.' }; rendre(); viser('r-nom'); return; }
+    if (tel.replace(/\D/g, '').length < 9) { A.rappel = { etat: 'rate', msg: 'Écrivez un numéro où vous rappeler, par exemple 06 12 34 56 78.' }; rendre(); viser('r-tel'); return; }
+    pAppel('rappel', { f: 'rappel', nom: nom, tel: tel, saisie: String(PO.saisie || '').slice(0, 80), a: idAppareil() }, 'Envoi…', function (r) {
+      A.rappel = r.ok === true || /déjà noté/i.test(String(r.erreur || '')) ? { etat: 'fait' } : { etat: 'rate', msg: point(r.erreur || 'Réessayez dans une minute') }; rendre();
+    });
+  }
+  function clicPorte(ev, a) {
+    var x;
+    if (a === 'changer') { O.changer = !O.changer; rendre(); return; }
+    if (a === 'changer_oui') { if (!CLE) return; x = moi(); if (x) connexion({ f: 'oublier', k: x.k }, 20000).then(function () { }, function () { }); versPorte(true); return; }
+    if (!PO) return;
+    if (a === 'p_retour') { if (PO.e === 'choisir') return; oublierCode(); PO = { e: 'porte', saisie: '' }; F = {}; A = {}; O = {}; rendre(); hautDePage(); viser('p-saisie'); return; }
+    if (a === 'p_renvoyer') { if (PO.e === 'code' && PO.saisie) pDemander(PO.saisie, true); return; }
+    if (a === 'p_oublie') { if (PO.e === 'mdp') pDemander(PO.saisie, true); return; }
+    if (a === 'p_voir') { relire(); O.pvoir = !O.pvoir; rendre(); viser('p-mdp'); return; }
+    if (a === 'p_tard') { if (PO.e === 'choisir') finPorte(); return; }
+    if (a === 'p_rien') { if (PO.e !== 'code') return; O.prien = true; preRappel(PO.saisie); rendre(); viser('r-nom'); return; }
+  }
+  /* les formulaires de la porte sont de vrais formulaires, réellement soumis (touche Entrée, bouton, remplissage du téléphone) */
+  function soumettre(ev) {
+    var t = ev && ev.target, s = t && t.getAttribute ? t.getAttribute('data-s') : null; if (!s) return;
+    try { ev.preventDefault(); } catch (x) { }
+    if (!PO) return;
+    relire();
+    if (s === 'p_demander') return pDemander(F.psaisie === undefined ? PO.saisie : F.psaisie);
+    if (s === 'p_valider') return pValider();
+    if (s === 'p_entrer') return pEntrer();
+    if (s === 'p_poser') return pPoser();
+    if (s === 'p_rappel') return pRappel();
+  }
+  /* ---------- les écrans de la porte : mêmes écritures, mêmes champs et mêmes boutons que le reste de l'espace ---------- */
+  function surIphone() { try { var u = String(navigator.userAgent || ''); if (!(/iPhone|iPad|iPod/.test(u) || (/Macintosh/.test(u) && navigator.maxTouchPoints > 1))) return false; if (navigator.standalone === true) return false; return !(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches); } catch (x) { return false; } }
+  function basCle() {
+    var h = surIphone() ? '<div class="info" style="margin-top:5px">' + ICO.info + '<span>Sur iPhone : ajoutez cette page à l\'écran d\'accueil pour rester connecté.</span></div>' : '';
+    if (O.changer) h += carte('<h2 class="fort">Changer d\'espace ?</h2><p>Ce téléphone oubliera cet espace. Pour y revenir : votre mot de passe ou un nouveau code.</p><div class="duo"><button type="button" class="btn rouge" data-a="changer_oui">Oui, changer</button><button type="button" class="btn gris" data-a="changer">Annuler</button></div>');
+    return h;
+  }
+  var FORM = '<form class="formu" method="post" novalidate onsubmit="return false" data-s="';
+  function pTete() { return '<div class="tete"><div><small>BoostArtisan</small><b>Votre espace</b><span class="m">Vos appels, votre publicité, vos factures.</span></div></div>'; }
+  function pErreur(cle) { var s = A[cle] || {}; return s.etat === 'rate' && s.msg ? '<div class="boite rouge" role="alert">' + e(s.msg) + '</div>' : ''; }
+  function pBouton(cle, texte, cls) { var s = A[cle] || {}; return '<button type="submit" class="btn' + (cls ? ' ' + cls : '') + (s.etat === 'envoi' ? ' occ' : '') + '">' + (s.etat === 'envoi' ? '<i class="roue"></i>' + e(s.msg || 'Un instant…') : e(texte)) + '</button>'; }
+  function pIdent(saisie) { return saisie ? '<div class="champ"><label for="p-id">Numéro, e-mail ou nom de l\'entreprise</label><input id="p-id" name="username" type="text" autocomplete="username" readonly value="' + e(saisie) + '"></div>' : ''; }
+  function pMdp(neuf) { return '<div class="champ"><label for="p-mdp">Mot de passe</label><span class="mdp"><input id="p-mdp" name="password" type="' + (O.pvoir ? 'text' : 'password') + '" autocomplete="' + (neuf ? 'new-password' : 'current-password') + '" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="200" data-i="pmdp" value="' + e(F.pmdp || '') + '"><button type="button" data-a="p_voir" aria-pressed="' + !!O.pvoir + '">' + (O.pvoir ? 'Cacher' : 'Afficher') + '</button></span></div>'; }
+  function carteRappel() {
+    var s = A.rappel || {};
+    if (s.etat === 'fait') return carte('<h2 class="fort">On vous rappelle</h2>' + fait('C\'est noté.', 'On vous rappelle pour ouvrir votre espace.'));
+    return carte('<h2 class="fort">On vous rappelle</h2><p>Laissez votre nom et votre numéro : on vous rappelle et on ouvre votre espace.</p>' + FORM + 'p_rappel"><div class="champ"><label for="r-nom">Nom de votre entreprise</label><input id="r-nom" name="organization" type="text" autocomplete="organization" maxlength="80" data-i="rnom" value="' + e(F.rnom || '') + '"></div><div class="champ"><label for="r-tel">Votre numéro</label><input id="r-tel" name="tel" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" data-i="rtel" value="' + e(F.rtel || '') + '"></div>' + pErreur('rappel') + pBouton('rappel', 'Me faire rappeler', 'gris') + '</form>');
+  }
+  function ecranPorte() {
+    var s = A.porte || {}, h = pTete() + '<div class="corps">', x, inc;
+    if (PO.e === 'code' && PO.fini) {
+      h += carte('<h2 class="fort">Votre code</h2><div class="boite rouge" role="alert">' + e(PO.msg) + '</div>' + pErreur('porte')
+        + (PO.saisie ? '<button type="button" class="btn' + (s.etat === 'envoi' ? ' occ' : '') + '" data-a="p_renvoyer">' + (s.etat === 'envoi' ? '<i class="roue"></i>Un instant…' : 'Recevoir un nouveau code') + '</button>' : '')
+        + '<button type="button" class="' + (PO.saisie ? 'lien' : 'btn') + '" data-a="p_retour">' + (PO.saisie ? 'Ce n\'est pas moi' : 'Recommencer') + '</button>');
+    }
+    else if (PO.e === 'code') {
+      x = (PO.vers ? 'Code envoyé ' + PO.vers + '.' : 'Entrez le code reçu par ' + (PO.canal === 'sms' ? 'SMS' : 'e-mail') + '.') + ' Il est valable ' + PO.minutes + ' minutes.';
+      h += carte('<h2 class="fort">Entrez votre code</h2>' + (PO.renvoi ? '<div class="boite vert" role="status">Nouveau code envoyé.</div>' : '') + '<p>' + e(x) + '</p>'
+        + FORM + 'p_valider"><div class="champ"><label for="p-code">Code à 4 chiffres</label><input id="p-code" class="code" name="code" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" maxlength="6" data-i="pcode" value="' + e(F.pcode || '') + '"></div>' + pErreur('porte') + pBouton('porte', 'Valider') + '</form>'
+        + (PO.saisie ? '<button type="button" class="lien" data-a="p_renvoyer">Renvoyer un code</button>' : '')
+        + '<button type="button" class="lien" data-a="p_retour">' + (PO.saisie ? 'Ce n\'est pas moi' : 'Recommencer') + '</button>');
+      h += O.prien ? carteRappel() : '<div class="info">' + ICO.info + '<span>Rien reçu ? Regardez dans vos courriers indésirables.</span></div><button type="button" class="lien" data-a="p_rien">Toujours rien ? On vous rappelle</button>';
+    }
+    else if (PO.e === 'mdp') {
+      h += carte('<h2 class="fort">Votre mot de passe</h2>' + FORM + 'p_entrer">' + pIdent(PO.saisie) + pMdp(false) + pErreur('porte')
+        + (PO.code ? '<button type="button" class="btn" data-a="p_oublie">Recevoir un code</button>' : '') + pBouton('porte', 'Ouvrir mon espace', PO.code ? 'gris' : '') + '</form>'
+        + (PO.code ? '' : '<button type="button" class="lien" data-a="p_oublie">Mot de passe oublié ? Recevoir un code</button>')
+        + '<button type="button" class="lien" data-a="p_retour">Ce n\'est pas moi</button>');
+    }
+    else if (PO.e === 'choisir') {
+      h += carte((PO.garde ? '<div class="boite vert" role="status"><b>C\'est bien vous ✓</b>Ce téléphone ouvrira maintenant votre espace tout seul.</div>' : '')
+        + '<h2 class="fort">' + (PO.deja ? 'Nouveau mot de passe' : 'Choisissez votre mot de passe') + '</h2><p>Pour revenir sans code si votre téléphone vous oublie.</p>'
+        + FORM + 'p_poser">' + pIdent(PO.saisie) + pMdp(true) + pErreur('porte') + pBouton('porte', 'Enregistrer') + '</form><button type="button" class="lien" data-a="p_tard">Plus tard</button>');
+    }
+    else {
+      inc = PO.inc;
+      /* « plusieurs » : un nom que deux clients portent → demander le contact ; un contact que deux espaces partagent (un client, deux entreprises) → demander le nom */
+      x = !inc || inc.bloque ? '' : inc.plusieurs ? (/@/.test(PO.saisie) || /^[\d\s.+()\-]+$/.test(PO.saisie) ? '<div class="boite ambre" role="alert"><b>Ce contact ouvre plusieurs espaces.</b>Écrivez le nom de l\'entreprise à ouvrir.</div>' : '<div class="boite ambre" role="alert"><b>Plusieurs entreprises ont un nom proche.</b>Écrivez plutôt votre e-mail ou votre numéro.</div>')
+        : inc.sans ? '<div class="boite ambre" role="alert"><b>Il nous manque votre e-mail pour vous envoyer un code.</b>Laissez votre numéro juste en dessous : on vous rappelle.</div>'
+        : '<div class="boite ambre" role="alert"><b>Nous ne vous avons pas trouvé.</b>Essayez autre chose : votre numéro, votre e-mail ou le nom de votre entreprise.</div>';
+      h += carte('<h2 class="fort">Retrouver mon espace</h2><p>Dites-nous qui vous êtes : on vous ouvre votre espace.</p>' + x
+        + FORM + 'p_demander"><div class="champ"><label for="p-saisie">Numéro, e-mail ou nom de l\'entreprise</label><input id="p-saisie" name="username" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" maxlength="120" data-i="psaisie" value="' + e(F.psaisie === undefined ? (PO.saisie || '') : F.psaisie) + '"></div>' + pErreur('porte') + pBouton('porte', 'Continuer') + '</form>');
+      h += inc ? carteRappel() : '<div class="info">' + ICO.info + '<span>La première fois, vous recevez un code par e-mail. Ensuite, votre téléphone vous reconnaît.</span></div>';
+    }
+    return h + '</div><p class="pied">BoostArtisan</p>';
+  }
+
   /* ---------- les gestes ---------- */
   function clic(ev) {
     var c = ev && ev.target && ev.target.closest ? ev.target : null; if (!c) return;
     var t = c.closest('[data-a]'); if (!t) return;
     var a = t.getAttribute('data-a'), v = t.getAttribute('data-v'), acc = (copie && copie.accueil) || {}, x;
+    if (/^(p_|changer)/.test(a)) return clicPorte(ev, a);
     if (a === 'aller') { ev.preventDefault(); x = t.getAttribute('data-q'); if (ecran === 'site' || ecran === 'parler') { PJ = []; O.pjmsg = ''; } aller(v, x ? { k: 'q', v: x } : null); return; }
     if (a === 'retour') { ev.preventDefault(); PJ = []; O.pjmsg = ''; retour(); return; }
     if (a === 'regler') return regler(ev, t);
@@ -1075,7 +1354,10 @@ audio{display:block;width:100%;margin-top:3.5px}
     if (a === 'gg_ok') return envoyer('ggok', { f: 'acces_google_ok' });
     if (a === 'carte') { if (A.carte && A.carte.etat === 'envoi') return; A.carte = { etat: 'envoi' }; rendre(); poster({ f: 'carte' }).then(function (r) { if (r && r.ok && r.url) { noter('Enregistrer ma carte'); location.href = r.url; } else { A.carte = { etat: 'rate', msg: point((r && r.erreur) || 'Impossible pour l\'instant') }; rendre(); } }, function () { A.carte = { etat: 'rate', msg: 'La connexion a coupé. Réessayez.' }; rendre(); }); return; }
   }
-  function saisie(ev) { var t = ev && ev.target, k = t && t.getAttribute ? t.getAttribute('data-i') : null; if (k) F[k] = String(t.value == null ? '' : t.value); }
+  function saisie(ev) {
+    var t = ev && ev.target, k = t && t.getAttribute ? t.getAttribute('data-i') : null; if (k) F[k] = String(t.value == null ? '' : t.value);
+    if (k === 'pcode' && PO && PO.e === 'code' && !PO.fini && F.pcode.replace(/\D/g, '').length >= 4) pValider();   /* le code part tout seul au 4e chiffre */
+  }
   function change(ev) { var t = ev && ev.target; if (t && t.getAttribute && t.getAttribute('data-f') === 'pj') { ajouterFichiers(t.files); try { t.value = ''; } catch (x) { } rendre(); } }
   function apresSaisie() { setTimeout(function () { if (aRendre && !occupe()) rendre(); }, 60); }
 
@@ -1085,7 +1367,7 @@ audio{display:block;width:100%;margin-top:3.5px}
   function recharger() {
     if (!NEUF) return;
     try { if (sessionStorage.getItem('ba:neuf') === NEUF) return; } catch (x) { }
-    if (occupe() || envoiEnCours() || PJ.length) { setTimeout(recharger, 20000); return; }
+    if (occupe() || envoiEnCours() || PJ.length || porteEnCours()) { setTimeout(recharger, 20000); return; }
     try { sessionStorage.setItem('ba:neuf', NEUF); } catch (x) { }
     try { location.reload(); } catch (x) { }
   }
@@ -1101,22 +1383,30 @@ audio{display:block;width:100%;margin-top:3.5px}
   }
   /* ---------- les erreurs de la page partent au tableau (jamais de contenu) : une fois par message, 5 au plus ---------- */
   var VUES = {}, NERR = 0;
-  function signalerErreur(m) { try { m = String(m || '').slice(0, 300); if (!m || NERR >= 5 || VUES[m] || J.length < 8) return; VUES[m] = 1; NERR++; poster({ f: 'erreur', message: 'page ' + BUILD + ' : ' + m }, 20000).catch(function () { }); } catch (x) { } }
+  function signalerErreur(m) {
+    try {
+      m = String(m || '').slice(0, 300); if (!m || NERR >= 5 || VUES[m]) return; VUES[m] = 1; NERR++;
+      if (J.length < 8) { connexion({ f: 'erreur', message: 'porte ' + BUILD + ' : ' + m, a: idAppareil() }, 20000).then(function () { }, function () { }); return; }   /* personne n'est encore reconnu : l'erreur part quand même, sans rien de personnel */
+      poster({ f: 'erreur', message: 'page ' + BUILD + ' : ' + m }, 20000).catch(function () { });
+    } catch (x) { }
+  }
 
   /* ---------- départ ---------- */
-  if (J.length < 8) { message('Lien incomplet', 'Ouvrez le lien reçu par SMS ou par e-mail. Sinon, contactez BoostArtisan.'); return; }
+  var M0 = CLE ? moi() : null;
+  if (CLE && !M0) { ecran = 'accueil'; PO = porteDepart(); }   /* lien commun, téléphone pas encore connu : la porte */
+  if (M0) K = M0.s;                                              /* lien commun, téléphone connu : sa copie gardée tout de suite, puis sa clé retrouve le jeton */
   try { history.replaceState({ p: ecran, n: 0 }, '', adresse(ecran)); } catch (x) { }
   try { history.scrollRestoration = 'manual'; } catch (x) { }
   try { app.setAttribute('data-v', BUILD); } catch (x) { }
-  copie = reprise(); ligne = 'maj'; rendre();
+  if (!PO) { copie = reprise(); ligne = 'maj'; }
+  rendre();
   app.addEventListener('click', clic);
+  app.addEventListener('submit', soumettre);
   app.addEventListener('input', saisie);
   app.addEventListener('change', change);
   try { app.addEventListener('focusout', apresSaisie); app.addEventListener('pause', apresSaisie, true); app.addEventListener('ended', apresSaisie, true); app.addEventListener('error', function (ev) { var t = ev && ev.target; if (t && t.tagName === 'AUDIO') sonRate(t.getAttribute('data-son')); }, true); } catch (x) { }
   window.addEventListener('popstate', surRetour);
-  var G0 = guichet();
-  chercher();
-  G0.then(function () { if (!copie) espace(); });
+  if (!CLE) reseau(); else if (!PO) reconnaitre();
   if (RET.carte) { poster({ f: 'carte_ok', session_id: RET.carte }).then(function (r) { if (r && r.ok) { BAN = { c: 'vert', t: 'Carte enregistrée ✓', x: (r.libelle ? r.libelle + ' : ' : '') + 'vos relevés seront réglés tout seuls. Plus rien à faire.' }; chercher({ frais: true }); } rendre(true); }, function () { }); RET.carte = ''; }
   window.addEventListener('online', function () { if (horsR || !vifFrais()) { essais = 0; chercher(); } });
   document.addEventListener('visibilitychange', function () {
