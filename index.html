@@ -255,7 +255,7 @@ audio{display:block;width:100%;margin-top:3.5px}
      Le téléphone et le guichet ne gardent que la copie PUBLIQUE : aucun numéro, aucun e-mail, aucun lien de paiement. Les numéros, le fil et les liens viennent
      du tableau seulement et restent en mémoire vive (« vif »). Le lien du client est la clé : il est après le « # » (jamais envoyé à l'hébergeur).
      Les actions appellent les MÊMES fonctions du tableau que l'ancienne page. Aucun secret ici : ce fichier est public. */
-  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = '7278655581', H2 = 2, H6 = 6, H26 = 26;
+  var API = 'https://script.google.com/macros/s/AKfycbwDgwfesj-aTaYtcUutatJAJhfrb3xmD4hkWKDnZTeQdh7ZHUVOKqjYkiuDy9Qbt8_N/exec', GUICHET = 'https://boostartisan-espace-default-rtdb.europe-west1.firebasedatabase.app', BUILD = 'daf0d6c078', H2 = 2, H6 = 6, H26 = 26;
   var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'], MOISC = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'], JOURS = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
   var app = document.getElementById('app'), bandeau = document.getElementById('hors');
   function params() { var o = {}; (String(location.search || '').replace(/^\?/, '') + '&' + String(location.hash || '').replace(/^#/, '')).split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i > 0) { try { o[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); } catch (x) { } } }); return o; }
@@ -682,6 +682,9 @@ audio{display:block;width:100%;margin-top:3.5px}
     var D = g(c, 's.dem') || {}, Pb = pub(c), lu = estLu(c, Pb), n = Math.round(Number(D.mois) || 0), q = D.qz, L = lignesDemandes(c);
     var h = haut('Mes appels et demandes') + '<div class="corps">';
     var t = lu ? '<div class="chiffre"><b>' + n + '</b><span>' + (n > 1 ? 'demandes ce mois-ci' : 'demande ce mois-ci') + '</span></div><p>Appels et formulaires reçus grâce à vos annonces.</p>' : '<div class="gros">Demandes du mois : pas lu.</div><p>Le relevé de Google ' + (ageReleve(c) === null ? 'manque.' : 'date de plus d\'un jour.') + '</p>';
+    /* (chantier 32) Google compte parfois plus de demandes que la liste n'en détaille (formulaire d'un site pas relié, appel passé sans la ligne suivie) : on le dit, sous le chiffre */
+    var gM = Math.round(Number(D.google_mois) || 0), lM = D.lignes_mois;
+    if (lu && typeof lM === 'number' && lM >= 0 && gM > lM) t += '<p>Google en a compté ' + gM + ' ; ' + (lM === 0 ? 'aucune n\'est détaillée' : lM === 1 ? '1 est détaillée' : Math.round(lM) + ' sont détaillées') + ' ci-dessous.</p>';
     if (q) {
       t += '<div class="ligne"><span>' + e(maj1(q.periode)) + '</span><b>' + e(pl(q.facturees, D.active ? 'facturée' : 'valable')) + (D.active ? ' = ' + e(euros(q.montant)) : '') + '</b></div>';
       if (q.offertes) t += '<div class="ligne"><span>Offertes</span><b>' + e(q.offertes) + '</b></div>';
